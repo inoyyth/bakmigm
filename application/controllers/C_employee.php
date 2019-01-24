@@ -5,13 +5,10 @@ class C_employee extends CI_Controller {
    parent::__construct();
    $this->load->model('M_employee');
  }
- function index() {
-    $data['employee'] = $this->M_employee->getEmployee();
-    $this->load->view('V_employee', $data);
+ function sync_employee() {
+    $employee = $this->M_employee->getEmployee();
+    $this->M_employee->updateEmployee($employee);
+   //  $this->load->view('V_employee', $data);
  }
- public function level($level)
- {
- 	$data['employee'] = $this->M_employee->getEmployeeLevel($level);
-    $this->load->view('V_employee', $data);
- }
+
 }
