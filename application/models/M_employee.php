@@ -12,14 +12,31 @@ class M_employee extends CI_Model {
         $employee = $db->query('exec USEREDOC');
         return $employee->result_array();
     }
-    public function getEmployeeLevel($level)
+
+    public function updateEmployee($employee)
     {
-        $db = $this->load->database('sql_server', TRUE);
-        if(!$db) {
-          echo "Not connected";
-          die;
+        $db = $this->load->database('default', TRUE);
+        $db->truncate('tb_employee');
+        $data = array();
+        foreach($employee as $k=>$v) {
+            $data[] = array(
+                'NIP' => $v['NIP'],
+                'USER_NAME' => $v['USER_NAME'],
+                'FULL_NAME' => $v['FULL_NAME'],
+                'JOBTITLE' => $v['JOBTITLE'],
+                'JOBLVL' => $v['JOBLVL'],
+                'DEPCODE' => $v['DEPCODE'],
+                'DEPNAME' => $v['DEPNAME'],
+                'ORG_PARENT' => $v['ORG_PARENT']
+            );
         }
-        $employee = $db->query('SELECT * FROM USEREDOC WHERE JOBLVL LIKE "'.$level.'" ');
-        return $employee->result_array();
+
+        $insert = $this->db->insert_batch('tb_employee', $data);
+        if ($insert) {
+            echo "ok";
+        } else {
+            echo "gagal";
+        }
+
     }
 }
