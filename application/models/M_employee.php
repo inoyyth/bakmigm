@@ -28,6 +28,7 @@ class M_employee extends CI_Model {
                 'DEPCODE' => $v['DEPCODE'],
                 'DEPNAME' => $v['DEPNAME'],
                 'ORG_PARENT' => $v['ORG_PARENT']
+                'SYNC_DATE' => date('Y-m-d H:i:s)
             );
         }
 
