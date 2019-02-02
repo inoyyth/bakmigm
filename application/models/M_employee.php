@@ -15,6 +15,7 @@ class M_employee extends CI_Model {
 
     public function updateEmployee($employee)
     {
+	date_default_timezone_set('Asia/Jakarta');
         $db = $this->load->database('default', TRUE);
         $db->truncate('tb_employee');
         $data = array();
@@ -27,8 +28,8 @@ class M_employee extends CI_Model {
                 'JOBLVL' => $v['JOBLVL'],
                 'DEPCODE' => $v['DEPCODE'],
                 'DEPNAME' => $v['DEPNAME'],
-                'ORG_PARENT' => $v['ORG_PARENT']
-                'SYNC_DATE' => date('Y-m-d H:i:s)
+                'ORG_PARENT' => $v['ORG_PARENT'],
+                'SYNC_DATE' => date('Y-m-d H:i:s')
             );
         }
 
