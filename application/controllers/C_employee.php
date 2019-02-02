@@ -11,4 +11,14 @@ class C_employee extends CI_Controller {
    //  $this->load->view('V_employee', $data);
  }
 
+ function sync_department() {
+   $department = $this->M_employee->getDepartment();
+   $this->M_employee->updateDepartment($department);
+ }
+
+ function sync_division() {
+  $division = $this->M_employee->getDivision();
+  $this->M_employee->updateDivision($division);
+}
+
 }
