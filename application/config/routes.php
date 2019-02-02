@@ -75,6 +75,8 @@ $route['contribution'] 				= 'C_contribution';
 $route['report'] 					= 'C_report';
 $route['employee'] 					= 'C_employee';
 $route['employee/sync_employee'] = 'C_employee/sync_employee';
+$route['employee/sync_department'] = 'C_employee/sync_department';
+$route['employee/sync_division'] = 'C_employee/sync_division';
 $route['employee-level/(:any)']		= 'C_employee/level/$1';
 
 $route['404_override'] 				= '';
