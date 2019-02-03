@@ -591,6 +591,25 @@ class M_library_database extends CI_Model {
 		}
 		return $result;
 	}
+
+	public function DB_GET_DATA_LOGIN_DIRECT($UR_ID){
+		$result = "";
+		try{
+			//NEW
+			$query = $this->db->query('
+			SELECT * FROM tb_employee
+			WHERE tb_employee.NIP = "'.$UR_ID.'"
+			LIMIT 1
+			');
+			if ($query->num_rows() > 0) {
+				return $query->result();
+			}
+		}catch(Exception $exc){
+			$error = $exc->getMessage();
+			echo "[ERROR][M_LIBRARY_DATABASE][DB_GET_DATA_LOGIN_DIRECT]".$error;
+		}
+		return $result;
+	}
 	//-----------------------------------------------------------------------------------------------//
 	public function DB_GET_DATA_MASTER_ARRAY(){
 		$result = "";

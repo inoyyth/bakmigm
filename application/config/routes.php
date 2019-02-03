@@ -78,6 +78,7 @@ $route['employee/sync_employee'] = 'C_employee/sync_employee';
 $route['employee/sync_department'] = 'C_employee/sync_department';
 $route['employee/sync_division'] = 'C_employee/sync_division';
 $route['employee-level/(:any)']		= 'C_employee/level/$1';
+$route['direct-login'] = 'C_login/direct_login';
 
 $route['404_override'] 				= '';
 $route['translate_uri_dashes'] 		= FALSE;
