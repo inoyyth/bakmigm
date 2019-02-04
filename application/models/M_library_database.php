@@ -594,11 +594,12 @@ class M_library_database extends CI_Model {
 
 	public function DB_GET_DATA_LOGIN_DIRECT($UR_ID){
 		$result = "";
+                $id = preg_replace('/\D/', '', $UR_ID);
 		try{
 			//NEW
 			$query = $this->db->query('
 			SELECT * FROM tb_employee
-			WHERE tb_employee.NIP = "'.$UR_ID.'"
+			WHERE tb_employee.NIP = "'.$id.'"
 			LIMIT 1
 			');
 			if ($query->num_rows() > 0) {
