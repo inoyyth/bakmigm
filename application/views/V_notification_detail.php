@@ -1,90 +1,27 @@
 <?php
-//-----------------------------------------------------------------------------------------------//
 defined('BASEPATH') OR exit('No direct script access allowed');
-//-----------------------------------------------------------------------------------------------//
-$SESSION_ID = $this->session->userdata("session_bgm_edocument_id");
-$SESSION_EMAIL = $this->session->userdata("session_bgm_edocument_email");
-
-$SESSION_DIREKTORAT_ID = $this->session->userdata("session_bgm_edocument_direktorat_id");
-$SESSION_DIREKTORAT_NAME = $this->session->userdata("session_bgm_edocument_direktorat_name");
-
-$SESSION_DIVISI_ID = $this->session->userdata("session_bgm_edocument_divisi_id");
-$SESSION_DIVISI_CODE = $this->session->userdata("session_bgm_edocument_divisi_code");
-$SESSION_DIVISI_NAME = $this->session->userdata("session_bgm_edocument_divisi_name");
-
-$SESSION_DEPARTEMENT_ID = $this->session->userdata("session_bgm_edocument_departement_id");
-$SESSION_DEPARTEMENT_CODE = $this->session->userdata("session_bgm_edocument_departement_code");
-$SESSION_DEPARTEMENT_NAME = $this->session->userdata("session_bgm_edocument_departement_name");
-
-$SESSION_ROLES = $this->session->userdata("session_bgm_edocument_roles");
-
-$SESSION_JOB_LEVEL_ID = $this->session->userdata("session_bgm_edocument_job_level_id");
-$SESSION_JOB_LEVEL_NAME = $this->session->userdata("session_bgm_edocument_job_level_name");
-$SESSION_JOB_LEVEL_INDEX = $this->session->userdata("session_bgm_edocument_job_level_index");
-//-----------------------------------------------------------------------------------------------//
+include (APPPATH.'libraries/session_user.php');
+// Tools
 $is_continue = true;
 $count_notification = 0;
 $count_news = 0;
-//-----------------------------------------------------------------------------------------------//
-//NOTIFICATION
-if ($SESSION_ROLES == "PENDISTRIBUSI") {
-	$get_data_ext = $this->M_library_database->DB_GET_SEARCH_DATA_DOCUMENT_ARRAY("","","","","","");
-	if (empty($get_data_ext)) {
-		$is_continue = false;
-	}else{	
-		foreach ($get_data_ext as $data_row_ext) {
-			$DOC_PENDISTRIBUSI = $data_row_ext->DOC_PENDISTRIBUSI;
-			$DI_CODE = $data_row_ext->DI_CODE;
-		}
-		if ($SESSION_DEPARTEMENT_ID==$DOC_PENDISTRIBUSI) {
-			$count_notification = count($get_data_ext);
-		}else{
-			$is_continue = false;
-		}
-	}
-}
-if ($SESSION_ROLES == "ATASAN PENCIPTA") {
-	$get_data_ext = $this->M_library_database->DB_GET_SEARCH_DATA_DOCUMENT_ARRAY("","","","","","");
-	if (empty($get_data_ext)) {
-		$is_continue = false;
-	}else{	
-		foreach ($get_data_ext as $data_row_ext) {
-			$DOC_PENDISTRIBUSI = $data_row_ext->DOC_PENDISTRIBUSI;
-			$DI_CODE = $data_row_ext->DI_CODE;
-		}
-		if ($SESSION_DEPARTEMENT_ID==$DOC_PENDISTRIBUSI||$SESSION_DIVISI_CODE==$DI_CODE) {
-			$count_notification = count($get_data_ext);
-		}else{
-			$is_continue = false;
-		}
-	}
-}
-if($SESSION_ROLES=="PENCIPTA"){
-	//$DOC_ID,$DOC_NOMOR,$DOC_NAMA,$DOC_MAKER,$DOC_APPROVE,$DOC_STATUS,$DN_ID
-	$get_data_ext = $this->M_library_database->DB_GET_SEARCH_DATA_DOCUMENT_ARRAY("","","",$SESSION_ID,"","",$SESSION_DEPARTEMENT_ID);
-	if(empty($get_data_ext)||$get_data_ext==""){
-		$is_continue = false;
-	}else{
-		$count_notification = count($get_data_ext);
-	}
-}
-if($SESSION_ROLES=="PENGGUNA"){
+// Notification
+$get_data_ext = $this->M_notification->GET_NOTIFICATION_NEW($SESSION_ID);
+if (empty($get_data_ext)) {
 	$is_continue = false;
+}else{
+	$count_notification = count($get_data_ext);
 }
-//-----------------------------------------------------------------------------------------------//
-//NEWS
-//$DOC_AKSES_LEVEL,$DOC_PENGGUNA
-$get_data_count = $this->M_library_database->DB_GET_SEARCH_NEWS_DATA_DOCUMENT_ARRAY_EVO($SESSION_JOB_LEVEL_ID,$SESSION_DEPARTEMENT_ID);
+// News
+$get_data_count = $this->M_notification->GET_NEWS_NEW($SESSION_ID);
 if(empty($get_data_count)||$get_data_count==""){
-	//DO NOTHING
+
 }else{
 	$count_news = count($get_data_count);	
 }
-
+// Jumlah Notification
 $count_notification = $count_notification + $count_news;
-//-----------------------------------------------------------------------------------------------//
 ?>
-<!------------------------------------------------------------------------------------------------->
 <!DOCTYPE html>
 <html lang="en">
 <!------------------------------------------------------------------------------------------------->
@@ -244,7 +181,7 @@ $count_notification = $count_notification + $count_news;
 							$DOCD_PERSETUJUAN_TYPE	= $data_row->DOCD_PERSETUJUAN_TYPE;
 						}
 					?>
-						<div class="row">
+					<div class="row">
 						<div class="col-md-6">
 						
 							<?php
@@ -280,12 +217,15 @@ $count_notification = $count_notification + $count_news;
 								$count = count($data_array);
 								for($x=0;$x<$count;$x++){
 									$get_data = $this->M_library_database->DB_GET_DATA_DEPARTEMEN_BY_ID_EVO($data_array[$x]);
-									foreach($get_data as $data_row){
-										$DN_ID = $data_row->DN_ID;
-										$DN_CODE = $data_row->DN_CODE;
-										$DN_NAME = $data_row->DN_NAME;
+									if (!empty($get_data)) {
+										foreach($get_data as $data_row){
+											$DN_ID = $data_row->DN_ID;
+											$DN_CODE = $data_row->DN_CODE;
+											$DN_NAME = $data_row->DN_NAME;
+										}
+										$DOC_PENGGUNA_FINAL .= "- ".$DN_CODE." (".$DN_NAME.")"."\n";
 									}
-									$DOC_PENGGUNA_FINAL .= "- ".$DN_CODE." (".$DN_NAME.")"."\n";
+									
 								}
 							}else{
 								$get_data = $this->M_library_database->DB_GET_DATA_DEPARTEMEN_BY_ID_EVO($DOC_PENGGUNA);
@@ -296,54 +236,62 @@ $count_notification = $count_notification + $count_news;
 								}
 								$DOC_PENGGUNA_FINAL = "- ".$DN_CODE." (".$DN_NAME.")";
 							}
-							//------------------------------------------------------------------------------------------------//
-							$DOC_PEMILIK_PROSES_FINAL = "";
-							if($DOC_PEMILIK_PROSES=="BPI"){
-								$DOC_PEMILIK_PROSES_FINAL = ""."BPI";
-							}else if($DOC_PEMILIK_PROSES==$SESSION_DIVISI_ID ){
-								$DOC_PEMILIK_PROSES_FINAL = "".$SESSION_DIVISI_NAME;
+							//-------------------------------------------------------------------------------//
+							//-------------------------------------------------------------------------------//
+							$GET_DOC_PEMILIK_DEPARTEMEN = $this->db
+							->select('*')
+							->from('tb_departemen')
+							->join('tb_divisi', 'tb_departemen.DI_ID = tb_divisi.DI_ID', 'left')
+							->like('tb_departemen.DN_ID', $DOC_PEMILIK_PROSES, 'BOTH')
+							->get()->result();
+							$GET_DOC_PEMILIK_DIVISI = $this->db
+							->select('*')
+							->from('tb_departemen')
+							->join('tb_divisi', 'tb_departemen.DI_ID = tb_divisi.DI_ID', 'left')
+							->like('tb_divisi.DI_ID', $DOC_PEMILIK_PROSES, 'BOTH')
+							->get()->result();
+							if (!empty($GET_DOC_PEMILIK_DEPARTEMEN)) {
+								$DOC_PEMILIK_PROSES_FINAL = $GET_DOC_PEMILIK_DEPARTEMEN[0]->DN_CODE."(".$GET_DOC_PEMILIK_DEPARTEMEN[0]->DN_NAME.")";
 							}else{
-								$get_data = $this->M_library_database->DB_GET_DATA_DEPARTEMEN_BY_ID_EVO($DOC_PEMILIK_PROSES);
-								foreach($get_data as $data_row){
-									$DN_ID = $data_row->DN_ID;
-									$DN_CODE = $data_row->DN_CODE;
-									$DN_NAME = $data_row->DN_NAME;
-								}
-								$DOC_PEMILIK_PROSES_FINAL = "".$DN_CODE;
+								$DOC_PEMILIK_PROSES_FINAL = $GET_DOC_PEMILIK_DIVISI[0]->DI_CODE."(".$GET_DOC_PEMILIK_DIVISI[0]->DI_NAME.")";
 							}
-							//------------------------------------------------------------------------------------------------//
-							$DOC_PENYIMPAN_FINAL = "";
-							if($DOC_PENYIMPAN=="BPI"){
-								$DOC_PENYIMPAN_FINAL = ""."BPI";
-							}else if($DOC_PENYIMPAN==$SESSION_DIVISI_ID){
-								$DOC_PENYIMPAN_FINAL = "".$SESSION_DIVISI_NAME;
+							//-------------------------------------------------------------------------------//
+							$GET_DOC_PENYIMPAN_DEPARTEMEN = $this->db
+							->select('*')
+							->from('tb_departemen')
+							->join('tb_divisi', 'tb_departemen.DI_ID = tb_divisi.DI_ID', 'left')
+							->like('tb_departemen.DN_ID', $DOC_PENYIMPAN, 'BOTH')
+							->get()->result();
+							$GET_DOC_PENYIMPAN_DIVISI = $this->db
+							->select('*')
+							->from('tb_departemen')
+							->join('tb_divisi', 'tb_departemen.DI_ID = tb_divisi.DI_ID', 'left')
+							->like('tb_divisi.DI_ID', $DOC_PENYIMPAN, 'BOTH')
+							->get()->result();
+							if (!empty($GET_DOC_PENYIMPAN_DEPARTEMEN)) {
+								$DOC_PENYIMPAN_FINAL = $GET_DOC_PENYIMPAN_DEPARTEMEN[0]->DN_CODE."(".$GET_DOC_PENYIMPAN_DEPARTEMEN[0]->DN_NAME.")";
 							}else{
-								$get_data = $this->M_library_database->DB_GET_DATA_DEPARTEMEN_BY_ID_EVO($DOC_PENYIMPAN);
-								foreach($get_data as $data_row){
-									$DN_ID = $data_row->DN_ID;
-									$DN_CODE = $data_row->DN_CODE;
-									$DN_NAME = $data_row->DN_NAME;
-								}
-								$DOC_PENYIMPAN_FINAL = "".$DN_CODE;
+								$DOC_PENYIMPAN_FINAL = $GET_DOC_PENYIMPAN_DIVISI[0]->DI_CODE."(".$GET_DOC_PENYIMPAN_DIVISI[0]->DI_NAME.")";
 							}
-							//------------------------------------------------------------------------------------------------//
-							$DOC_PENDISTRIBUSI_FINAL = "";
-							if($DOC_PENDISTRIBUSI=="BPI"){
-								$DOC_PENDISTRIBUSI_FINAL = ""."BPI";
-							}else if($DOC_PENDISTRIBUSI==$SESSION_DIVISI_ID){
-								$DOC_PENDISTRIBUSI_FINAL = "".$SESSION_DIVISI_NAME;
+							//-------------------------------------------------------------------------------//
+							$GET_DOC_PENDISTRIBUSI_DEPARTEMEN = $this->db
+							->select('*')->from('tb_departemen')
+							->join('tb_divisi', 'tb_departemen.DI_ID = tb_divisi.DI_ID', 'left')
+							->like('tb_departemen.DN_ID', $DOC_PENDISTRIBUSI, 'BOTH')
+							->get()->result();
+							$GET_DOC_PENDISTRIBUSI_DIVISI = $this->db
+							->select('*')->from('tb_departemen')
+							->join('tb_divisi', 'tb_departemen.DI_ID = tb_divisi.DI_ID', 'left')
+							->like('tb_divisi.DI_ID', $DOC_PENDISTRIBUSI, 'BOTH')
+							->get()->result();
+							if (!empty($GET_DOC_PENDISTRIBUSI_DEPARTEMEN)) {
+								$DOC_PENDISTRIBUSI_FINAL = $GET_DOC_PENDISTRIBUSI_DEPARTEMEN[0]->DN_CODE."(".$GET_DOC_PENDISTRIBUSI_DEPARTEMEN[0]->DN_NAME.")";
 							}else{
-								$get_data = $this->M_library_database->DB_GET_DATA_DEPARTEMEN_BY_ID_EVO($DOC_PENDISTRIBUSI);
-								foreach($get_data as $data_row){
-									$DN_ID = $data_row->DN_ID;
-									$DN_CODE = $data_row->DN_CODE;
-									$DN_NAME = $data_row->DN_NAME;
-								}
-								$DOC_PENDISTRIBUSI_FINAL = "".$DN_CODE;
+								$DOC_PENDISTRIBUSI_FINAL = $GET_DOC_PENDISTRIBUSI_DIVISI[0]->DI_CODE."(".$GET_DOC_PENDISTRIBUSI_DIVISI[0]->DI_NAME.")";
 							}
 							?>
 							<div class="form-group">
-								<label for="" class="col-sm-12 control-label" style="text-align:left">Judul Dokumen</label>
+								<label for="" class="col-sm-12 control-label" style="text-align:left">Nama Dokumen</label>
 								<div class="col-sm-12">
 									<input type="text" class="form-control" value="<?=$DOC_NAMA;?>">
 								</div>
@@ -354,6 +302,31 @@ $count_notification = $count_notification + $count_news;
 									<input type="text" class="form-control" value="<?=$DOC_NOMOR;?>">
 								</div>
 							</div>
+							<div class="form-group">
+								<label for="" class="col-sm-12 control-label" style="text-align:left">Level Akses</label>
+								<div class="col-sm-12">
+									<textarea type="text" rows="10" class="form-control" style="resize:none"><?=$DOC_AKSES_LEVEL_FINAL;?></textarea>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="" class="col-sm-12 control-label" style="text-align:left">Pengguna Dokumen (Dept)</label>
+								<div class="col-sm-12">
+									<textarea type="text" rows="10" class="form-control" style="resize:none"><?=$DOC_PENGGUNA_FINAL;?></textarea>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="" class="col-sm-12 control-label" style="text-align:left">Tipe Dokumen</label>
+								<div class="col-sm-12">
+									<input type="text" class="form-control" value="<?=$DTSETE_TIPE;?>">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="" class="col-sm-12 control-label" style="text-align:left">Kata Kunci</label>
+								<div class="col-sm-12">
+									<input type="text" class="form-control" value="<?=$DOC_KATA_KUNCI;?>">
+								</div>
+							</div>
+
 							<div class="form-group">
 								<label for="" class="col-sm-12 control-label" style="text-align:left">Versi</label>
 								<div class="col-sm-12">
@@ -385,64 +358,27 @@ $count_notification = $count_notification + $count_news;
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="" class="col-sm-12 control-label" style="text-align:left">Tipe Dokumen</label>
+								<label for="" class="col-sm-12 control-label" style="text-align:left">Abstrak</label>
 								<div class="col-sm-12">
-									<input type="text" class="form-control" value="<?=$DTSETE_TIPE;?>">
+									<textarea rows="3" class="form-control" style="resize:none"><?=$DOC_ABSTRAK?></textarea>
 								</div>
 							</div>
-							<div class="form-group">
-								<label for="" class="col-sm-12 control-label" style="text-align:left">Pemilik Dokumen</label>
-								<div class="col-sm-12">
-									<input type="text" class="form-control" value="<?=$DOC_MAKER;?>">
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="" class="col-sm-12 control-label" style="text-align:left">Group Proses (5M)</label>
-								<div class="col-sm-12">
-									<input type="text" class="form-control" value="<?=$DOC_GROUP_PROSES;?>">
-								</div>
-							</div>
-
-							<div class="form-group">
-								<label for="" class="col-sm-12 control-label" style="text-align:left">Proses</label>
-								<div class="col-sm-12">
-									<input type="text" class="form-control" value="<?=$DOC_PROSES;?>">
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="" class="col-sm-12 control-label" style="text-align:left">Standar Kerahasiaan</label>
-								<div class="col-sm-12">
-									<input type="text" class="form-control" value="<?=$CL_NAME;?>">
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="" class="col-sm-12 control-label" style="text-align:left">Level Akses</label>
-								<div class="col-sm-12">
-									<textarea type="text" rows="10" class="form-control" style="resize:none"><?=$DOC_AKSES_LEVEL_FINAL;?></textarea>
-								</div>
-							</div>
-							</div>
+						</div>
 						<div class="col-md-6">
 							<div class="form-group">
-								<label for="" class="col-sm-12 control-label" style="text-align:left">Pengguna Dokumen (Dept)</label>
-								<div class="col-sm-12">
-									<textarea type="text" rows="10" class="form-control" style="resize:none"><?=$DOC_PENGGUNA_FINAL;?></textarea>
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="" class="col-sm-12 control-label" style="text-align:left">Divisi/Dept Pemilik Proses</label>
+								<label for="" class="col-sm-12 control-label" style="text-align:left">Departemen Pemilik Proses</label>
 								<div class="col-sm-12">
 									<textarea type="text" rows="3" class="form-control" style="resize:none"><?=$DOC_PEMILIK_PROSES_FINAL;?></textarea>
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="" class="col-sm-12 control-label" style="text-align:left">Divisi/Dept Penyimpan Dokumen Master</label>
+								<label for="" class="col-sm-12 control-label" style="text-align:left">Divisi/Departemen Penyimpan</label>
 								<div class="col-sm-12">
 									<textarea type="text" rows="3" class="form-control" style="resize:none"><?=$DOC_PENYIMPAN_FINAL;?></textarea>
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="" class="col-sm-12 control-label" style="text-align:left">Divisi/Dept Pendistribusi</label>
+								<label for="" class="col-sm-12 control-label" style="text-align:left">Divisi/Departemen Pendistribusi</label>
 								<div class="col-sm-12">
 									<textarea type="text" rows="3" class="form-control" style="resize:none"><?=$DOC_PENDISTRIBUSI_FINAL;?></textarea>
 								</div>
@@ -450,7 +386,7 @@ $count_notification = $count_notification + $count_news;
 							<div class="form-group">
 								<label for="" class="col-sm-12 control-label" style="text-align:left">Tanggal Efektif Berlaku</label>
 								<div class="col-sm-12">
-									<input type="text" class="form-control" value="<?= date('d/m/Y', strtotime($DOC_TGL_EFEKTIF)); ?>">
+									<input type="text" class="form-control" value="<?= date('d/M/Y', strtotime($DOC_TGL_EFEKTIF)); ?>">
 								</div>
 							</div>
 							<div class="form-group">
@@ -460,21 +396,21 @@ $count_notification = $count_notification + $count_news;
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="" class="col-sm-12 control-label" style="text-align:left">Tanggal Expired</label>
+								<label for="" class="col-sm-12 control-label" style="text-align:left">Tanggal Kadaluarsa</label>
 								<div class="col-sm-12">
-									<input type="text" class="form-control" value="<?=date('d/m/Y', strtotime($DOC_TGL_EXPIRED));?>">
+									<input type="text" class="form-control" value="<?=date('d/M/Y', strtotime($DOC_TGL_EXPIRED));?>">
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="" class="col-sm-12 control-label" style="text-align:left">Kata Kunci</label>
+								<label for="" class="col-sm-12 control-label" style="text-align:left">Wujud Dokumen</label>
 								<div class="col-sm-12">
-									<input type="text" class="form-control" value="<?=$DOC_KATA_KUNCI;?>">
+									<input type="text" class="form-control" value="<?=$DTFM_NAME;?>">
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="" class="col-sm-12 control-label" style="text-align:left">Abstrak</label>
+								<label for="" class="col-sm-12 control-label" style="text-align:left">Metode Distribusi</label>
 								<div class="col-sm-12">
-									<textarea rows="3" class="form-control" style="resize:none"><?=$DOC_ABSTRAK?></textarea>
+									<input type="text" class="form-control" value="<?=$DNMD_NAME;?>">
 								</div>
 							</div>
 							<div class="form-group">
@@ -518,7 +454,20 @@ $count_notification = $count_notification + $count_news;
 									<?php endif; ?>
 								</div>
 							</div>
-							
+							<div class="form-group">
+								<?php 
+								if($SESSION_DEPARTEMENT_ID == $DOC_STATUS || $SESSION_DIVISI_ID == $DOC_STATUS || $SESSION_DIREKTORAT_ID == $DOC_STATUS):
+								?>
+								<div class="col-sm-6" style="margin-top:20px;">
+									<form id="form_approve[]" name="form_approve[]" action="<?php echo base_url('C_notification/approve'); ?>" method="post" enctype="multipart/form-data">
+										<input type="hidden" id="si_key[]" name="si_key[]" value="<?php echo $DOC_ID; ?>" class="form-control" required/>
+										<input type="hidden" id="si_approver" name="si_approver" class="form-control" value="<?=$SESSION_ROLES;?>">
+										<button type="submit" class="ace-icon fa fa-check btn btn-sm btn-primary">Terima</button>
+										<a data-toggle="modal" data-target="#modal-reject<?=$DOC_ID;?>" class="ace-icon fa fa-ban btn btn-sm btn-danger" data-popup="tooltip" data-placement="top" title="Reject">Tolak Sirkulasi</a>
+									</form>
+								</div>
+								<?php endif; ?>
+							</div>
 						</div>
 						</div>
 						<div class="col-xs-12 col-sm-12 col-md-12 col-lg-3 col-xl-3"></div>
@@ -530,6 +479,46 @@ $count_notification = $count_notification + $count_news;
 				</div><!-- /.page-content -->
 			</div>
 		</div><!-- /.main-content -->
+		<div id="modal-reject<?=$DOC_ID;?>" class="modal" tabindex="-1">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<form class="form-horizontal" action="<?php echo base_url('C_notification/reject'); ?>" method="post" enctype="multipart/form-data">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal">&times;</button>
+							<h5 class="blue bigger">Tolak Sirkulasi</h5>
+						</div>
+						<div class="modal-body">
+							<div class="row">
+								<div class="form-group">
+									<label class="col-sm-12 control-label" style="text-align:left">Catatan Untuk Diperhatikan</label>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-12 control-label" style="text-align:left">Maksimum 400 Karakter</label>
+								</div>
+								<div class="form-group">
+									<div class="col-sm-12">
+										<input type="hidden" id="si_key" name="si_key" class="form-control" value="<?=$DOC_ID;?>">
+										<input type="hidden" id="si_approver" name="si_approver" class="form-control" value="<?=$SESSION_ROLES;?>">
+										<textarea type="text" required id="si_note" name="si_note" rows="3" maxlength="400" class="form-control"></textarea>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button class="btn btn-sm" data-dismiss="modal">
+								<i class="ace-icon fa fa-times"></i>
+								Cancel
+							</button>
+							<button type="submit" class="btn btn-sm btn-primary">
+								<i class="ace-icon fa fa-check"></i>
+								Submit
+							</button>
+						</div>
+					</form>
+					
+				</div>
+			</div>
+		</div>
 
 		<div class="footer"></div>
 
@@ -603,6 +592,7 @@ $count_notification = $count_notification + $count_news;
 		$(document).ready(function() {
 			$('input[type="text"]').attr('readonly',true);
 			$('textarea').attr('readonly',true);
+			$('#si_note').prop('readonly', false);
 		});
 	</script>
 	

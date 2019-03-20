@@ -1,90 +1,27 @@
 <?php
-//-----------------------------------------------------------------------------------------------//
 defined('BASEPATH') OR exit('No direct script access allowed');
-//-----------------------------------------------------------------------------------------------//
-$SESSION_ID = $this->session->userdata("session_bgm_edocument_id");
-$SESSION_EMAIL = $this->session->userdata("session_bgm_edocument_email");
-
-$SESSION_DIREKTORAT_ID = $this->session->userdata("session_bgm_edocument_direktorat_id");
-$SESSION_DIREKTORAT_NAME = $this->session->userdata("session_bgm_edocument_direktorat_name");
-
-$SESSION_DIVISI_ID = $this->session->userdata("session_bgm_edocument_divisi_id");
-$SESSION_DIVISI_CODE = $this->session->userdata("session_bgm_edocument_divisi_code");
-$SESSION_DIVISI_NAME = $this->session->userdata("session_bgm_edocument_divisi_name");
-
-$SESSION_DEPARTEMENT_ID = $this->session->userdata("session_bgm_edocument_departement_id");
-$SESSION_DEPARTEMENT_CODE = $this->session->userdata("session_bgm_edocument_departement_code");
-$SESSION_DEPARTEMENT_NAME = $this->session->userdata("session_bgm_edocument_departement_name");
-
-$SESSION_ROLES = $this->session->userdata("session_bgm_edocument_roles");
-
-$SESSION_JOB_LEVEL_ID = $this->session->userdata("session_bgm_edocument_job_level_id");
-$SESSION_JOB_LEVEL_NAME = $this->session->userdata("session_bgm_edocument_job_level_name");
-$SESSION_JOB_LEVEL_INDEX = $this->session->userdata("session_bgm_edocument_job_level_index");
-//-----------------------------------------------------------------------------------------------//
+include (APPPATH.'libraries/session_user.php');
+// Tools
 $is_continue = true;
 $count_notification = 0;
 $count_news = 0;
-//-----------------------------------------------------------------------------------------------//
-//NOTIFICATION
-if ($SESSION_ROLES == "PENDISTRIBUSI") {
-	$get_data_ext = $this->M_library_database->DB_GET_SEARCH_DATA_DOCUMENT_ARRAY("","","","","","");
-	if (empty($get_data_ext)) {
-		$is_continue = false;
-	}else{	
-		foreach ($get_data_ext as $data_row_ext) {
-			$DOC_PENDISTRIBUSI = $data_row_ext->DOC_PENDISTRIBUSI;
-			$DI_CODE = $data_row_ext->DI_CODE;
-		}
-		if ($SESSION_DEPARTEMENT_ID==$DOC_PENDISTRIBUSI) {
-			$count_notification = count($get_data_ext);
-		}else{
-			$is_continue = false;
-		}
-	}
-}
-if ($SESSION_ROLES == "ATASAN PENCIPTA") {
-	$get_data_ext = $this->M_library_database->DB_GET_SEARCH_DATA_DOCUMENT_ARRAY("","","","","","");
-	if (empty($get_data_ext)) {
-		$is_continue = false;
-	}else{	
-		foreach ($get_data_ext as $data_row_ext) {
-			$DOC_PENDISTRIBUSI = $data_row_ext->DOC_PENDISTRIBUSI;
-			$DI_CODE = $data_row_ext->DI_CODE;
-		}
-		if ($SESSION_DEPARTEMENT_ID==$DOC_PENDISTRIBUSI||$SESSION_DIVISI_CODE==$DI_CODE) {
-			$count_notification = count($get_data_ext);
-		}else{
-			$is_continue = false;
-		}
-	}
-}
-if($SESSION_ROLES=="PENCIPTA"){
-	//$DOC_ID,$DOC_NOMOR,$DOC_NAMA,$DOC_MAKER,$DOC_APPROVE,$DOC_STATUS,$DN_ID
-	$get_data_ext = $this->M_library_database->DB_GET_SEARCH_DATA_DOCUMENT_ARRAY("","","",$SESSION_ID,"","",$SESSION_DEPARTEMENT_ID);
-	if(empty($get_data_ext)||$get_data_ext==""){
-		$is_continue = false;
-	}else{
-		$count_notification = count($get_data_ext);
-	}
-}
-if($SESSION_ROLES=="PENGGUNA"){
+// Notification
+$get_data_ext = $this->M_notification->GET_NOTIFICATION_NEW($SESSION_ID);
+if (empty($get_data_ext)) {
 	$is_continue = false;
+}else{
+	$count_notification = count($get_data_ext);
 }
-//-----------------------------------------------------------------------------------------------//
-//NEWS
-//$DOC_AKSES_LEVEL,$DOC_PENGGUNA
-$get_data_count = $this->M_library_database->DB_GET_SEARCH_NEWS_DATA_DOCUMENT_ARRAY_EVO($SESSION_JOB_LEVEL_ID,$SESSION_DEPARTEMENT_ID);
+// News
+$get_data_count = $this->M_notification->GET_NEWS_NEW($SESSION_ID);
 if(empty($get_data_count)||$get_data_count==""){
-	//DO NOTHING
+
 }else{
 	$count_news = count($get_data_count);	
 }
-
+// Jumlah Notification
 $count_notification = $count_notification + $count_news;
-//-----------------------------------------------------------------------------------------------//
 ?>
-<!------------------------------------------------------------------------------------------------->
 <!DOCTYPE html>
 <html lang="en">
 <!------------------------------------------------------------------------------------------------->
@@ -188,7 +125,7 @@ $count_notification = $count_notification + $count_news;
 					<br />
 					<i class="menu-icon fa fa-user"></i>
 					<span class="menu-text">
-						<?php echo $SESSION_ID; ?>
+						<?php echo $SESSION_NAME; ?>
 					</span>
 					<br />
 				</div>
@@ -196,8 +133,9 @@ $count_notification = $count_notification + $count_news;
 			
 
 			<ul class="nav nav-list">
+
 				<li class="">
-					<a href="<?php echo base_url('document-search'); ?>">
+					<a href="<?php echo base_url('menu'); ?>">
 						<i class="menu-icon fa fa-history"></i>
 						<span class="menu-text"> Pencarian </span>
 					</a>
@@ -216,21 +154,47 @@ $count_notification = $count_notification + $count_news;
 				$SESSION_ROLES=="PENGGUNA"||
 				$SESSION_ROLES=="PENCIPTA"||
 				$SESSION_ROLES=="PENDISTRIBUSI"||
-				$SESSION_ROLES=="ATASAN PENCIPTA"
+				$SESSION_ROLES=="ATASAN PENCIPTA" ||
+
+				$SESSION_ROLES_2=="PENGGUNA"||
+				$SESSION_ROLES_2=="PENCIPTA"||
+				$SESSION_ROLES_2=="PENDISTRIBUSI"||
+				$SESSION_ROLES_2=="ATASAN PENCIPTA" ||
+
+				$SESSION_ROLES_3=="PENGGUNA"||
+				$SESSION_ROLES_3=="PENCIPTA"||
+				$SESSION_ROLES_3=="PENDISTRIBUSI"||
+				$SESSION_ROLES_3=="ATASAN PENCIPTA" ||
+
+				$SESSION_ROLES_4=="PENGGUNA"||
+				$SESSION_ROLES_4=="PENCIPTA"||
+				$SESSION_ROLES_4=="PENDISTRIBUSI"||
+				$SESSION_ROLES_4=="ATASAN PENCIPTA" ||
+
+				$SESSION_ROLES_5=="PENGGUNA"||
+				$SESSION_ROLES_5=="PENCIPTA"||
+				$SESSION_ROLES_5=="PENDISTRIBUSI"||
+				$SESSION_ROLES_5=="ATASAN PENCIPTA"
 				){ ?>
 				<li class="">
 					<a href="<?php echo base_url('notification'); ?>">
 						<i class="menu-icon fa fa-exclamation"></i>
 						<span class="menu-text">
 							Aktifitas
-							<span class="badge badge-primary"><?php echo $count_notification; ?></span>
+							<span class="badge badge-primary nofication-count"></span>
 						</span>
 					</a>
 					<b class="arrow"></b>
 				</li>
 				<?php } ?>
 				
-				<?php if($SESSION_ROLES=="PENCIPTA"){ ?>
+				<?php if(
+				$SESSION_ROLES=="PENCIPTA" ||
+				$SESSION_ROLES_2=="PENCIPTA" ||
+				$SESSION_ROLES_3=="PENCIPTA" ||
+				$SESSION_ROLES_4=="PENCIPTA" ||
+				$SESSION_ROLES_5=="PENCIPTA"
+				){ ?>
 				<li class="">
 					<a href="<?php echo base_url('contribution'); ?>">
 						<i class="menu-icon fa fa-database"></i>
@@ -242,7 +206,19 @@ $count_notification = $count_notification + $count_news;
 				
 				<?php if(
 				$SESSION_ROLES=="PENCIPTA"||
-				$SESSION_ROLES=="ADMIN DOKUMEN"
+				$SESSION_ROLES=="ADMIN DOKUMEN"||
+
+				$SESSION_ROLES_2=="PENCIPTA"||
+				$SESSION_ROLES_2=="ADMIN DOKUMEN"||
+
+				$SESSION_ROLES_3=="PENCIPTA"||
+				$SESSION_ROLES_3=="ADMIN DOKUMEN"||
+
+				$SESSION_ROLES_4=="PENCIPTA"||
+				$SESSION_ROLES_4=="ADMIN DOKUMEN"||
+
+				$SESSION_ROLES_5=="PENCIPTA"||
+				$SESSION_ROLES_5=="ADMIN DOKUMEN"
 				){ ?>
 				<li class="">
 					<a href="<?php echo base_url('report'); ?>">
@@ -253,7 +229,13 @@ $count_notification = $count_notification + $count_news;
 				</li>
 				<?php } ?>
 
-				<?php if($SESSION_ROLES=="ADMIN KONFIGURASI"){ ?>
+				<?php if(
+				$SESSION_ROLES=="ADMIN KONFIGURASI"||
+				$SESSION_ROLES_2=="ADMIN KONFIGURASI"||
+				$SESSION_ROLES_3=="ADMIN KONFIGURASI"||
+				$SESSION_ROLES_4=="ADMIN KONFIGURASI"||
+				$SESSION_ROLES_5=="ADMIN KONFIGURASI"
+				){ ?>
 				<li class="">
 					<a href="#" class="dropdown-toggle">
 						<i class="menu-icon fa fa-cog"></i>
@@ -306,6 +288,51 @@ $count_notification = $count_notification + $count_news;
 						</li>
 					</ul>
 				</li>
+				<li class="">
+					<a href="#" class="dropdown-toggle">
+						<i class="menu-icon fa fa-cog"></i>
+						<span class="menu-text">General Setting </span>
+						<b class="arrow fa fa-angle-down"></b>
+					</a>
+					<b class="arrow"></b>
+					<ul class="submenu">
+						<li class="">
+							<a href="<?php echo base_url('C_general_setting/welcome_speech'); ?>">
+								<i class="menu-icon fa fa-caret-right"></i>
+								Welcome Speech
+							</a>
+							<b class="arrow"></b>
+						</li>
+						<li class="">
+							<a href="<?php echo base_url('C_general_setting/nomor'); ?>">
+								<i class="menu-icon fa fa-caret-right"></i>
+								Nomor Dokumen
+							</a>
+							<b class="arrow"></b>
+						</li>
+						<li class="">
+							<a href="<?php echo base_url('C_general_setting/format_dokumen'); ?>">
+								<i class="menu-icon fa fa-caret-right"></i>
+								Format Dokumen
+							</a>
+							<b class="arrow"></b>
+						</li>
+						<li class="">
+							<a href="<?php echo base_url('C_general_setting/sharelink'); ?>">
+								<i class="menu-icon fa fa-caret-right"></i>
+								Sharelink
+							</a>
+							<b class="arrow"></b>
+						</li>
+						<li class="">
+							<a href="<?php echo base_url('C_general_setting/watermark'); ?>">
+								<i class="menu-icon fa fa-caret-right"></i>
+								Watermark
+							</a>
+							<b class="arrow"></b>
+						</li>
+					</ul>
+				</li>
 				<?php } ?>
 
 				<li class="">
@@ -315,6 +342,7 @@ $count_notification = $count_notification + $count_news;
 					</a>
 					<b class="arrow"></b>
 				</li>
+
 			</ul><!-- /.nav-list -->
 		</div>
 		<div class="main-content">
@@ -856,12 +884,13 @@ $count_notification = $count_notification + $count_news;
 
 							<div class="form-group row">
 								<label for="si_history_date" class="col-sm-3 control-label" style="text-align:left">Tanggal Efektif Berlaku*</label>
-								<div class="col-sm-3">
+								<div class="col-sm-6">
 									<div class="input-group">
 										<input class="form-control date-picker" id="si_history_date" name="si_history_date" type="text" value="<?php echo date('m/d/Y', strtotime($DOC_TGL_EFEKTIF)); ?>" />
 										<span class="input-group-addon">
 										<i class="fa fa-calendar bigger-110"></i>
 										</span>
+										<input class="form-control" id="si_history_date2" name="si_history_date2" type="text" value="<?php echo date('d/M/Y', strtotime($DOC_TGL_EFEKTIF)); ?>" readonly/>
 									</div>
 								</div>
 								<span id="req_tgl_efektif" class="text-danger hide">Harap Isi Tanggal Efektif Berlaku Dokumen!</span>
@@ -892,7 +921,7 @@ $count_notification = $count_notification + $count_news;
 								</div>
 								<div class="col-sm-3">
 									<div class="input-group">
-										<input class="form-control date-picker" id="si_history_date_final" name="si_history_date_final" value="<?php echo date('m/d/Y', strtotime($DOC_TGL_EXPIRED)); ?>" type="text">
+										<input class="form-control" id="si_history_date_final" name="si_history_date_final" value="<?php echo date('d/M/Y', strtotime($DOC_TGL_EXPIRED)); ?>" type="text" readonly>
 										<span class="input-group-addon">
 										<i class="fa fa-calendar bigger-110"></i>
 										</span>
@@ -933,23 +962,48 @@ $count_notification = $count_notification + $count_news;
 								<div class="col-sm-10">
 									<select id="duallistbox_dokumen_terkait" multiple="multiple" size="5" name="duallistbox_dokumen_terkait[]" />
 										<?php
-											$is_continue = true;
-											//$DOC_ID,$DOC_NOMOR,$DOC_NAMA,$DOC_MAKER,$DOC_APPROVE,$DOC_STATUS
-											$get_data_ext = $this->M_library_database->DB_GET_SEARCH_DATA_DOCUMENT_ARRAY2("","","",$SESSION_ID,"","");
-											if(empty($get_data_ext)||$get_data_ext==""){
-												$is_continue = false;
-											}
-											if($is_continue){
-												foreach($get_data_ext as $data_row_ext){
+										$is_continue = true;
+										$DOC_TERKAIT = $DOC_TERKAIT;
+										$DOC_TERKAIT_FINAL = "";
+										if (strrpos($DOC_TERKAIT, '|') !== false):
+											$data_array = explode('|',$DOC_TERKAIT);
+											$count = count($data_array);
+											for($x=0;$x<$count;$x++):
+												$get_data = $this->M_library_database->GET_DOC_TERKAIT($data_array[$x]);
+												foreach($get_data as $data_row):
+													$DOC_ID = $data_row->DOC_ID;
+													$DOC_NAMA = $data_row->DOC_NAMA;
 										?>
-										<option value="<?php echo $data_row_ext->DOC_ID; ?>"><?php echo $data_row_ext->DOC_NAMA; ?></option>
+											<option selected value="<?= $DOC_ID; ?>"><?= $DOC_NAMA; ?></option>
 										<?php
-												}
-											}else{
+												endforeach;
+												$DOC_TERKAIT_FINAL .= $DOC_ID.",";
+											endfor;
+										else:
+											$get_data = $this->M_library_database->GET_DOC_TERKAIT($DOC_TERKAIT);
+											foreach($get_data as $data_row):
+												$DOC_ID = $data_row->DOC_ID;
+												$DOC_NAMA = $data_row->DOC_NAMA;
 										?>
-										<option value="">Pilih</option>
+											<option selected value="<?= $DOC_ID; ?>"><?= $DOC_NAMA; ?></option>
 										<?php
-											}
+											endforeach;
+										endif;
+
+										$is_continue = true;
+										$get_data_ext = $this->M_library_database->GET_DOC_TERKAIT_2($DOC_TERKAIT_FINAL);
+										if(empty($get_data_ext)||$get_data_ext==""){
+											$is_continue = false;
+										}
+										if ($is_continue):
+											foreach($get_data_ext as $data_row_ext):
+												if ($DOC_ID!=$data_row_ext->DOC_ID):
+										?>
+											<option value="<?= $data_row_ext->DOC_ID; ?>"><?= $data_row_ext->DOC_NAMA; ?></option>
+										<?php
+												endif;
+											endforeach;
+										endif;
 										?>
 									</select>
 								</div>
@@ -1330,12 +1384,52 @@ $count_notification = $count_notification + $count_news;
 					return false;
 				}
 			});
+			// filter dokumen utama
+			$('#dokumen_utama').on('change', function() {
+				var dokumen_utama = $('#dokumen_utama').val();
+				var file = dokumen_utama.split('\\').pop();
+				var jumlah = file.substr(0, file.lastIndexOf('.'));
+				if (jumlah.length > 100) {
+					alert("Nama File Harus Kurang dari 100 Karakter!");
+					$(this).val('');
+					return false;
+				}
+			});
+			// filter dokumen pelengkap 1
+			$('#dokumen_pelengkap_1').on('change', function() {
+				var dokumen_pelengkap_1 = $('#dokumen_pelengkap_1').val();
+				var file = dokumen_pelengkap_1.split('\\').pop();
+				var jumlah = file.substr(0, file.lastIndexOf('.'));
+				if (jumlah.length > 100) {
+					alert("Nama File Harus Kurang dari 100 Karakter!");
+					$(this).val('');
+					return false;
+				}
+			});
+			// filter dokumen pelengkap 2
+			$('#dokumen_pelengkap_2').on('change', function() {
+				var dokumen_pelengkap_2 = $('#dokumen_pelengkap_2').val();
+				var file = dokumen_pelengkap_2.split('\\').pop();
+				var jumlah = file.substr(0, file.lastIndexOf('.'));
+				if (jumlah.length > 100) {
+					alert("Nama File Harus Kurang dari 100 Karakter!");
+					$(this).val('');
+					return false;
+				}
+			});
 			// filter dokumen persetujuan
 			$('#dokumen_persetujuan').on('change', function() {
 				var persetujuan_doc = $('#dokumen_persetujuan').val();
+				var file = persetujuan_doc.split('\\').pop();
+				var jumlah = file.substr(0, file.lastIndexOf('.'));
 				var exten = persetujuan_doc.split('.')[1]
 				if (exten != 'pdf' ) {
 					alert("File Persetujuan Harus PDF!");
+					$(this).val('');
+					return false;
+				}
+				if (jumlah.length > 100) {
+					alert("Nama File Harus Kurang dari 100 Karakter!");
 					$(this).val('');
 					return false;
 				}
@@ -1612,6 +1706,20 @@ $count_notification = $count_notification + $count_news;
 			$('#form_revisi').submit();
 			$('#simpan').attr('disabled', true);
 		});
+		var id_key = $('#si_template_new_tipe').val();
+		$.ajax({
+			url: '<?=base_url('C_contribution/get_data_document_structure_tipe_confidental2')?>',
+			type: 'POST', 
+			data: {id_key: id_key},
+			success: function(response){
+				//Parsing Json
+				response = $.parseJSON(response);
+				//Add Options
+				$.each(response,function(index,data){
+					$('#watermark').val(data['WATERMARK']);
+				});
+			}
+		});
 		//si_template_new_kategori Change
 		$('#si_template_new_kategori').change(function(){
 			var id_key = document.getElementById("si_template_new_kategori");
@@ -1664,9 +1772,72 @@ $count_notification = $count_notification + $count_news;
 		});
 	
 		//si_template_new_tipe
+		// $('#si_template_new_tipe').change(function(){
+		// 	var id_key = document.getElementById("si_template_new_tipe");
+		// 	id_key = id_key.options[id_key.selectedIndex].value;
+			
+		// 	//AJAX Request
+		// 	$.ajax({
+		// 		url: '<?=base_url('C_contribution/get_data_document_structure_tipe_confidental')?>',
+		// 		type: 'POST', 
+		// 		data: {id_key: id_key},
+		// 		success: function(response){
+		// 			//Parsing Json
+		// 			response = $.parseJSON(response);
+					
+		// 			//Remove Options 
+		// 			$('#si_header_confidential').find('option').not(':first').remove();
+					
+		// 			//Add Options
+		// 			$.each(response,function(index,data){
+		// 				$('#si_header_confidential').append('<option value="'+data['CL_ID']+'">'+data['CL_NAME']+'</option>');
+						
+		// 				var date_now = new Date();
+		// 				var dd = date_now.getDate();
+		// 				var mm = date_now.getMonth();
+		// 				var y = date_now.getFullYear();
+				
+		// 				document.getElementById("si_header_no").value = data['DTSETE_SINGKATAN']+"/"+y+"/"+mm+"/";
+		// 			});
+		// 		}
+		// 	});
+		// });
 		$('#si_template_new_tipe').change(function(){
 			var id_key = document.getElementById("si_template_new_tipe");
 			id_key = id_key.options[id_key.selectedIndex].value;
+
+			var field_1,field_2,field_3,field_4,field_5,nom;
+			let access;
+			let dist;
+			// Request nomor
+			$.ajax({
+				url: '<?= base_url('C_contribution/nomor_doc'); ?>',
+				type: 'GET',
+				success: function(response){
+					//Parsing Json
+					response = $.parseJSON(response);
+					//Add Options
+					$.each(response,function(index,data){
+						nom = data['kode'];	
+					});
+				}
+			});
+			$.ajax({
+				url: '<?= base_url('C_general_setting/get_nomor'); ?>',
+				type: 'GET',
+				success: function(response){
+					//Parsing Json
+					response = $.parseJSON(response);
+					//Add Options
+					$.each(response,function(index,data){
+						field_1 = data['field_1'];
+						field_2 = data['field_2'];
+						field_3 = data['field_3'];
+						field_4 = data['field_4'];
+						field_5 = data['field_5'];
+					});
+				}
+			});
 			
 			//AJAX Request
 			$.ajax({
@@ -1676,21 +1847,171 @@ $count_notification = $count_notification + $count_news;
 				success: function(response){
 					//Parsing Json
 					response = $.parseJSON(response);
-					
-					//Remove Options 
-					$('#si_header_confidential').find('option').not(':first').remove();
-					
 					//Add Options
 					$.each(response,function(index,data){
-						$('#si_header_confidential').append('<option value="'+data['CL_ID']+'">'+data['CL_NAME']+'</option>');
-						
+						$('#si_template_new_jenis').append('<option value="'+data['DTSEJS_ID']+'" selected>'+data["DTSEJS_JENIS"]+'</option>');
+						$('#si_template_new_kategori').val(data['DTSEKI_ID']);
+						$('#si_header_confidential').val(data['CL_ID']);
+						let singkatan = data['DTSETE_SINGKATAN'];
 						var date_now = new Date();
-						var dd = date_now.getDate();
-						var mm = date_now.getMonth();
-						var y = date_now.getFullYear();
-				
-						document.getElementById("si_header_no").value = data['DTSETE_SINGKATAN']+"/"+y+"/"+mm+"/";
+						// Field_1
+						if (field_1 == 'Table') {
+							field_1 = singkatan
+						}else if(field_1 == 'Year'){
+							field_1 = date_now.getFullYear();
+						}else if(field_1 == 'Month'){
+							field_1 = ("0" + (date_now.getMonth() + 1)).slice(-2)
+						}else if(field_1 == 'Delimeter'){
+							field_1 = "/";
+						}else if (field_1 == 'Free Text') {
+							field_1 = nom;
+						}else{
+							field_1 = "";
+						}
+						// Field_2
+						if (field_2 == 'Table') {
+							field_2 = singkatan
+						}else if(field_2 == 'Year'){
+							field_2 = date_now.getFullYear();
+						}else if(field_2 == 'Month'){
+							field_2 = ("0" + (date_now.getMonth() + 1)).slice(-2)
+						}else if(field_2 == 'Delimeter'){
+							field_2 = "/";
+						}else if (field_2 == 'Free Text') {
+							field_2 = nom;
+						}else{
+							field_2 = "";
+						}
+						// Field_3
+						if (field_3 == 'Table') {
+							field_3 = singkatan
+						}else if(field_3 == 'Year'){
+							field_3 = date_now.getFullYear();
+						}else if(field_3 == 'Month'){
+							field_3 = ("0" + (date_now.getMonth() + 1)).slice(-2);
+						}else if(field_3 == 'Delimeter'){
+							field_3 = "/";
+						}else if (field_3 == 'Free Text') {
+							field_3 = nom;
+						}else{
+							field_3 = "";
+						}
+						// Field_4
+						if (field_4 == 'Table') {
+							field_4 = singkatan
+						}else if(field_4 == 'Year'){
+							field_4 = date_now.getFullYear();
+						}else if(field_4 == 'Month'){
+							field_4 = ("0" + (date_now.getMonth() + 1)).slice(-2)
+						}else if(field_4 == 'Delimeter'){
+							field_4 = "/";
+						}else if (field_4 == 'Free Text') {
+							field_4 = nom;
+						}else{
+							field_4 = "";
+						}
+						// Field_5
+						if (field_5 == 'Table') {
+							field_5 = singkatan
+						}else if(field_5 == 'Year'){
+							field_5 = date_now.getFullYear();
+						}else if(field_5 == 'Month'){
+							field_5 = ("0" + (date_now.getMonth() + 1)).slice(-2)
+						}else if(field_5 == 'Delimeter'){
+							field_5 = "/";
+						}else if (field_5 == 'Free Text') {
+							field_5 = nom;
+						}else{
+							field_5 = "";
+						}
+						var hasil = field_1 + field_2 + field_3 + field_4 + field_5;
+						$('#si_header_no').val(hasil);
+						$('#watermark').val(data['WATERMARK']);
+						access = data['DTSETE_ACCESS'];
+						dist = data['DTSETE_DISTRIBUTION'];
+						// var date_now = new Date();
+						// var dd = date_now.getDate();
+						// var mm = date_now.getMonth();
+						// var h = parseInt(mm)+1;
+						// var y = date_now.getFullYear();
+						// function integer_to_roman(num) {
+						// 	if (typeof num !== 'number') 
+						// 		return false;
+						// 		var digits = String(+num).split(""),
+						// 		key = ["","C","CC","CCC","CD","D","DC","DCC","DCCC","CM",
+						// 		"","X","XX","XXX","XL","L","LX","LXX","LXXX","XC",
+						// 		"","I","II","III","IV","V","VI","VII","VIII","IX"],
+						// 		roman_num = "",
+						// 		i = 3;
+						// 		while (i--)
+						// 			roman_num = (key[+digits.pop() + (i * 10)] || "") + roman_num;
+						// 	return Array(+digits.join("") + 1).join("M") + roman_num;
+						// }
+						// var tgl = integer_to_roman(h);
+						// document.getElementById("si_header_no").value = data['DTSETE_SINGKATAN']+"/"+y+"/"+tgl+"/";
+						// document.getElementById("nomor").value = data['DTSETE_SINGKATAN']+"/"+y+"/"+tgl+"/";
 					});
+					if (access == 'All') {
+						$.ajax({
+							url: '<?=base_url('C_contribution/AllDepartmen')?>',
+							type: 'POST', 
+							data: {id_key: id_key},
+							success: function(response){
+								//Parsing Json
+								response = $.parseJSON(response);
+								$('#duallistbox_pengguna_dokumen').find('option').remove();
+								$.each(response,function(index,data){
+									$('#duallistbox_pengguna_dokumen').append('<option value="'+data['DN_ID']+'">'+data['DN_CODE']+' ('+data['DN_NAME']+')</option>');
+									$('#duallistbox_pengguna_dokumen option[value="<?=$SESSION_DEPARTEMENT_ID;?>"]').attr('selected','selected');
+									$('#duallistbox_pengguna_dokumen option[value="7550"]').attr('selected','selected');
+									$('#duallistbox_pengguna_dokumen option[value="7494"]').attr('selected','selected');
+									$('#duallistbox_pengguna_dokumen option[value="7559"]').attr('selected','selected');
+								});
+								$('#duallistbox_pengguna_dokumen').bootstrapDualListbox('refresh', true);
+							}
+						});
+					}else{
+						$.ajax({
+							url: '<?=base_url('C_contribution/GetDepatemenAccess')?>',
+							type: 'POST', 
+							data: {id_key: id_key},
+							success: function(response){
+								//Parsing Json
+								response = $.parseJSON(response);
+								$('#duallistbox_pengguna_dokumen').find('option').remove();
+								$.each(response,function(index,data){
+									$('#duallistbox_pengguna_dokumen').append('<option value="'+data['DN_ID']+'">'+data['DN_CODE']+' ('+data['DN_NAME']+')</option>');
+									$('#duallistbox_pengguna_dokumen option[value="<?=$SESSION_DEPARTEMENT_ID;?>"]').attr('selected','selected');
+									$('#duallistbox_pengguna_dokumen option[value="7550"]').attr('selected','selected');
+									$('#duallistbox_pengguna_dokumen option[value="7494"]').attr('selected','selected');
+									$('#duallistbox_pengguna_dokumen option[value="7559"]').attr('selected','selected');
+								});
+								$('#duallistbox_pengguna_dokumen').bootstrapDualListbox('refresh', true);
+							}
+						});
+					}
+					if (dist == 'Available') {
+						$.ajax({
+							url: '<?=base_url('C_contribution/GetDepatemenDistribution')?>',
+							type: 'POST', 
+							data: {id_key: id_key},
+							success: function(response){
+								//Parsing Json
+								response = $.parseJSON(response);
+								$('#si_owner_dept_pendistribusi').find('option').not(':first').remove();
+								$('#si_owner_dept_pendistribusi').append('<option value="7550" selected>BUSINESS PROCESS IMPROVEMENT</option>');
+								$('#si_owner_dept_pendistribusi').append('<option value="<?= $SESSION_DIVISI_ID; ?>"><?= $SESSION_DIVISI_NAME; ?></option>');
+								$('#si_owner_dept_pendistribusi').append('<option value="<?= $SESSION_DEPARTEMENT_ID; ?>"><?= $SESSION_DEPARTEMENT_NAME; ?></option>');
+								$.each(response,function(index,data){
+									$('#si_owner_dept_pendistribusi').append('<option value="'+data['DN_ID']+'">'+data['DN_NAME']+'</option>');
+								});
+							}
+						});
+					}else{
+						$('#si_owner_dept_pendistribusi').find('option').not(':first').remove();
+						$('#si_owner_dept_pendistribusi').append('<option value="<?= $SESSION_DIVISI_ID; ?>"><?= $SESSION_DIVISI_NAME; ?></option>');
+						$('#si_owner_dept_pendistribusi').append('<option value="<?= $SESSION_DEPARTEMENT_ID; ?>"><?= $SESSION_DEPARTEMENT_NAME; ?></option>');
+					}
 				}
 			});
 		});
@@ -1838,6 +2159,10 @@ $count_notification = $count_notification + $count_news;
 			}
 		});
 		
+		$('#si_history_date').on('changeDate', function() {
+			var tgl_awal = $('#si_history_date').val();
+			$('#si_history_date2').val(moment(tgl_awal).format("DD/MMM/YYYY"));
+		});
 		$('#si_history_period').change(function(){
 			var period = document.getElementById("si_history_period");
 			period = period.options[period.selectedIndex].value;
@@ -1847,14 +2172,12 @@ $count_notification = $count_notification + $count_news;
 				alert("Mohon Isi Tanggal Efektif Berlaku");
 				document.getElementById("si_history_period").selectedIndex = 0;
 			}else{
-				var tgl_priod = $('#si_history_period').val();
 				var tgl_awal = $('#si_history_date').val();
+				var tgl_priod = $('#si_history_period').val();
 				a = moment(tgl_awal).add(tgl_priod, 'month').calendar();
 				b = moment(a).subtract(1, 'days').calendar();
-				document.getElementById("si_history_date_final").value = b;
-				$("#si_history_date_final").each(function() {    
-					$(this).datepicker('setDate', b);
-				});
+				c = moment(b).format("DD/MMM/YYYY");
+				$('#si_history_date_final').val(c);
 			}
 		});
 		jQuery(function($) {
@@ -2279,37 +2602,8 @@ $count_notification = $count_notification + $count_news;
 			
 			$(".knob").knob();
 			
-			var tag_input = $('#form-field-tags');
-			try{
-				tag_input.tag(
-				  {
-					placeholder:tag_input.attr('placeholder'),
-					//enable typeahead by specifying the source array
-					source: ace.vars['US_STATES'],//defined in ace.js >> ace.enable_search_ahead
-					/**
-					//or fetch data from database, fetch those that match "query"
-					source: function(query, process) {
-					  $.ajax({url: 'remote_source.php?q='+encodeURIComponent(query)})
-					  .done(function(result_items){
-						process(result_items);
-					  });
-					}
-					*/
-				  }
-				)
-			
-				//programmatically add/remove a tag
-				var $tag_obj = $('#form-field-tags').data('tag');
-				$tag_obj.add('Programmatically Added');
-				
-				var index = $tag_obj.inValues('some tag');
-				$tag_obj.remove(index);
-			}
-			catch(e) {
-				//display a textarea for old IE, because it doesn't support this plugin or another one I tried!
-				tag_input.after('<textarea id="'+tag_input.attr('id')+'" name="'+tag_input.attr('name')+'" rows="3">'+tag_input.val()+'</textarea>').remove();
-				//autosize($('#form-field-tags'));
-			}
+			var tag_input = $('#si_history_keyword');
+			tag_input.tag();
 			
 			$('#modal-form input[type=file]').ace_file_input({
 				style:'well',
@@ -2518,7 +2812,11 @@ $count_notification = $count_notification + $count_news;
 				showFilterInputs: false
 			});
 			var container1 = demo1.bootstrapDualListbox('getContainer');
-			container1.find('.btn').addClass('btn-white btn-info btn-bold').html('All');
+			// container1.find('.btn').addClass('btn-white btn-info btn-bold').html('All');
+			container1.find('.move').html('Move');
+			container1.find('.remove').html('Remove');
+			container1.find('.moveall').html('All');
+			container1.find('.removeall').html('All');
 
 			var demo2 = $('select[name="duallistbox_pengguna_dokumen[]"]').bootstrapDualListbox({
 				infoTextFiltered: '<span class="label label-purple label-lg">Filtered</span>',

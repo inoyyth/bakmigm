@@ -1,90 +1,27 @@
 <?php
-//-----------------------------------------------------------------------------------------------//
 defined('BASEPATH') OR exit('No direct script access allowed');
-//-----------------------------------------------------------------------------------------------//
-$SESSION_ID = $this->session->userdata("session_bgm_edocument_id");
-$SESSION_EMAIL = $this->session->userdata("session_bgm_edocument_email");
-
-$SESSION_DIREKTORAT_ID = $this->session->userdata("session_bgm_edocument_direktorat_id");
-$SESSION_DIREKTORAT_NAME = $this->session->userdata("session_bgm_edocument_direktorat_name");
-
-$SESSION_DIVISI_ID = $this->session->userdata("session_bgm_edocument_divisi_id");
-$SESSION_DIVISI_CODE = $this->session->userdata("session_bgm_edocument_divisi_code");
-$SESSION_DIVISI_NAME = $this->session->userdata("session_bgm_edocument_divisi_name");
-
-$SESSION_DEPARTEMENT_ID = $this->session->userdata("session_bgm_edocument_departement_id");
-$SESSION_DEPARTEMENT_CODE = $this->session->userdata("session_bgm_edocument_departement_code");
-$SESSION_DEPARTEMENT_NAME = $this->session->userdata("session_bgm_edocument_departement_name");
-
-$SESSION_ROLES = $this->session->userdata("session_bgm_edocument_roles");
-
-$SESSION_JOB_LEVEL_ID = $this->session->userdata("session_bgm_edocument_job_level_id");
-$SESSION_JOB_LEVEL_NAME = $this->session->userdata("session_bgm_edocument_job_level_name");
-$SESSION_JOB_LEVEL_INDEX = $this->session->userdata("session_bgm_edocument_job_level_index");
-//-----------------------------------------------------------------------------------------------//
+include (APPPATH.'libraries/session_user.php');
+// Tools
 $is_continue = true;
 $count_notification = 0;
 $count_news = 0;
-//-----------------------------------------------------------------------------------------------//
-//NOTIFICATION
-if ($SESSION_ROLES == "PENDISTRIBUSI") {
-	$get_data_ext = $this->M_library_database->DB_GET_SEARCH_DATA_DOCUMENT_ARRAY("","","","","","");
-	if (empty($get_data_ext)) {
-		$is_continue = false;
-	}else{	
-		foreach ($get_data_ext as $data_row_ext) {
-			$DOC_PENDISTRIBUSI = $data_row_ext->DOC_PENDISTRIBUSI;
-			$DI_CODE = $data_row_ext->DI_CODE;
-		}
-		if ($SESSION_DEPARTEMENT_ID==$DOC_PENDISTRIBUSI) {
-			$count_notification = count($get_data_ext);
-		}else{
-			$is_continue = false;
-		}
-	}
-}
-if ($SESSION_ROLES == "ATASAN PENCIPTA") {
-	$get_data_ext = $this->M_library_database->DB_GET_SEARCH_DATA_DOCUMENT_ARRAY("","","","","","");
-	if (empty($get_data_ext)) {
-		$is_continue = false;
-	}else{	
-		foreach ($get_data_ext as $data_row_ext) {
-			$DOC_PENDISTRIBUSI = $data_row_ext->DOC_PENDISTRIBUSI;
-			$DI_CODE = $data_row_ext->DI_CODE;
-		}
-		if ($SESSION_DEPARTEMENT_ID==$DOC_PENDISTRIBUSI||$SESSION_DIVISI_CODE==$DI_CODE) {
-			$count_notification = count($get_data_ext);
-		}else{
-			$is_continue = false;
-		}
-	}
-}
-if($SESSION_ROLES=="PENCIPTA"){
-	//$DOC_ID,$DOC_NOMOR,$DOC_NAMA,$DOC_MAKER,$DOC_APPROVE,$DOC_STATUS,$DN_ID
-	$get_data_ext = $this->M_library_database->DB_GET_SEARCH_DATA_DOCUMENT_ARRAY("","","",$SESSION_ID,"","",$SESSION_DEPARTEMENT_ID);
-	if(empty($get_data_ext)||$get_data_ext==""){
-		$is_continue = false;
-	}else{
-		$count_notification = count($get_data_ext);
-	}
-}
-if($SESSION_ROLES=="PENGGUNA"){
+// Notification
+$get_data_ext = $this->M_notification->GET_NOTIFICATION_NEW($SESSION_ID);
+if (empty($get_data_ext)) {
 	$is_continue = false;
+}else{
+	$count_notification = count($get_data_ext);
 }
-//-----------------------------------------------------------------------------------------------//
-//NEWS
-//$DOC_AKSES_LEVEL,$DOC_PENGGUNA
-$get_data_count = $this->M_library_database->DB_GET_SEARCH_NEWS_DATA_DOCUMENT_ARRAY_EVO($SESSION_JOB_LEVEL_ID,$SESSION_DEPARTEMENT_ID);
+// News
+$get_data_count = $this->M_notification->GET_NEWS_NEW($SESSION_ID);
 if(empty($get_data_count)||$get_data_count==""){
-	//DO NOTHING
+
 }else{
 	$count_news = count($get_data_count);	
 }
-
+// Jumlah Notification
 $count_notification = $count_notification + $count_news;
-//-----------------------------------------------------------------------------------------------//
 ?>
-<!------------------------------------------------------------------------------------------------->
 <!DOCTYPE html>
 <html lang="en">
 <!------------------------------------------------------------------------------------------------->
@@ -179,7 +116,7 @@ $count_notification = $count_notification + $count_news;
 					<br />
 					<i class="menu-icon fa fa-user"></i>
 					<span class="menu-text">
-						<?php echo $SESSION_ID; ?>
+						<?php echo $SESSION_NAME; ?>
 					</span>
 					<br />
 				</div>
@@ -190,7 +127,7 @@ $count_notification = $count_notification + $count_news;
 			<ul class="nav nav-list">
 
 				<li class="active">
-					<a href="<?php echo base_url('document-search'); ?>">
+					<a href="<?php echo base_url('menu'); ?>">
 						<i class="menu-icon fa fa-history"></i>
 						<span class="menu-text"> Pencarian </span>
 					</a>
@@ -209,21 +146,47 @@ $count_notification = $count_notification + $count_news;
 				$SESSION_ROLES=="PENGGUNA"||
 				$SESSION_ROLES=="PENCIPTA"||
 				$SESSION_ROLES=="PENDISTRIBUSI"||
-				$SESSION_ROLES=="ATASAN PENCIPTA"
+				$SESSION_ROLES=="ATASAN PENCIPTA" ||
+
+				$SESSION_ROLES_2=="PENGGUNA"||
+				$SESSION_ROLES_2=="PENCIPTA"||
+				$SESSION_ROLES_2=="PENDISTRIBUSI"||
+				$SESSION_ROLES_2=="ATASAN PENCIPTA" ||
+
+				$SESSION_ROLES_3=="PENGGUNA"||
+				$SESSION_ROLES_3=="PENCIPTA"||
+				$SESSION_ROLES_3=="PENDISTRIBUSI"||
+				$SESSION_ROLES_3=="ATASAN PENCIPTA" ||
+
+				$SESSION_ROLES_4=="PENGGUNA"||
+				$SESSION_ROLES_4=="PENCIPTA"||
+				$SESSION_ROLES_4=="PENDISTRIBUSI"||
+				$SESSION_ROLES_4=="ATASAN PENCIPTA" ||
+
+				$SESSION_ROLES_5=="PENGGUNA"||
+				$SESSION_ROLES_5=="PENCIPTA"||
+				$SESSION_ROLES_5=="PENDISTRIBUSI"||
+				$SESSION_ROLES_5=="ATASAN PENCIPTA"
 				){ ?>
 				<li class="">
 					<a href="<?php echo base_url('notification'); ?>">
 						<i class="menu-icon fa fa-exclamation"></i>
 						<span class="menu-text">
 							Aktifitas
-							<span class="badge badge-primary"><?php echo $count_notification; ?></span>
+							<span class="badge badge-primary nofication-count"></span>
 						</span>
 					</a>
 					<b class="arrow"></b>
 				</li>
 				<?php } ?>
 				
-				<?php if($SESSION_ROLES=="PENCIPTA"){ ?>
+				<?php if(
+				$SESSION_ROLES=="PENCIPTA" ||
+				$SESSION_ROLES_2=="PENCIPTA" ||
+				$SESSION_ROLES_3=="PENCIPTA" ||
+				$SESSION_ROLES_4=="PENCIPTA" ||
+				$SESSION_ROLES_5=="PENCIPTA"
+				){ ?>
 				<li class="">
 					<a href="<?php echo base_url('contribution'); ?>">
 						<i class="menu-icon fa fa-database"></i>
@@ -235,7 +198,19 @@ $count_notification = $count_notification + $count_news;
 				
 				<?php if(
 				$SESSION_ROLES=="PENCIPTA"||
-				$SESSION_ROLES=="ADMIN DOKUMEN"
+				$SESSION_ROLES=="ADMIN DOKUMEN"||
+
+				$SESSION_ROLES_2=="PENCIPTA"||
+				$SESSION_ROLES_2=="ADMIN DOKUMEN"||
+
+				$SESSION_ROLES_3=="PENCIPTA"||
+				$SESSION_ROLES_3=="ADMIN DOKUMEN"||
+
+				$SESSION_ROLES_4=="PENCIPTA"||
+				$SESSION_ROLES_4=="ADMIN DOKUMEN"||
+
+				$SESSION_ROLES_5=="PENCIPTA"||
+				$SESSION_ROLES_5=="ADMIN DOKUMEN"
 				){ ?>
 				<li class="">
 					<a href="<?php echo base_url('report'); ?>">
@@ -246,7 +221,13 @@ $count_notification = $count_notification + $count_news;
 				</li>
 				<?php } ?>
 
-				<?php if($SESSION_ROLES=="ADMIN KONFIGURASI"){ ?>
+				<?php if(
+				$SESSION_ROLES=="ADMIN KONFIGURASI"||
+				$SESSION_ROLES_2=="ADMIN KONFIGURASI"||
+				$SESSION_ROLES_3=="ADMIN KONFIGURASI"||
+				$SESSION_ROLES_4=="ADMIN KONFIGURASI"||
+				$SESSION_ROLES_5=="ADMIN KONFIGURASI"
+				){ ?>
 				<li class="">
 					<a href="#" class="dropdown-toggle">
 						<i class="menu-icon fa fa-cog"></i>
@@ -299,6 +280,51 @@ $count_notification = $count_notification + $count_news;
 						</li>
 					</ul>
 				</li>
+				<li class="">
+					<a href="#" class="dropdown-toggle">
+						<i class="menu-icon fa fa-cog"></i>
+						<span class="menu-text">General Setting </span>
+						<b class="arrow fa fa-angle-down"></b>
+					</a>
+					<b class="arrow"></b>
+					<ul class="submenu">
+						<li class="">
+							<a href="<?php echo base_url('C_general_setting/welcome_speech'); ?>">
+								<i class="menu-icon fa fa-caret-right"></i>
+								Welcome Speech
+							</a>
+							<b class="arrow"></b>
+						</li>
+						<li class="">
+							<a href="<?php echo base_url('C_general_setting/nomor'); ?>">
+								<i class="menu-icon fa fa-caret-right"></i>
+								Nomor Dokumen
+							</a>
+							<b class="arrow"></b>
+						</li>
+						<li class="">
+							<a href="<?php echo base_url('C_general_setting/format_dokumen'); ?>">
+								<i class="menu-icon fa fa-caret-right"></i>
+								Format Dokumen
+							</a>
+							<b class="arrow"></b>
+						</li>
+						<li class="">
+							<a href="<?php echo base_url('C_general_setting/sharelink'); ?>">
+								<i class="menu-icon fa fa-caret-right"></i>
+								Sharelink
+							</a>
+							<b class="arrow"></b>
+						</li>
+						<li class="">
+							<a href="<?php echo base_url('C_general_setting/watermark'); ?>">
+								<i class="menu-icon fa fa-caret-right"></i>
+								Watermark
+							</a>
+							<b class="arrow"></b>
+						</li>
+					</ul>
+				</li>
 				<?php } ?>
 
 				<li class="">
@@ -321,7 +347,7 @@ $count_notification = $count_notification + $count_news;
 					<div class="row">
 						<div class="center">
 							<p class="lead">
-								Halo <?php echo $SESSION_ID; ?>, Selamat datang di e-Document
+								Halo <?php echo $SESSION_NAME; ?>, Selamat datang di e-Document
 							</p>
 							<ul class="list-unstyled spaced">
 								<li>
@@ -340,12 +366,16 @@ $count_notification = $count_notification + $count_news;
 										<span class="input-group-addon">
 											<i class="ace-icon fa fa-check"></i>
 										</span>
-										<input type="text" id="keyword" name="keyword" class="form-control" placeholder="Search (Write A Keyword)" value="<?= set_value('keyword') ?>" />
+										<input type="text" id="keyword" name="keyword" class="form-control" placeholder="Search (Write A Keyword)" value="<?= set_value('keyword') ?>" autocomplete="off" />
 										<span class="input-group-btn">
 											<button type="submit" id="search" name="cari" class="btn btn-purple btn-sm">
 												<span class="ace-icon fa fa-search icon-on-right bigger-110"></span>
 												Search
 											</button>
+											<a class="btn btn-red btn-sm" href="<?php echo base_url('menu');?>">
+												<span class="ace-icon fa fa-refresh icon-on-right bigger-110"></span>
+												Reload
+											</a>
 										</span>
 									</div>
 								</form>
@@ -429,39 +459,49 @@ $count_notification = $count_notification + $count_news;
 						<table id="example" class="table table-bordered table-striped table-hovered example">
 							<thead>
 								<tr>
-									<th>Kode Dokumen</th>
+									<th>Nomor Dokumen</th>
 									<th>Nama Dokumen</th>
-									<th>Pemilik Proses / Dept</th>
-									<th>Tgl Upload</th>
+									<th>Tipe Dokumen</th>
+									<th>Dept Pemilik Proses</th>
+									<th>Tanggal Berlaku</th>
 									<th>Status Dokumen</th>
-									<th>Aging</th>
-									<th>Action</th>
+									<th>Sisa Umur</th>
+									<th>Aktivitas</th>
 								</tr>
 							</thead>
-							<?php if ($is_continue) : ?>
+							<?php if (!empty($detail)): ?>
 							<?php foreach ($detail as $key) : ?>
 								
 								<?php 
 								date_default_timezone_set('Asia/Jakarta');
-								$DOC_DATE_EXPIRED = date('Y-m-d',strtotime($key['DOC_TGL_EXPIRED']));
+								// Tanggal / Aging
+								$DOC_DATE_EXPIRED = date('Y-m-d',strtotime($key->DOC_TGL_EXPIRED));
 
 								$tanggal = new DateTime($DOC_DATE_EXPIRED);
 								$today = new DateTime('today');
 								$y = $today->diff($tanggal)->y;
 								$m = $today->diff($tanggal)->m;
 								$d = $today->diff($tanggal)->d;
+								if (date('Y-m-d') > $DOC_DATE_EXPIRED) {
+									$aging = "0 tahun 0 bulan 0 hari";
+								}else{
+									$aging = $y." tahun ".$m." bulan ".$d." hari";
+								}
 								?>
 								<tbody>
 									<tr>
-										<td><?php echo $key['DOC_ID']?></td>
-										<td><?php echo $key['DOC_NAMA']?></td>
-										<td><?php echo $key['DN_NAME']?></td>
-										<td><?php echo date('d/m/Y',strtotime($key['DOC_DATE']))?></td>
-										<td><?php echo $key['DOC_STATUS']?></td>
-										<td><?php echo "" . $y . " tahun " . $m . " bulan " . $d . " hari";?></td>
+										<td><?php echo $key->DOC_NOMOR;?></td>
+										<td><?php echo $key->DOC_NAMA;?></td>
+										<td><?php echo $key->DTSETE_SINGKATAN;?></td>
+										<td><?php echo $key->DN_CODE;?></td>
+										<td><?php echo date('d/M/Y', strtotime($key->DOC_DATE));?></td>
+										<td><?php echo $key->DOC_STATUS;?></td>
+										<td><?php echo $aging;?></td>
 										<td>
-											<a href="<?php echo base_url('document-details-'.$key['DOC_ID']) ?>" class="fa fa-eye" style="font-size: 2rem;text-decoration: none;color: black;" target="_blank"></a>
-											<a style="font-size: 2rem;text-decoration: none;color: black;" class="fa fa-download" href="<?=base_url('download-'.$key['DOC_ID'].".zip");?>" id="btn-unduh" class="btn btn-sm btn-warning"></a>
+											<a href="<?php echo base_url('document-details-'.$key->DOC_ID); ?>" class="fa fa-eye" style="font-size: 2rem;text-decoration: none;color: black;" target="_blank"></a>
+											<?php if (strrpos($key->JBLL_DOWNLOAD, $SESSION_JOB_LEVEL_ID) !== FALSE): ?>
+											<a style="font-size: 2rem;text-decoration: none;color: black;" class="fa fa-download" href="<?=base_url('download-'.$key->DOC_ID.".zip");?>" id="btn-unduh" class="btn btn-sm btn-warning"></a>
+											<?php endif; ?>
 										</td>
 									</tr>
 								</tbody>
@@ -633,6 +673,15 @@ $count_notification = $count_notification + $count_news;
 			
 					return false;
 				});
+			});
+
+			$.ajax({
+				type: "GET",
+				url: "<?php echo base_url();?>C_notification/getNotification/<?php echo $this->session->userdata("session_bgm_edocument_id");?>/true/",             
+				dataType: "html",   //expect html to be returned                
+				success: function(response){
+							$(".nofication-count").text(JSON.parse(response).length);
+				}
 			});
 		});
 
