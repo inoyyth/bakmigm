@@ -1,67 +1,26 @@
 <?php
-//-----------------------------------------------------------------------------------------------//
 defined('BASEPATH') OR exit('No direct script access allowed');
-//-----------------------------------------------------------------------------------------------//
-$SESSION_ID = $this->session->userdata("session_bgm_edocument_id");
-$SESSION_EMAIL = $this->session->userdata("session_bgm_edocument_email");
-
-$SESSION_DIREKTORAT_ID = $this->session->userdata("session_bgm_edocument_direktorat_id");
-$SESSION_DIREKTORAT_NAME = $this->session->userdata("session_bgm_edocument_direktorat_name");
-
-$SESSION_DIVISI_ID = $this->session->userdata("session_bgm_edocument_divisi_id");
-$SESSION_DIVISI_CODE = $this->session->userdata("session_bgm_edocument_divisi_code");
-$SESSION_DIVISI_NAME = $this->session->userdata("session_bgm_edocument_divisi_name");
-
-$SESSION_DEPARTEMENT_ID = $this->session->userdata("session_bgm_edocument_departement_id");
-$SESSION_DEPARTEMENT_CODE = $this->session->userdata("session_bgm_edocument_departement_code");
-$SESSION_DEPARTEMENT_NAME = $this->session->userdata("session_bgm_edocument_departement_name");
-
-$SESSION_ROLES = $this->session->userdata("session_bgm_edocument_roles");
-
-$SESSION_JOB_LEVEL_ID = $this->session->userdata("session_bgm_edocument_job_level_id");
-$SESSION_JOB_LEVEL_NAME = $this->session->userdata("session_bgm_edocument_job_level_name");
-$SESSION_JOB_LEVEL_INDEX = $this->session->userdata("session_bgm_edocument_job_level_index");
-//-----------------------------------------------------------------------------------------------//
+include (APPPATH.'libraries/session_user.php');
+// Tools
 $is_continue = true;
 $count_notification = 0;
 $count_news = 0;
-//-----------------------------------------------------------------------------------------------//
-//NOTIFICATION
-if(	$SESSION_ROLES=="ATASAN PENCIPTA"||
-	$SESSION_ROLES=="PENDISTRIBUSI"
-){
-	//$DOC_ID,$DOC_NOMOR,$DOC_NAMA,$DOC_MAKER,$DOC_APPROVE,$DOC_STATUS,$DN_ID
-	$get_data_ext = $this->M_library_database->DB_GET_SEARCH_DATA_DOCUMENT_ARRAY("","","","","","WAITING",$SESSION_DEPARTEMENT_ID);
-if(empty($get_data_ext)||$get_data_ext==""){
+// Notification
+$get_data_ext = $this->M_notification->GET_NOTIFICATION_NEW($SESSION_ID);
+if (empty($get_data_ext)) {
 	$is_continue = false;
 }else{
 	$count_notification = count($get_data_ext);
 }
-}
-if($SESSION_ROLES=="PENCIPTA"){
-	//$DOC_ID,$DOC_NOMOR,$DOC_NAMA,$DOC_MAKER,$DOC_APPROVE,$DOC_STATUS,$DN_ID
-	$get_data_ext = $this->M_library_database->DB_GET_SEARCH_DATA_DOCUMENT_ARRAY("","","",$SESSION_ID,"","",$SESSION_DEPARTEMENT_ID);
-	if(empty($get_data_ext)||$get_data_ext==""){
-		$is_continue = false;
-	}else{
-		$count_notification = count($get_data_ext);
-	}
-}
-if($SESSION_ROLES=="PENGGUNA"){
-	$is_continue = false;
-}
-//-----------------------------------------------------------------------------------------------//
-//NEWS
-//$DOC_AKSES_LEVEL,$DOC_PENGGUNA
-$get_data_count = $this->M_library_database->DB_GET_SEARCH_NEWS_DATA_DOCUMENT_ARRAY_EVO($SESSION_JOB_LEVEL_ID,$SESSION_DEPARTEMENT_ID);
+// News
+$get_data_count = $this->M_notification->GET_NEWS_NEW($SESSION_ID);
 if(empty($get_data_count)||$get_data_count==""){
-	//DO NOTHING
+
 }else{
 	$count_news = count($get_data_count);	
 }
-
+// Jumlah Notification
 $count_notification = $count_notification + $count_news;
-//-----------------------------------------------------------------------------------------------//
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -128,6 +87,46 @@ $count_notification = $count_notification + $count_news;
     padding: 0;
     margin:0;
 	}
+	.navbar-toggle {
+	    display: inline;
+	}
+	.sidebar.responsive+.main-content {
+    margin-left: 0!important;
+    margin-right: 0!important;
+	}
+	.sidebar.responsive.display {
+    -moz-transform: none!important;
+    -webkit-transform: none!important;
+    -o-transform: none!important;
+    -ms-transform: none!important;
+    transform: none!important;
+    overflow: visible;
+    max-height: 2000px;
+    -webkit-transition-delay: 0s;
+    -moz-transition-delay: 0s;
+    -o-transition-delay: 0s;
+    transition-delay: 0s;
+	}
+	.sidebar.responsive {
+    -webkit-box-shadow: 2px 1px 2px 0 rgba(0,0,0,.15);
+    box-shadow: 2px 1px 2px 0 rgba(0,0,0,.15);
+    z-index: 1027;
+    overflow: hidden;
+    max-height: 0;
+    -moz-transform: translateX(-200px);
+    -webkit-transform: translateX(-200px);
+    -o-transform: translateX(-200px);
+    -ms-transform: translateX(-200px);
+    transform: translateX(-200px);
+    -webkit-transition: -webkit-transform .2s linear 0s,max-height 0s linear .2s;
+    -moz-transition: -moz-transform .2s linear 0s,max-height 0s linear .2s;
+    -o-transition: -o-transform .2s linear 0s,max-height 0s linear .2s;
+    transition: transform .2s linear 0s,max-height 0s linear .2s;
+    position: relative;
+    bottom: auto;
+    left: 190px;
+    margin-left: -190px;
+	}
 </style>
 </head>
 <!------------------------------------------------------------------------------------------------->
@@ -158,6 +157,241 @@ $count_notification = $count_notification + $count_news;
 	</div>
 
 	<div class="main-container ace-save-state" id="main-container">
+		<script type="text/javascript">
+			try{ace.settings.loadState('main-container')}catch(e){}
+		</script>
+		<div id="sidebar" class="sidebar responsive ace-save-state">
+			<script type="text/javascript">
+				try{ace.settings.loadState('sidebar')}catch(e){}
+			</script>
+
+			<div id="user-profile-1" class="user-profile row">
+				<div class="col-12 center">
+					<span class="profile-picture">
+						<img id="avatar" class="editable img-responsive" src="<?php echo base_url('template/backend/assets/images/avatars/profile-pic.jpg'); ?>" />
+					</span>
+					<br />
+					<i class="menu-icon fa fa-user"></i>
+					<span class="menu-text">
+						<?php echo $SESSION_NAME; ?>
+					</span>
+					<br />
+				</div>
+			</div>
+
+			<ul class="nav nav-list">
+
+				<li class="">
+					<a href="<?php echo base_url('menu'); ?>">
+						<i class="menu-icon fa fa-history"></i>
+						<span class="menu-text"> Pencarian </span>
+					</a>
+					<b class="arrow"></b>
+				</li>
+				
+				<li class="">
+					<a href="<?php echo base_url('bookmarks'); ?>">
+						<i class="menu-icon fa fa-bookmark"></i>
+						<span class="menu-text"> Favorit </span>
+					</a>
+					<b class="arrow"></b>
+				</li>
+				
+				<?php if(
+				$SESSION_ROLES=="PENGGUNA"||
+				$SESSION_ROLES=="PENCIPTA"||
+				$SESSION_ROLES=="PENDISTRIBUSI"||
+				$SESSION_ROLES=="ATASAN PENCIPTA" ||
+
+				$SESSION_ROLES_2=="PENGGUNA"||
+				$SESSION_ROLES_2=="PENCIPTA"||
+				$SESSION_ROLES_2=="PENDISTRIBUSI"||
+				$SESSION_ROLES_2=="ATASAN PENCIPTA" ||
+
+				$SESSION_ROLES_3=="PENGGUNA"||
+				$SESSION_ROLES_3=="PENCIPTA"||
+				$SESSION_ROLES_3=="PENDISTRIBUSI"||
+				$SESSION_ROLES_3=="ATASAN PENCIPTA" ||
+
+				$SESSION_ROLES_4=="PENGGUNA"||
+				$SESSION_ROLES_4=="PENCIPTA"||
+				$SESSION_ROLES_4=="PENDISTRIBUSI"||
+				$SESSION_ROLES_4=="ATASAN PENCIPTA" ||
+
+				$SESSION_ROLES_5=="PENGGUNA"||
+				$SESSION_ROLES_5=="PENCIPTA"||
+				$SESSION_ROLES_5=="PENDISTRIBUSI"||
+				$SESSION_ROLES_5=="ATASAN PENCIPTA"
+				){ ?>
+				<li class="">
+					<a href="<?php echo base_url('notification'); ?>">
+						<i class="menu-icon fa fa-exclamation"></i>
+						<span class="menu-text">
+							Aktifitas
+							<span class="badge badge-primary nofication-count"></span>
+						</span>
+					</a>
+					<b class="arrow"></b>
+				</li>
+				<?php } ?>
+				
+				<?php if(
+				$SESSION_ROLES=="PENCIPTA" ||
+				$SESSION_ROLES_2=="PENCIPTA" ||
+				$SESSION_ROLES_3=="PENCIPTA" ||
+				$SESSION_ROLES_4=="PENCIPTA" ||
+				$SESSION_ROLES_5=="PENCIPTA"
+				){ ?>
+				<li class="active">
+					<a href="<?php echo base_url('contribution'); ?>">
+						<i class="menu-icon fa fa-database"></i>
+						<span class="menu-text"> Kontribusi </span>
+					</a>
+					<b class="arrow"></b>
+				</li>
+				<?php } ?>
+				
+				<?php if(
+				$SESSION_ROLES=="PENCIPTA"||
+				$SESSION_ROLES=="ADMIN DOKUMEN"||
+
+				$SESSION_ROLES_2=="PENCIPTA"||
+				$SESSION_ROLES_2=="ADMIN DOKUMEN"||
+
+				$SESSION_ROLES_3=="PENCIPTA"||
+				$SESSION_ROLES_3=="ADMIN DOKUMEN"||
+
+				$SESSION_ROLES_4=="PENCIPTA"||
+				$SESSION_ROLES_4=="ADMIN DOKUMEN"||
+
+				$SESSION_ROLES_5=="PENCIPTA"||
+				$SESSION_ROLES_5=="ADMIN DOKUMEN"
+				){ ?>
+				<li class="">
+					<a href="<?php echo base_url('report'); ?>">
+						<i class="menu-icon fa fa-database"></i>
+						<span class="menu-text"> Laporan </span>
+					</a>
+					<b class="arrow"></b>
+				</li>
+				<?php } ?>
+
+				<?php if(
+				$SESSION_ROLES=="ADMIN KONFIGURASI"||
+				$SESSION_ROLES_2=="ADMIN KONFIGURASI"||
+				$SESSION_ROLES_3=="ADMIN KONFIGURASI"||
+				$SESSION_ROLES_4=="ADMIN KONFIGURASI"||
+				$SESSION_ROLES_5=="ADMIN KONFIGURASI"
+				){ ?>
+				<li class="">
+					<a href="#" class="dropdown-toggle">
+						<i class="menu-icon fa fa-cog"></i>
+						<span class="menu-text"> Setting </span>
+						<b class="arrow fa fa-angle-down"></b>
+					</a>
+					<b class="arrow"></b>
+					<ul class="submenu">
+						<li class="">
+							<a href="<?php echo base_url('C_setting_data_master'); ?>">
+								<i class="menu-icon fa fa-caret-right"></i>
+								Data Master
+							</a>
+							<b class="arrow"></b>
+						</li>
+						<li class="">
+							<a href="<?php echo base_url('C_setting_structure_organization'); ?>">
+								<i class="menu-icon fa fa-caret-right"></i>
+								Struktur Organisasi
+							</a>
+							<b class="arrow"></b>
+						</li>
+						<li class="">
+							<a href="<?php echo base_url('C_setting_user'); ?>">
+								<i class="menu-icon fa fa-caret-right"></i>
+								User
+							</a>
+							<b class="arrow"></b>
+						</li>
+						<li class="">
+							<a href="<?php echo base_url('C_setting_structure_document'); ?>">
+								<i class="menu-icon fa fa-caret-right"></i>
+								Struktur Dokumen
+							</a>
+							<b class="arrow"></b>
+						</li>
+						<li class="">
+							<a href="<?php echo base_url('C_setting_business_rule'); ?>">
+								<i class="menu-icon fa fa-caret-right"></i>
+								Aturan Bisnis
+							</a>
+							<b class="arrow"></b>
+						</li>
+						<li class="">
+							<a href="<?php echo base_url('C_setting_document_level_access'); ?>">
+								<i class="menu-icon fa fa-caret-right"></i>
+								Tingkat Akses Dokumen
+							</a>
+							<b class="arrow"></b>
+						</li>
+					</ul>
+				</li>
+				<li class="">
+					<a href="#" class="dropdown-toggle">
+						<i class="menu-icon fa fa-cog"></i>
+						<span class="menu-text">General Setting </span>
+						<b class="arrow fa fa-angle-down"></b>
+					</a>
+					<b class="arrow"></b>
+					<ul class="submenu">
+						<li class="">
+							<a href="<?php echo base_url('C_general_setting/welcome_speech'); ?>">
+								<i class="menu-icon fa fa-caret-right"></i>
+								Welcome Speech
+							</a>
+							<b class="arrow"></b>
+						</li>
+						<li class="">
+							<a href="<?php echo base_url('C_general_setting/nomor'); ?>">
+								<i class="menu-icon fa fa-caret-right"></i>
+								Nomor Dokumen
+							</a>
+							<b class="arrow"></b>
+						</li>
+						<li class="">
+							<a href="<?php echo base_url('C_general_setting/format_dokumen'); ?>">
+								<i class="menu-icon fa fa-caret-right"></i>
+								Format Dokumen
+							</a>
+							<b class="arrow"></b>
+						</li>
+						<li class="">
+							<a href="<?php echo base_url('C_general_setting/sharelink'); ?>">
+								<i class="menu-icon fa fa-caret-right"></i>
+								Sharelink
+							</a>
+							<b class="arrow"></b>
+						</li>
+						<li class="">
+							<a href="<?php echo base_url('C_general_setting/watermark'); ?>">
+								<i class="menu-icon fa fa-caret-right"></i>
+								Watermark
+							</a>
+							<b class="arrow"></b>
+						</li>
+					</ul>
+				</li>
+				<?php } ?>
+
+				<li class="">
+					<a href="<?php echo base_url('C_menu/logout'); ?>">
+						<i class="menu-icon fa fa-power-off"></i>
+						<span class="menu-text"> Keluar </span>
+					</a>
+					<b class="arrow"></b>
+				</li>
+
+			</ul><!-- /.nav-list -->
+		</div>
 		<div class="main-content">
 			<div class="main-content-inner">
 				<div class="page-content">
@@ -176,13 +410,17 @@ $count_notification = $count_notification + $count_news;
 									<?php if($key['DOC_MAKER']!=$SESSION_ID): ?>
 									<div class="col-md-12">
 										<div class="form-group">
+											<?php
+											$get_maks_comment = $this->db->get('m_maks_comment')->result();
+											?>
+											<label for="">Tulis Komentar :</label>
 											<form class="form-horizontal" id="form_new_data" name="form_new_data" action="<?php echo base_url('C_menu/comment'); ?>" method="post" enctype="multipart/form-data">
 
 												<input type="hidden" id="si_docid" name="si_docid" value="<?php echo $key['DOC_ID']; ?>" class="form-control" required/>
 												<input type="hidden" id="si_maker" name="si_maker" value="<?php echo $key['DOC_MAKER']; ?>" class="form-control" required/>
 
 												<div class="form-group">
-													<textarea type="text" name="si_review" id="si_review" rows="7" class="form-control" style="resize:none;width: 50.3rem;margin-left: 1rem;" required></textarea>
+													<textarea type="text" maxlength="<?= $get_maks_comment[0]->maks; ?>" name="si_review" id="si_review" rows="7" class="form-control" style="resize:none;width: 50.3rem;margin-left: 1rem;" required></textarea>
 												</div>
 
 												<button type="submit" id="btn_comment" name="btn_comment" class="ace-icon fa fa-check btn btn-success btn-sm">Kirim</button>
@@ -207,7 +445,12 @@ $count_notification = $count_notification + $count_news;
 											</div>
 											<div class="widget-body">
 												<?php
-												$get_comment = $this->M_library_database->GET_COMMENT_BY_PENGGUNA($key['DOC_ID'],$SESSION_ID);
+												$get_comment = $this->db
+													->select('*')
+													->from('tb_document_comment')
+													->join('tb_employee', 'tb_document_comment.DTCT_USER = tb_employee.NIP', 'left')
+													->where(array('tb_document_comment.DTCT_USER' => $SESSION_ID, 'tb_document_comment.DOC_ID' => $key['DOC_ID']))
+													->get()->result();
 												if (!empty($get_comment)):
 													foreach ($get_comment as $get_comment_1) {
 														$COMMENTER = $get_comment_1->DTCT_USER;
@@ -217,14 +460,9 @@ $count_notification = $count_notification + $count_news;
 												<ul class="list-group">
 													<?php foreach ($get_comment as $get_comment): ?>
 													<li class="list-group-item">
-														<?=$get_comment->DTCT_USER;?> : <?=$get_comment->DTCT_NOTE;?>
-														<?php if(!empty($get_comment->DTCR_ID)): ?>
-														<br>
+														<?=$get_comment->NIP." - ".$get_comment->FULL_NAME;?> : <?=$get_comment->DTCT_NOTE;?>
 														<hr>
-														<p style="margin-left:5px;">
-															<i class="ace-icon fa fa-reply"></i> <?=$get_comment->DTCT_AUTHOR;?> : <?=$get_comment->DTCR_NOTE;?>
-														</p>
-														<?php endif; ?>
+														<?= date('d/M/Y', strtotime($get_comment->DTCT_DATE))." WIB"; ?>
 													</li>
 													<?php endforeach; ?>
 												</ul>
@@ -282,32 +520,37 @@ $count_notification = $count_notification + $count_news;
 										</label>
 									</div>
 									<div class="form-group">
-										<label for="" class="col-sm-6"><i class="fa fa-book" style="font-size: 9rem;"></i></label>
 										<label for="" class="col-sm-6" style="">
 											<!-- DOKUMEN UTAMA -->
-											<a id="click" href="" data-toggle="modal" data-target="#dokumenutama<?= $key['DOCD_UTAMA'];?>">DOKUMEN UTAMA</a>
+											<!-- <a id="click" href="" data-toggle="modal" data-target="#dokumenutama<?= $key['DOCD_UTAMA'];?>">DOKUMEN UTAMA</a> -->
+											<a target="_blank" href="<?= base_url('C_notification/document/'.$key['DOC_ID'].'/'.$key['DOCD_UTAMA']); ?>">Dokumen Utama</a>
 											<!-- END DOKUMEN UTAMA -->
 											<br>
 											<!-- Dokumen Pelengkap 1 -->
 											<?php if($key['DOCD_PELENGKAP_1']!="File_Not_Found"): ?>
-											<a href="" data-toggle="modal" data-target="#dokumenpelengkap1<?= $key['DOCD_PELENGKAP_1'];?>">DOKUMEN PELENGKAP 1</a> 
+											<!-- <a href="" data-toggle="modal" data-target="#dokumenpelengkap1<?= $key['DOCD_PELENGKAP_1'];?>">DOKUMEN PELENGKAP 1</a>  -->
+											<a target="_blank" href="<?= base_url('C_notification/document/'.$key['DOC_ID'].'/'.$key['DOCD_PELENGKAP_1']); ?>">Dokumen Pelengkap 1</a>
 											<br>
 											<?php endif; ?>
 											<!-- Dokumen Pelengkap 2 -->
 											<?php if($key['DOCD_PELENGKAP_2']!="File_Not_Found"): ?>
-											<a href="" data-toggle="modal" data-target="#dokumenpelengkap2<?= $key['DOCD_PELENGKAP_2'];?>">DOKUMEN PELENGKAP 2</a>
+											<!-- <a href="" data-toggle="modal" data-target="#dokumenpelengkap2<?= $key['DOCD_PELENGKAP_2'];?>">DOKUMEN PELENGKAP 2</a> -->
+											<a target="_blank" href="<?= base_url('C_notification/document/'.$key['DOC_ID'].'/'.$key['DOCD_PELENGKAP_2']); ?>">Dokumen Pelengkap 2</a>
 											<br>
 											<?php endif; ?>
 										</label>
-
+										<label for="" class="col-sm-6" style="font-size:10px;">
+											*Dengan Anda Membuka Dokumen Utama, Berarti Anda Sudah Membaca dan Memahami Dokumen ini
+										</label>
 									</div>
 
 								</form>
 								<h5 id="show" style="color:orange;"><b>Saya sudah membaca dan memahami dokumen ini</b></h5>
-								<?php if ($SESSION_ROLES != "PENGGUNA"): ?>
+								<?php $pengguna = $this->Model_detail->getDetail($SESSION_DEPARTEMENT_ID,$key['DOC_ID'],$SESSION_JOB_LEVEL_ID);  ?>
+								<?php if ($pengguna): ?>
 									<form id="form_detail" name="form_view[]" action="<?php echo base_url('C_notification/detail'); ?>" method="post" enctype="multipart/form-data" target="_blank">
 										<input type="hidden" id="si_key[]" name="si_key[]" value="<?php echo $key['DOC_ID']; ?>" class="form-control" required/>
-										<button type="submit" class="btn btn-link"><b style="font-size: 1.6rem;">Detail PMD</b></button>
+										<button type="submit" class="btn btn-info"><b>Detail PMD</b></button>
 									</form>
 								<?php endif ?>
 								
@@ -329,15 +572,28 @@ $count_notification = $count_notification + $count_news;
 								<button type="submit" class="btn btn-link" data-placement="top" title="comment-list"><i class="fa fa-comment" style="color:black;font-size: 2.5rem;float: right;margin-left:.7rem;cursor: pointer;margin: -.4rem -1.7rem 0 -.7rem;"></i> </button>
 							</form>
 							<!-- end comment -->
+							<?php endif; ?>
+							<?php if ($key['DOC_MAKER'] == $SESSION_ID && ($key['DOC_STATUS'] == 'DIPUBLIKASI' || $key['DOC_STATUS'] == 'KADALUARSA' || $key['DOC_STATUS'] == 'DIARSIPKAN')): ?>
 							<!-- versioning -->
 							<a data-toggle="modal" data-target="#modal-versioning<?= $key['DOC_ID'];?>" data-popup="tooltip" data-placement="top" title="Pengkinian" href="" style="color: black;"><i class="glyphicon glyphicon-edit" style="font-size: 2.5rem;float: right;cursor: pointer;margin-left: .7rem"></i></a>
 							<!-- end versioning -->
 							<?php endif ?>
-							<?php if (($SESSION_DEPARTEMENT_CODE == "BPI" || $SESSION_ID == $key['DOC_MAKER']) && ($SESSION_ROLES == "PENDISTRIBUSI" || $SESSION_ROLES == "PENCIPTA") && $key['DOC_STATUS'] == 'DIPUBLIKASI'): ?>
+							<?php if (
+								$SESSION_ID == $key['DOC_MAKER'] &&
+
+								(
+									$SESSION_ROLES == "PENDISTRIBUSI" || $SESSION_ROLES == "PENCIPTA" ||
+									$SESSION_ROLES_2 == "PENDISTRIBUSI" || $SESSION_ROLES_2 == "PENCIPTA" ||
+									$SESSION_ROLES_3 == "PENDISTRIBUSI" || $SESSION_ROLES_3 == "PENCIPTA" ||
+									$SESSION_ROLES_4 == "PENDISTRIBUSI" || $SESSION_ROLES_4 == "PENCIPTA" ||
+									$SESSION_ROLES_5 == "PENDISTRIBUSI" || $SESSION_ROLES_5 == "PENCIPTA"
+								) 
+								&&
+								$key['DOC_STATUS'] == 'DIPUBLIKASI'): ?>
 							<!-- archive -->
 							<a href="" data-placement="top" title="Arsipkan" data-toggle="modal" data-target="#myModal" style="color: black;"><i class="fa fa-archive" style="font-size: 2.5rem;float: right;cursor: pointer;margin-left: .7rem"></i></a>
 							<!-- end archive -->
-							<?php endif ?>
+							<?php endif; ?>
 							
 							<!-- bookmark -->
 							<form id="form_bookmark[]" style="float: right; " name="form_bookmark" action="<?php echo base_url('C_bookmarks/bookmark'); ?>" method="post" enctype="multipart/form-data">
@@ -358,7 +614,7 @@ $count_notification = $count_notification + $count_news;
 						      <div class="modal-body">
 						      	<form action="<?php echo base_url('C_bookmarks/archived_by') ?>" method="POST">
 						        <h4><b>Alasan Non Aktifkan Dokumen</b></h4>
-						        <textarea style="resize: none;" name="note" id="" cols="77" rows="9" minlength="20"></textarea>
+						        <textarea style="resize: none;" name="note" id="" cols="60" rows="9" minlength="20"></textarea>
 						        <?php
 						        if ($SESSION_DEPARTEMENT_CODE == "BPI") {
 						        	$si_archived = "BPI";
@@ -370,8 +626,7 @@ $count_notification = $count_notification + $count_news;
 						        <input type="hidden" name="si_key" value="<?php echo $key['DOC_ID']; ?>">
 						      </div>
 						      <div class="modal-footer">
-						        <button type="submit" name="simpan" class="btn btn-default">Simpan</button>
-						        <button type="submit" name="nonaktif" class="btn btn-primary">Non Aktifkan</button>
+						        <button type="submit" name="nonaktif" class="btn btn-primary">Arsipkan</button>
 						      </div>
 						      	</form>
 						    </div>
@@ -492,7 +747,7 @@ $versi_meta = $versi_awal + 0.1;
 											$get_data_ext = $this->Model_detail->DB_GET_EMAIL();
 											foreach($get_data_ext as $data_row_ext){
 											?>
-											<option id="<?php echo $data_row_ext->UR_EMAIL; ?>" value="<?php echo $data_row_ext->UR_EMAIL; ?>"><?php echo $data_row_ext->UR_ID; ?></option>
+											<option value="<?php echo $data_row_ext->NIP; ?>"><?php echo $data_row_ext->FULL_NAME; ?> ( <?php echo $data_row_ext->EMAIL; ?> )</option>
 											<?php
 											}
 											?>
@@ -500,7 +755,7 @@ $versi_meta = $versi_awal + 0.1;
 										</div>
 										<div class="form-group">
 										    <label for="pesan">Tulis Pesan</label>
-										    <textarea style="resize: none;" class="form-control" name="pesan" id="pesan" cols="30" rows="10"></textarea>
+										    <textarea style="resize: none;" class="form-control" name="pesan" id="pesan" cols="30" rows="10" required></textarea>
 										</div>
 										<div class="modal-footer">
 											<input type="hidden" id="si_key" name="si_key" value="<?php echo $key['DOC_ID']; ?>" class="form-control" required/>
@@ -514,134 +769,6 @@ $versi_meta = $versi_awal + 0.1;
 											</button>
 										</form>
 									</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						<!-- end -->
-						<!-- DOKUMEN UTAMA -->
-						<div id="dokumenutama<?=$key['DOCD_UTAMA'];?>" class="modal" tabindex="-1">
-							<div class="modal-dialog1 modal-lg">
-								<div class="modal-content">
-									<div class="modal-header">
-										<button type="button" class="close" data-dismiss="modal">&times;</button>
-										<h5 class="blue bigger"></h5>
-									</div>
-									<?php if ($key['DOCD_UTAMA_EXT']=='pdf' || $key['DOCD_UTAMA_EXT']=='doc' || $key['DOCD_UTAMA_EXT']=='docx' || $key['DOCD_UTAMA_EXT']=='xls' || $key['DOCD_UTAMA_EXT']=='xlsx' || $key['DOCD_UTAMA_EXT']=='ppt' || $key['DOCD_UTAMA_EXT']=='pptx' || $key['DOCD_UTAMA_EXT']=='vsd' || $key['DOCD_UTAMA_EXT']=='vsdx'): ?>
-										<div class="modal-body">
-											<object data="<?= base_url('assets/pdf/'.$key['DOCD_UTAMA']).'.pdf';?>#toolbar=0&navpanes=0&scrollbar=0" type="application/pdf" width="100%" height="535px">
-												<iframe src="<?= base_url('assets/pdf/'.$key['DOCD_UTAMA']).'.pdf';?>#toolbar=0&navpanes=0&scrollbar=0" frameborder="0" width="100%" height="535px"></iframe>
-											</object>
-										</div>
-										<?php else: ?>
-										<div class="modal-body">
-											<object data="<?= base_url('assets/original/'.$key['DOCD_UTAMA']).'.'.$key['DOCD_UTAMA_EXT'];?>#toolbar=0&navpanes=0&scrollbar=0" width="100%" height="535px">
-												<iframe src="<?= base_url('assets/pdf/'.$key['DOCD_UTAMA']).'.pdf';?>#toolbar=0&navpanes=0&scrollbar=0" frameborder="0" width="100%" height="535px"></iframe>
-											</object>
-										</div>
-									<?php endif; ?>
-
-									<?php if ($key['DOCD_UTAMA_STATUS'] == 1){
-										$url_download_utama = base_url('C_notification/download_pdf/'.$key['DOCD_UTAMA'].'.pdf');
-									}else{
-										$url_download_utama = base_url('C_notification/download_ori/'.$key['DOCD_UTAMA'].'.'.$key['DOCD_UTAMA_EXT']);
-									}
-									?>				
-									<div class="modal-footer">
-											
-										<?php 
-										$DOC_ID = $key['DOC_ID'];
-										$datu = $this->Model_detail->getDetail($SESSION_DEPARTEMENT_ID,$DOC_ID,$SESSION_JOB_LEVEL_ID); 
-										if ($datu):
-										?>
-
-										<a href="<?php echo $url_download_utama; ?>" class="btn btn-primary"><i class="glyphicon glyphicon-download-alt"></i> DOWNLOAD</a>
-										<?php endif; ?>
-									</div>
-								</div>
-							</div>
-						</div>
-						<!-- end -->
-						<!-- DOKUMEN PELENGKAP 1 -->
-						<div id="dokumenpelengkap1<?=$key['DOCD_PELENGKAP_1'];?>" class="modal" tabindex="-1">
-							<div class="modal-dialog1 modal-lg">
-								<div class="modal-content">
-									<div class="modal-header">
-										<button type="button" class="close" data-dismiss="modal">&times;</button>
-										<h5 class="blue bigger"></h5>
-									</div>
-									<?php if ($key['DOCD_PELENGKAP_1_EXT']=='pdf' || $key['DOCD_PELENGKAP_1_EXT']=='doc' || $key['DOCD_PELENGKAP_1_EXT']=='docx' || $key['DOCD_PELENGKAP_1_EXT']=='xls' || $key['DOCD_PELENGKAP_1_EXT']=='xlsx' || $key['DOCD_PELENGKAP_1_EXT']=='ppt' || $key['DOCD_PELENGKAP_1_EXT']=='pptx' || $key['DOCD_PELENGKAP_1_EXT']=='vsd' || $key['DOCD_PELENGKAP_1_EXT']=='vsdx'): ?>
-										<div class="modal-body">
-											<object data="<?= base_url('assets/pdf/'.$key['DOCD_PELENGKAP_1']).'.pdf';?>#toolbar=0&navpanes=0&scrollbar=0" type="application/pdf" width="100%" height="535px">
-												<iframe src="<?= base_url('assets/pdf/'.$key['DOCD_PELENGKAP_1']).'.pdf';?>#toolbar=0&navpanes=0&scrollbar=0" frameborder="0" width="100%" height="535px"></iframe>
-											</object>
-										</div>
-										<?php elseif ($key['DOCD_PELENGKAP_1_EXT']=='mp4' ): ?>
-											<video width="100%" controlsList="nodownload" height="500px" src="<?= base_url('assets/original/'.$key['DOCD_PELENGKAP_1']).'.'.$key['DOCD_PELENGKAP_1_EXT'];?>" controls></video>
-										<?php elseif ($key['DOCD_PELENGKAP_1_EXT']=='dwg'):?>
-											<h1 style="text-align: center;">TIDAK BISA MEMBUKA FILE DWG</h1>
-										<?php else: ?>
-										<div class="modal-body">
-											<object data="<?= base_url('assets/original/'.$key['DOCD_PELENGKAP_1']).'.'.$key['DOCD_PELENGKAP_1_EXT'];?>#toolbar=0&navpanes=0&scrollbar=0" width="100%" height="535px">
-												<iframe src="<?= base_url('assets/original/'.$key['DOCD_PELENGKAP_1']).'.'.$key['DOCD_PELENGKAP_1_EXT'];?>#toolbar=0&navpanes=0&scrollbar=0" frameborder="0" width="100%" height="535px"></iframe>
-											</object>
-										</div>
-									<?php endif; ?>	
-
-									<?php if ($key['DOCD_PELENGKAP_1_STATUS'] == 1){
-										$url_download_pelengkap_1 = base_url('C_notification/download_pdf/'.$key['DOCD_PELENGKAP_1'].'.pdf');
-									}else{
-										$url_download_pelengkap_1 = base_url('C_notification/download_ori/'.$key['DOCD_PELENGKAP_1'].'.'.$key['DOCD_PELENGKAP_1_EXT']);
-									}
-									?>				
-									<div class="modal-footer">
-										<?php
-										if ($datu):
-										?>
-										<a href="<?php echo $url_download_pelengkap_1; ?>" class="btn btn-primary">DOWNLOAD</a>
-										<?php endif; ?>
-									</div>
-								</div>
-							</div>
-						</div>
-						<!-- end -->
-						<!-- DOKUMEN PELENGKAP 2 -->
-						<div id="dokumenpelengkap2<?=$key['DOCD_PELENGKAP_2'];?>" class="modal" tabindex="-1">
-							<div class="modal-dialog1 modal-lg">
-								<div class="modal-content">
-									<div class="modal-header">
-										<button type="button" class="close" data-dismiss="modal">&times;</button>
-										<h5 class="blue bigger"></h5>
-									</div>
-									<?php if ($key['DOCD_PELENGKAP_2_EXT']=='pdf' || $key['DOCD_PELENGKAP_2_EXT']=='doc' || $key['DOCD_PELENGKAP_2_EXT']=='docx' || $key['DOCD_PELENGKAP_2_EXT']=='xls' || $key['DOCD_PELENGKAP_2_EXT']=='xlsx' || $key['DOCD_PELENGKAP_2_EXT']=='ppt' || $key['DOCD_PELENGKAP_2_EXT']=='pptx' || $key['DOCD_PELENGKAP_2_EXT']=='vsd' || $key['DOCD_PELENGKAP_2_EXT']=='vsdx'): ?>
-										<div class="modal-body">
-											<object data="<?= base_url('assets/pdf/'.$key['DOCD_PELENGKAP_2']).'.pdf';?>#toolbar=0&navpanes=0&scrollbar=0" type="application/pdf" width="100%" height="535px">
-												<iframe src="<?= base_url('assets/pdf/'.$key['DOCD_PELENGKAP_2']).'.pdf';?>#toolbar=0&navpanes=0&scrollbar=0" frameborder="0" width="100%" height="535px"></iframe>
-											</object>
-										</div>
-										<?php elseif ($key['DOCD_PELENGKAP_2_EXT']=='mp4' ): ?>
-											<video width="100%" controlsList="nodownload" height="500px" src="<?= base_url('assets/original/'.$key['DOCD_PELENGKAP_2']).'.'.$key['DOCD_PELENGKAP_2_EXT'];?>" controls></video>
-										<?php elseif ($key['DOCD_PELENGKAP_2_EXT']=='dwg'):?>
-											<h1>TIDAK BISA MEMBUKA FILE DWG</h1>
-										<?php else: ?>
-										<div class="modal-body">
-											<object data="<?= base_url('assets/original/'.$key['DOCD_PELENGKAP_2']).'.'.$key['DOCD_PELENGKAP_2_EXT'];?>#toolbar=0&navpanes=0&scrollbar=0" width="100%" height="535px">
-												<iframe src="<?= base_url('assets/original/'.$key['DOCD_PELENGKAP_2']).'.'.$key['DOCD_PELENGKAP_2_EXT'];?>#toolbar=0&navpanes=0&scrollbar=0" frameborder="0" width="100%" height="535px"></iframe>
-											</object>
-										</div>
-									<?php endif; ?>											
-									<?php if ($key['DOCD_PELENGKAP_2_STATUS'] == 1){
-										$url_download_pelengkap_2 = base_url('C_notification/download_pdf/'.$key['DOCD_PELENGKAP_2'].'.pdf');
-									}else{
-										$url_download_pelengkap_2 = base_url('C_notification/download_ori/'.$key['DOCD_PELENGKAP_2'].'.'.$key['DOCD_PELENGKAP_2_EXT']);
-									}
-									?>				
-									<div class="modal-footer">
-									<?php
-										if ($datu):
-										?>
-										<a href="<?php echo $url_download_pelengkap_2; ?>" class="btn btn-primary">DOWNLOAD</a>
-									<?php endif; ?>
 									</div>
 								</div>
 							</div>
@@ -783,7 +910,16 @@ $('#show').hide();
 			$('#v_meta').removeClass('hide');
 			$('#si_history_version').val('<?=$versi_meta?>');
 		});
-		$('[data-toggle="tooltip"]').tooltip()
+		$('[data-toggle="tooltip"]').tooltip();
+
+		$.ajax({
+			type: "GET",
+			url: "<?php echo base_url();?>C_notification/getNotification/<?php echo $this->session->userdata("session_bgm_edocument_id");?>/true/",             
+			dataType: "html",   //expect html to be returned                
+			success: function(response){
+				$(".nofication-count").text(JSON.parse(response).length);
+			}
+		});
 	});
 
 	// $(function(){

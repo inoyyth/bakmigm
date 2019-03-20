@@ -79,7 +79,7 @@ $db['default'] = array(
 	
 	'username' => 'root',
 	'password' => 'Bakmigm77',
-	'database' => 'db_edocument',
+	'database' => 'test_edocument',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,

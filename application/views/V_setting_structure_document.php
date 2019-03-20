@@ -1,90 +1,27 @@
 <?php
-//-----------------------------------------------------------------------------------------------//
 defined('BASEPATH') OR exit('No direct script access allowed');
-//-----------------------------------------------------------------------------------------------//
-$SESSION_ID = $this->session->userdata("session_bgm_edocument_id");
-$SESSION_EMAIL = $this->session->userdata("session_bgm_edocument_email");
-
-$SESSION_DIREKTORAT_ID = $this->session->userdata("session_bgm_edocument_direktorat_id");
-$SESSION_DIREKTORAT_NAME = $this->session->userdata("session_bgm_edocument_direktorat_name");
-
-$SESSION_DIVISI_ID = $this->session->userdata("session_bgm_edocument_divisi_id");
-$SESSION_DIVISI_CODE = $this->session->userdata("session_bgm_edocument_divisi_code");
-$SESSION_DIVISI_NAME = $this->session->userdata("session_bgm_edocument_divisi_name");
-
-$SESSION_DEPARTEMENT_ID = $this->session->userdata("session_bgm_edocument_departement_id");
-$SESSION_DEPARTEMENT_CODE = $this->session->userdata("session_bgm_edocument_departement_code");
-$SESSION_DEPARTEMENT_NAME = $this->session->userdata("session_bgm_edocument_departement_name");
-
-$SESSION_ROLES = $this->session->userdata("session_bgm_edocument_roles");
-
-$SESSION_JOB_LEVEL_ID = $this->session->userdata("session_bgm_edocument_job_level_id");
-$SESSION_JOB_LEVEL_NAME = $this->session->userdata("session_bgm_edocument_job_level_name");
-$SESSION_JOB_LEVEL_INDEX = $this->session->userdata("session_bgm_edocument_job_level_index");
-//-----------------------------------------------------------------------------------------------//
+include (APPPATH.'libraries/session_user.php');
+// Tools
 $is_continue = true;
 $count_notification = 0;
 $count_news = 0;
-//-----------------------------------------------------------------------------------------------//
-//NOTIFICATION
-if ($SESSION_ROLES == "PENDISTRIBUSI") {
-	$get_data_ext = $this->M_library_database->DB_GET_SEARCH_DATA_DOCUMENT_ARRAY("","","","","","");
-	if (empty($get_data_ext)) {
-		$is_continue = false;
-	}else{	
-		foreach ($get_data_ext as $data_row_ext) {
-			$DOC_PENDISTRIBUSI = $data_row_ext->DOC_PENDISTRIBUSI;
-			$DI_CODE = $data_row_ext->DI_CODE;
-		}
-		if ($SESSION_DEPARTEMENT_ID==$DOC_PENDISTRIBUSI) {
-			$count_notification = count($get_data_ext);
-		}else{
-			$is_continue = false;
-		}
-	}
-}
-if ($SESSION_ROLES == "ATASAN PENCIPTA") {
-	$get_data_ext = $this->M_library_database->DB_GET_SEARCH_DATA_DOCUMENT_ARRAY("","","","","","");
-	if (empty($get_data_ext)) {
-		$is_continue = false;
-	}else{	
-		foreach ($get_data_ext as $data_row_ext) {
-			$DOC_PENDISTRIBUSI = $data_row_ext->DOC_PENDISTRIBUSI;
-			$DI_CODE = $data_row_ext->DI_CODE;
-		}
-		if ($SESSION_DEPARTEMENT_ID==$DOC_PENDISTRIBUSI||$SESSION_DIVISI_CODE==$DI_CODE) {
-			$count_notification = count($get_data_ext);
-		}else{
-			$is_continue = false;
-		}
-	}
-}
-if($SESSION_ROLES=="PENCIPTA"){
-	//$DOC_ID,$DOC_NOMOR,$DOC_NAMA,$DOC_MAKER,$DOC_APPROVE,$DOC_STATUS,$DN_ID
-	$get_data_ext = $this->M_library_database->DB_GET_SEARCH_DATA_DOCUMENT_ARRAY("","","",$SESSION_ID,"","",$SESSION_DEPARTEMENT_ID);
-	if(empty($get_data_ext)||$get_data_ext==""){
-		$is_continue = false;
-	}else{
-		$count_notification = count($get_data_ext);
-	}
-}
-if($SESSION_ROLES=="PENGGUNA"){
+// Notification
+$get_data_ext = $this->M_notification->GET_NOTIFICATION_NEW($SESSION_ID);
+if (empty($get_data_ext)) {
 	$is_continue = false;
+}else{
+	$count_notification = count($get_data_ext);
 }
-//-----------------------------------------------------------------------------------------------//
-//NEWS
-//$DOC_AKSES_LEVEL,$DOC_PENGGUNA
-$get_data_count = $this->M_library_database->DB_GET_SEARCH_NEWS_DATA_DOCUMENT_ARRAY_EVO($SESSION_JOB_LEVEL_ID,$SESSION_DEPARTEMENT_ID);
+// News
+$get_data_count = $this->M_notification->GET_NEWS_NEW($SESSION_ID);
 if(empty($get_data_count)||$get_data_count==""){
-	//DO NOTHING
+
 }else{
 	$count_news = count($get_data_count);	
 }
-
+// Jumlah Notification
 $count_notification = $count_notification + $count_news;
-//-----------------------------------------------------------------------------------------------//
 ?>
-<!------------------------------------------------------------------------------------------------->
 <!DOCTYPE html>
 <html lang="en">
 <!------------------------------------------------------------------------------------------------->
@@ -179,7 +116,7 @@ $count_notification = $count_notification + $count_news;
 					<br />
 					<i class="menu-icon fa fa-user"></i>
 					<span class="menu-text">
-						<?php echo $SESSION_ID; ?>
+						<?php echo $SESSION_NAME; ?>
 					</span>
 					<br />
 				</div>
@@ -187,9 +124,9 @@ $count_notification = $count_notification + $count_news;
 
 
 			<ul class="nav nav-list">
-			
+
 				<li class="">
-					<a href="<?php echo base_url('C_recent_history'); ?>">
+					<a href="<?php echo base_url('menu'); ?>">
 						<i class="menu-icon fa fa-history"></i>
 						<span class="menu-text"> Pencarian </span>
 					</a>
@@ -197,7 +134,7 @@ $count_notification = $count_notification + $count_news;
 				</li>
 				
 				<li class="">
-					<a href="<?php echo base_url('C_bookmarks'); ?>">
+					<a href="<?php echo base_url('bookmarks'); ?>">
 						<i class="menu-icon fa fa-bookmark"></i>
 						<span class="menu-text"> Favorit </span>
 					</a>
@@ -208,23 +145,49 @@ $count_notification = $count_notification + $count_news;
 				$SESSION_ROLES=="PENGGUNA"||
 				$SESSION_ROLES=="PENCIPTA"||
 				$SESSION_ROLES=="PENDISTRIBUSI"||
-				$SESSION_ROLES=="ATASAN PENCIPTA"
+				$SESSION_ROLES=="ATASAN PENCIPTA" ||
+
+				$SESSION_ROLES_2=="PENGGUNA"||
+				$SESSION_ROLES_2=="PENCIPTA"||
+				$SESSION_ROLES_2=="PENDISTRIBUSI"||
+				$SESSION_ROLES_2=="ATASAN PENCIPTA" ||
+
+				$SESSION_ROLES_3=="PENGGUNA"||
+				$SESSION_ROLES_3=="PENCIPTA"||
+				$SESSION_ROLES_3=="PENDISTRIBUSI"||
+				$SESSION_ROLES_3=="ATASAN PENCIPTA" ||
+
+				$SESSION_ROLES_4=="PENGGUNA"||
+				$SESSION_ROLES_4=="PENCIPTA"||
+				$SESSION_ROLES_4=="PENDISTRIBUSI"||
+				$SESSION_ROLES_4=="ATASAN PENCIPTA" ||
+
+				$SESSION_ROLES_5=="PENGGUNA"||
+				$SESSION_ROLES_5=="PENCIPTA"||
+				$SESSION_ROLES_5=="PENDISTRIBUSI"||
+				$SESSION_ROLES_5=="ATASAN PENCIPTA"
 				){ ?>
 				<li class="">
-					<a href="<?php echo base_url('C_notification'); ?>">
+					<a href="<?php echo base_url('notification'); ?>">
 						<i class="menu-icon fa fa-exclamation"></i>
 						<span class="menu-text">
 							Aktifitas
-							<span class="badge badge-primary"><?php echo $count_notification; ?></span>
+							<span class="badge badge-primary nofication-count"></span>
 						</span>
 					</a>
 					<b class="arrow"></b>
 				</li>
 				<?php } ?>
 				
-				<?php if($SESSION_ROLES=="PENCIPTA"){ ?>
+				<?php if(
+				$SESSION_ROLES=="PENCIPTA" ||
+				$SESSION_ROLES_2=="PENCIPTA" ||
+				$SESSION_ROLES_3=="PENCIPTA" ||
+				$SESSION_ROLES_4=="PENCIPTA" ||
+				$SESSION_ROLES_5=="PENCIPTA"
+				){ ?>
 				<li class="">
-					<a href="<?php echo base_url('C_contribution'); ?>">
+					<a href="<?php echo base_url('contribution'); ?>">
 						<i class="menu-icon fa fa-database"></i>
 						<span class="menu-text"> Kontribusi </span>
 					</a>
@@ -234,10 +197,22 @@ $count_notification = $count_notification + $count_news;
 				
 				<?php if(
 				$SESSION_ROLES=="PENCIPTA"||
-				$SESSION_ROLES=="ADMIN DOKUMEN"
+				$SESSION_ROLES=="ADMIN DOKUMEN"||
+
+				$SESSION_ROLES_2=="PENCIPTA"||
+				$SESSION_ROLES_2=="ADMIN DOKUMEN"||
+
+				$SESSION_ROLES_3=="PENCIPTA"||
+				$SESSION_ROLES_3=="ADMIN DOKUMEN"||
+
+				$SESSION_ROLES_4=="PENCIPTA"||
+				$SESSION_ROLES_4=="ADMIN DOKUMEN"||
+
+				$SESSION_ROLES_5=="PENCIPTA"||
+				$SESSION_ROLES_5=="ADMIN DOKUMEN"
 				){ ?>
 				<li class="">
-					<a href="<?php echo base_url('C_report'); ?>">
+					<a href="<?php echo base_url('report'); ?>">
 						<i class="menu-icon fa fa-database"></i>
 						<span class="menu-text"> Laporan </span>
 					</a>
@@ -245,8 +220,14 @@ $count_notification = $count_notification + $count_news;
 				</li>
 				<?php } ?>
 
-				<?php if($SESSION_ROLES=="ADMIN KONFIGURASI"){ ?>
-				<li class="active open">
+				<?php if(
+				$SESSION_ROLES=="ADMIN KONFIGURASI"||
+				$SESSION_ROLES_2=="ADMIN KONFIGURASI"||
+				$SESSION_ROLES_3=="ADMIN KONFIGURASI"||
+				$SESSION_ROLES_4=="ADMIN KONFIGURASI"||
+				$SESSION_ROLES_5=="ADMIN KONFIGURASI"
+				){ ?>
+				<li class="">
 					<a href="#" class="dropdown-toggle">
 						<i class="menu-icon fa fa-cog"></i>
 						<span class="menu-text"> Setting </span>
@@ -298,6 +279,51 @@ $count_notification = $count_notification + $count_news;
 						</li>
 					</ul>
 				</li>
+				<li class="">
+					<a href="#" class="dropdown-toggle">
+						<i class="menu-icon fa fa-cog"></i>
+						<span class="menu-text">General Setting </span>
+						<b class="arrow fa fa-angle-down"></b>
+					</a>
+					<b class="arrow"></b>
+					<ul class="submenu">
+						<li class="">
+							<a href="<?php echo base_url('C_general_setting/welcome_speech'); ?>">
+								<i class="menu-icon fa fa-caret-right"></i>
+								Welcome Speech
+							</a>
+							<b class="arrow"></b>
+						</li>
+						<li class="">
+							<a href="<?php echo base_url('C_general_setting/nomor'); ?>">
+								<i class="menu-icon fa fa-caret-right"></i>
+								Nomor Dokumen
+							</a>
+							<b class="arrow"></b>
+						</li>
+						<li class="">
+							<a href="<?php echo base_url('C_general_setting/format_dokumen'); ?>">
+								<i class="menu-icon fa fa-caret-right"></i>
+								Format Dokumen
+							</a>
+							<b class="arrow"></b>
+						</li>
+						<li class="">
+							<a href="<?php echo base_url('C_general_setting/sharelink'); ?>">
+								<i class="menu-icon fa fa-caret-right"></i>
+								Sharelink
+							</a>
+							<b class="arrow"></b>
+						</li>
+						<li class="">
+							<a href="<?php echo base_url('C_general_setting/watermark'); ?>">
+								<i class="menu-icon fa fa-caret-right"></i>
+								Watermark
+							</a>
+							<b class="arrow"></b>
+						</li>
+					</ul>
+				</li>
 				<?php } ?>
 
 				<li class="">
@@ -307,151 +333,200 @@ $count_notification = $count_notification + $count_news;
 					</a>
 					<b class="arrow"></b>
 				</li>
-				
+
 			</ul><!-- /.nav-list -->
 		</div>
 
 		<div class="main-content">
 			<div class="main-content-inner">
 				<div class="page-content">
-					<!------------------------------------------------------------------------------------------------->
-					<!-- PAGE CONTENT BEGINS -->
-					<!------------------------------------------------------------------------------------------------->
 					<div class="row">
-						<!-- ??? -->
-					</div>
-					<div class="row">
-						<div class="col-xs-12 col-sm-12 col-md-12 col-lg-6 col-xl-6">
-							<div id="accordion" class="accordion-style1 panel-group">
-								<div class="panel panel-default">
-									<div class="panel-heading">
-										<h4 class="panel-title">
-											<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_new_data">
-												<i class="ace-icon fa fa-angle-right bigger-110" data-icon-hide="ace-icon fa fa-angle-down" data-icon-show="ace-icon fa fa-angle-right"></i>
-												&nbsp;Tambah Data&nbsp;>&nbsp;Struktur Dokumen
-											</a>
-										</h4>
-									</div>
-									<div class="panel-collapse collapse in" id="collapse_new_data">
-										<div class="panel-body">
-											<form class="form-horizontal" id="form_new_data" name="form_new_data" action="<?php echo base_url('C_setting_structure_document'); ?>" method="post" enctype="multipart/form-data">
-												<div class="form-group">
-													<label for="si_code" class="col-sm-4 control-label" style="text-align:left">Kode Sumber</label>
-													<div class="col-sm-8">
-														<input type="text" id="si_code" name="si_code" placeholder="Parent Code" class="form-control" required/>
-													</div>
-												</div>
-												<div class="form-group">
-													<label for="si_order_no" class="col-sm-4 control-label" style="text-align:left">Nomor Order</label>
-													<div class="col-sm-8">
-														<input type="number" id="si_order_no" name="si_order_no" placeholder="Order No" class="form-control" required/>
-													</div>
-												</div>
-												<div class="form-group">
-													<label for="si_doc_desc" class="col-sm-4 control-label" style="text-align:left">Deskripsi Dokumen</label>
-													<div class="col-sm-8">
-														<textarea type="text" name="si_doc_desc" id="si_doc_desc" rows="3" class="form-control" required></textarea>
-													</div>
-												</div>
-												<div class="form-group">
-													<label for="si_doc_name" class="col-sm-4 control-label" style="text-align:left">Nama Dokumen</label>
-													<div class="col-sm-8">
-														<input type="text" id="si_doc_name" name="si_doc_name" placeholder="Doc Name" class="form-control" required/>
-													</div>
-												</div>
-												<div class="form-group">
-													<label for="si_value" class="col-sm-4 control-label" style="text-align:left">Isi</label>
-													<div class="col-sm-8">
-														<input type="text" id="si_value" name="si_value" placeholder="Value" class="form-control" required/>
-													</div>
-												</div>
-												<div class="form-group">
-													<label for="si_revise" class="col-sm-4 control-label" style="text-align:left">Dapat Di Revisi</label>
-													<div class="col-sm-8">
-														<div class="checkbox">
-															<label>
-																<input id="si_revise" name="si_revise" type="checkbox" class="ace" />
-																<span class="lbl"></span>
-															</label>
-														</div>
-													</div>
-												</div>
-												<div class="form-group">
-													<label for="si_mandatory" class="col-sm-4 control-label" style="text-align:left">Wajib</label>
-													<div class="col-sm-8">
-														<div class="checkbox">
-															<label>
-																<input id="si_mandatory" name="si_mandatory" type="checkbox" class="ace" />
-																<span class="lbl"></span>
-															</label>
-														</div>
-													</div>
-												</div>
-												<div class="form-group">
-													<label for="si_active" class="col-sm-4 control-label" style="text-align:left">Aktif</label>
-													<div class="col-sm-8">
-														<div class="checkbox">
-															<label>
-																<input id="si_active" name="si_active" type="checkbox" class="ace" />
-																<span class="lbl"></span>
-															</label>
-														</div>
-													</div>
-												</div>
-												<div class="form-group">
-													<label for="si_watermark_text" class="col-sm-4 control-label" style="text-align:left">Label Watermark</label>
-													<div class="col-sm-8">
-														<input type="text" id="si_watermark_text" name="si_watermark_text" placeholder="Value" class="form-control" required/>
-													</div>
-												</div>
-												<div class="form-group">
-													<div class="widget-box">
-														<div class="widget-header">
-															<h4 class="widget-title">Upload Ikon</h4>
-														</div>
-														<div class="widget-body">
-															<div class="widget-main">
-																<div class="form-group">
-																	<div class="col-xs-12">
-																		<input multiple="" type="file" id="upload_file_input" name="upload_file_input" />
-																	</div>
-																</div>
-															</div>
-														</div>
-													</div>
-												</div>
-												
-												<button type="submit" id="btn_new" name="btn_new" class="ace-icon fa fa-save btn btn-success btn-sm"></button>
-											</form>
-											<br />
-											<div class="col-12">
-												<button type="submit" id="btn_delete" name="btn_delete" class="ace-icon fa fa-trash pull-right btn btn-danger btn-sm"></button>
-											</div>
-											<div class="col-12">
-												<button type="submit" id="btn_update" name="btn_update" class="ace-icon fa fa-pencil pull-right btn btn-success btn-sm"></button>
-											</div>
-											
-										</div>
-									</div>
-								</div>
+						<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">	
+							<div class="alert alert-info" style="margin-bottom:0px;">
+								Struktur Dokumen <br/><br/>
+								<select id="activega">
+									<option value="1" selected>Active</option>
+									<option value="0">Non Active</option>
+								</select>
+								<button data-toggle="modal" data-target="#modal-tambah" class="btn btn-success btn-sm" style="float:right;margin-top:-5px;">Tambah</button>
 							</div>
+							<table id="dynamic-table" class="table table-striped table-bordered table-hover" style="cursor:pointer">
+								<thead>
+									<tr>
+										<th>No</th>
+										<th>Kategori</th>
+										<th>Jenis</th>
+										<th>Tipe</th>
+										<th>Watermark</th>
+										<th colspan="2" style="text-align:center;"><i class="fa fa-gears"></i></th>
+									</tr>
+								</thead>
+								<tbody id="1">
+									<?php
+									$is_continue = true;
+									$no = 1;
+									$get_data = $this->M_admin_setting->GET_STRUKTUR_DOKUMEN_ALL();
+									if(empty($get_data)||$get_data==""){
+										$is_continue = false;
+									}
+									?>
+									
+									<?php
+									if($is_continue){
+										foreach($get_data as $data_row){
+									?>
+									<tr>
+										<td><?= $no; ?></td>
+										<td><?php echo $data_row->DTSEKI_KATEGORI; ?></td>
+										<td><?php echo $data_row->DTSEJS_JENIS; ?></td>
+										<td><?php echo $data_row->DTSETE_TIPE; ?></td>
+										<td><?php echo $data_row->WATERMARK; ?></td>
+										<td style="text-align:center;"><a class="btn-link fa fa-edit" href="<?=base_url('C_setting_structure_document/edit/'.$data_row->DTSETE_ID);?>" style="color:black;"></a></td>
+										<td style="text-align:center;"><a class="btn-link fa fa-trash" href="<?=base_url('C_setting_structure_document/disable/'.$data_row->DTSETE_ID);?>" style="color:black;"></a></td>
+									</tr>
+									<?php
+									 $no++;
+										}
+									}
+									?>
+									
+								</tbody>
+							</table>
 						</div>
-						<div class="col-xs-12 col-sm-12 col-md-12 col-lg-3 col-xl-3"></div>
-						<div class="col-xs-12 col-sm-12 col-md-12 col-lg-3 col-xl-3"></div>
-					</div>
-					<!------------------------------------------------------------------------------------------------->
-					<!-- PAGE CONTENT ENDS -->
-					<!------------------------------------------------------------------------------------------------->
+					</div><!-- ROW -->
 				</div><!-- /.page-content -->
 			</div>
 		</div><!-- /.main-content -->
-
-		<div class="footer"></div>
-
-		<a href="#" id="btn-scroll-up" class="btn-scroll-up btn btn-sm btn-inverse">
-			<i class="ace-icon fa fa-angle-double-up icon-only bigger-110"></i>
-		</a>
 	</div><!-- /.main-container -->
+	<!-- Modal Tambah -->
+	<div id="modal-tambah" class="modal" tabindex="-1">
+		<div class="modal-dialog modal-md">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h5 class="blue bigger">Tambah Data</h5>
+				</div>
+				<div class="modal-body" style="margin: 0 15px">
+					<div class="row">
+						<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
+							<form class="form-horizontal">
+								<div class="form-group">
+									<label for="pilih">Pilih :</label>
+									<select name="pilih" id="pilih" class="form-control" required>
+										<option value="">Pilih</option>
+										<option value="kategori">Kategori Dokumen</option>
+										<option value="jenis">Jenis Dokumen</option>
+										<option value="tipe">Tipe Dokumen</option>
+									</select>
+								</div>
+							</form>
+							<!-- Kategori -->
+							<form id="form-kategori" method="POST" action="<?= base_url('C_setting_structure_document/insert_kategori'); ?>" class="form-horizontal hide">
+								<div class="form-group">
+									<label for="kode_kategori">Kode Kategori Dokumen :</label>
+									<input type="text" name="kode" id="kode_kategori" class="form-control" required>
+								</div>
+								<div class="form-group">
+									<label for="nama_kategori">Nama Kategori Dokumen :</label>
+									<input type="text" name="nama" id="nama_kategori" class="form-control" required>
+								</div>
+							</form>
+							<!-- END Kategori -->
+							<!-- jenis -->
+							<form id="form-jenis" method="POST" action="<?= base_url('C_setting_structure_document/insert_jenis'); ?>" class="form-horizontal hide">
+								<div class="form-group">
+									<label for="kode_jenis">Kode Jenis Dokumen :</label>
+									<input type="text" name="kode" id="kode_jenis" class="form-control" required>
+								</div>
+								<div class="form-group">
+									<label for="nama_jenis">Nama Jenis Dokumen :</label>
+									<input type="text" name="nama" id="nama_jenis" class="form-control" required>
+								</div>
+								<div class="form-group">
+									<label for="parent_jenis">Parent :</label>
+									<select name="parent" id="parent_jenis" class="form-control" required>
+										<option value="">Pilih</option>
+										<?php
+										$PARENT_JENIS = $this->M_admin_setting->GET_KATEGORI();
+										foreach ($PARENT_JENIS as $parent_jenis):
+										?>
+										<option value="<?= $parent_jenis->DTSEKI_ID; ?>"><?= $parent_jenis->DTSEKI_KATEGORI; ?></option>
+										<?php endforeach; ?>
+									</select>
+								</div>
+							</form>
+							<!-- END jenis -->
+							<!-- tipe -->
+							<form id="form-tipe" method="POST" action="<?= base_url('C_setting_structure_document/insert_tipe'); ?>" class="form-horizontal hide">
+								<div class="form-group">
+									<label for="kode_tipe">Kode Tipe Dokumen :</label>
+									<input type="text" name="kode" id="kode_tipe" class="form-control" required>
+								</div>
+								<div class="form-group">
+									<label for="nama_tipe">Nama Tipe Dokumen :</label>
+									<input type="text" name="nama" id="nama_tipe" class="form-control" required>
+								</div>
+								<div class="form-group">
+									<label for="parent_tipe">Parent :</label>
+									<select name="parent" id="parent_tipe" class="form-control" required>
+										<option value="">Pilih</option>
+										<?php
+										$PARENT_TIPE = $this->M_admin_setting->GET_JENIS();
+										foreach ($PARENT_TIPE as $parent_tipe):
+										?>
+										<option value="<?= $parent_tipe->DTSEJS_ID; ?>"><?= $parent_tipe->DTSEJS_JENIS; ?></option>
+										<?php endforeach; ?>
+									</select>
+								</div>
+								<div class="form-group">
+									<label for="singkatan">Singkatan :</label>
+									<input type="text" name="singkatan" id="singkatan" class="form-control" required>
+								</div>
+								<!-- <div class="form-group">
+									<label for="rahasia">Standar Kerahasian :</label>
+									<select name="rahasia" id="rahasia" class="form-control" required>
+									<option value="">Pilih</option>
+									<?php
+									$GET_RHS = $this->M_admin_setting->GET_STANDAR_KERAHASIAN();
+									foreach ($GET_RHS as $stdk):
+									?>
+									<option value="<?= $stdk->CL_ID; ?>"><?= $stdk->CL_NAME; ?></option>
+									<?php endforeach; ?>
+									</select>
+								</div>
+								<div class="form-group">
+									<label for="jbl">Minimum Akses Level :</label>
+									<select name="jbl" id="jbl" class="form-control" required>
+									<option value="">Pilih</option>
+									<?php
+									$GET_JBL = $this->M_admin_setting->GET_JOB_LEVEL();
+									foreach ($GET_JBL as $jbl):
+									?>
+									<option value="<?= $jbl->JBLL_ID; ?>"><?= $jbl->JBLL_NAME; ?></option>
+									<?php endforeach; ?>
+									</select>
+								</div> -->
+								<div class="form-group">
+									<label class="checkbox-inline"><input type="checkbox" checked disabled>Mandatory</label>
+									<label class="checkbox-inline"><input type="checkbox" name="active" checked>Aktif</label>
+								</div>
+								<div class="form-group">
+									<label for="watermark">Watermark :</label>
+									<input type="text" name="watermark" id="watermark" class="form-control" required value="Copyright of Bakmi GM">
+								</div>
+							</form>
+							<!-- END tipe -->
+						</div><!-- col -->
+					</div><!-- row -->
+				</div><!-- body -->
+				<div class="modal-footer">
+					<button type="button" data-dismiss="modal" class="btn btn-warning btn-sm" style="float:left;">Cancel</button>
+					<button id="btn-tambah" type="submit" class="btn btn-success btn-sm">Tambah</button>
+				</div><!-- footer -->
+			</div>
+		</div>
+	</div>
+	<!-- END Modal Tambah -->
 	<!------------------------------------------------------------------------------------------------->
 	<!-- JAVA SCRIPT / BOOTSTRAP / ETC -->
 	<!--[if !IE]> -->
@@ -513,9 +588,55 @@ $count_notification = $count_notification + $count_news;
 	<script src="<?php echo base_url('template/backend/assets/js/ace.min.js'); ?>"></script>
 
 	<script src="<?php echo base_url('template/rion/jquery_costum.js'); ?>"></script>
+	<script src="<?php echo base_url('template/backend/assets/js/sweetalert.min.js'); ?>"></script>
+	<?php if ($pesan = $this->session->flashdata('pesan')): ?>
+	<script>
+		swal("Berhasil!", "<?= $pesan; ?>", "success");
+	</script>
+	<?php endif; ?>
+	<?php if ($pesan_gagal = $this->session->flashdata('pesan_gagal')): ?>
+	<script>
+		swal("Gagal!", "<?= $pesan_gagal; ?>", "error");
+	</script>
+	<?php endif; ?>
 	
 	<script type="text/javascript">
 		jQuery(function($) {
+			$('#activega').change(function(){
+				var activega = $('#activega').val();
+				if (activega == '0') {
+					window.location.href = '<?= base_url("C_setting_structure_document/na"); ?>';
+				}
+			});
+			$('#pilih').change(function(){
+				var pilih = $('#pilih').val();
+				if (pilih == 'kategori') {
+					$('#form-kategori').removeClass('hide');
+					$('#form-jenis').addClass('hide');
+					$('#form-tipe').addClass('hide');
+					$('#btn-tambah').click(function() {
+						$('#form-kategori').submit();
+					});
+				}else if(pilih == 'jenis'){
+					$('#form-kategori').addClass('hide');
+					$('#form-jenis').removeClass('hide');
+					$('#form-tipe').addClass('hide');
+					$('#btn-tambah').click(function() {
+						$('#form-jenis').submit();
+					});
+				}else if(pilih == 'tipe'){
+					$('#form-kategori').addClass('hide');
+					$('#form-jenis').addClass('hide');
+					$('#form-tipe').removeClass('hide');
+					$('#btn-tambah').click(function() {
+						$('#form-tipe').submit();
+					});
+				}else{
+					$('#form-kategori').addClass('hide');
+					$('#form-jenis').addClass('hide');
+					$('#form-tipe').addClass('hide');
+				}
+			});
 			//------------------------------------------------------------------------------------------------//
 			//------------------------------------------------------------------------------------------------//
 			//------------------------------------------------------------------------------------------------//
@@ -596,6 +717,16 @@ $count_notification = $count_notification + $count_news;
 					return false;
 				});
 			});
+
+			$.ajax({
+        type: "GET",
+        url: "<?php echo base_url();?>C_notification/getNotification/<?php echo $this->session->userdata("session_bgm_edocument_id");?>/true/",             
+        dataType: "html",   //expect html to be returned                
+        success: function(response){
+					$(".nofication-count").text(JSON.parse(response).length);
+        }
+			});
+			
 			//------------------------------------------------------------------------------------------------//
 			//------------------------------------------------------------------------------------------------//
 			//------------------------------------------------------------------------------------------------//
@@ -1010,91 +1141,91 @@ $count_notification = $count_notification + $count_news;
 			//------------------------------------------------------------------------------------------------//
 			//------------------------------------------------------------------------------------------------//
 			////initiate dataTables plugin
-			//var myTable = 
-			//$('#dynamic-table')
-			////.wrap("<div class='dataTables_borderWrap' />")   //if you are applying horizontal scrolling (sScrollX)
-			//.DataTable( {
-			//	bAutoWidth: false,
-			//	//PLEASE CHECK columns TABLE!!!
-			//	"aoColumns": [
-			//	  null, 
-			//	  null, 
-			//	  null, 
-			//	  null, 
-			//	  null, 
-			//	  null, 
-			//	  { "bSortable": false }
-			//	],
-			//	"aaSorting": [],
-			//	
-			//	//"bProcessing": true,
-			//    //"bServerSide": true,
-			//    //"sAjaxSource": "http://127.0.0.1/table.php"	,
-			//
-			//	//,
-			//	//"sScrollY": "200px",
-			//	//"bPaginate": false,
-			//
-			//	//"sScrollX": "100%",
-			//	//"sScrollXInner": "120%",
-			//	//"bScrollCollapse": true,
-			//	//Note: if you are applying horizontal scrolling (sScrollX) on a ".table-bordered"
-			//	//you may want to wrap the table inside a "div.dataTables_borderWrap" element
-			//
-			//	//"iDisplayLength": 50
-			//
-			//	select: {
-			//		style: 'multi'
-			//	}
-			//} );
-			//
-			//$.fn.dataTable.Buttons.defaults.dom.container.className = 'dt-buttons btn-overlap btn-group btn-overlap';
-			//
-			//new $.fn.dataTable.Buttons( myTable, {
-			//	buttons: [
-			//	  {
-			//		"extend": "colvis",
-			//		"text": "<i class='fa fa-search bigger-110 blue'></i> <span class='hidden'>Show/hide columns</span>",
-			//		"className": "btn btn-white btn-primary btn-bold",
-			//		columns: ':not(:first):not(:last)'
-			//	  },
-			//	  {
-			//		"extend": "copy",
-			//		"text": "<i class='fa fa-copy bigger-110 pink'></i> <span class='hidden'>Copy to clipboard</span>",
-			//		"className": "btn btn-white btn-primary btn-bold"
-			//	  },
-			//	  {
-			//		"extend": "csv",
-			//		"text": "<i class='fa fa-database bigger-110 orange'></i> <span class='hidden'>Export to CSV</span>",
-			//		"className": "btn btn-white btn-primary btn-bold"
-			//	  },
-			//	  {
-			//		"extend": "excel",
-			//		"text": "<i class='fa fa-file-excel-o bigger-110 green'></i> <span class='hidden'>Export to Excel</span>",
-			//		"className": "btn btn-white btn-primary btn-bold"
-			//	  },
-			//	  {
-			//		"extend": "pdf",
-			//		"text": "<i class='fa fa-file-pdf-o bigger-110 red'></i> <span class='hidden'>Export to PDF</span>",
-			//		"className": "btn btn-white btn-primary btn-bold"
-			//	  },
-			//	  {
-			//		"extend": "print",
-			//		"text": "<i class='fa fa-print bigger-110 grey'></i> <span class='hidden'>Print</span>",
-			//		"className": "btn btn-white btn-primary btn-bold",
-			//		autoPrint: false,
-			//		message: 'This print was produced using the Print button for DataTables'
-			//	  }		  
-			//	]
-			//} );
-			//myTable.buttons().container().appendTo( $('.tableTools-container') );
-			//
-			////style the message box
-			//var defaultCopyAction = myTable.button(1).action();
-			//myTable.button(1).action(function (e, dt, button, config) {
-			//	defaultCopyAction(e, dt, button, config);
-			//	$('.dt-button-info').addClass('gritter-item-wrapper gritter-info gritter-center white');
-			//});
+			var myTable = 
+			$('#dynamic-table')
+			//.wrap("<div class='dataTables_borderWrap' />")   //if you are applying horizontal scrolling (sScrollX)
+			.DataTable( {
+				bAutoWidth: false,
+				//PLEASE CHECK columns TABLE!!!
+				"aoColumns": [
+				  null, 
+				  null, 
+				  null, 
+				  null, 
+				  null, 
+				  null, 
+				  { "bSortable": false }
+				],
+				"aaSorting": [],
+				
+				//"bProcessing": true,
+			   //"bServerSide": true,
+			   //"sAjaxSource": "http://127.0.0.1/table.php"	,
+			
+				//,
+				//"sScrollY": "200px",
+				//"bPaginate": false,
+			
+				//"sScrollX": "100%",
+				//"sScrollXInner": "120%",
+				//"bScrollCollapse": true,
+				//Note: if you are applying horizontal scrolling (sScrollX) on a ".table-bordered"
+				//you may want to wrap the table inside a "div.dataTables_borderWrap" element
+			
+				//"iDisplayLength": 50
+			
+				select: {
+					style: 'single'
+				}
+			} );
+			
+			$.fn.dataTable.Buttons.defaults.dom.container.className = 'dt-buttons btn-overlap btn-group btn-overlap';
+			
+			new $.fn.dataTable.Buttons( myTable, {
+				buttons: [
+				  {
+					"extend": "colvis",
+					"text": "<i class='fa fa-search bigger-110 blue'></i> <span class='hidden'>Show/hide columns</span>",
+					"className": "btn btn-white btn-primary btn-bold",
+					columns: ':not(:first):not(:last)'
+				  },
+				  {
+					"extend": "copy",
+					"text": "<i class='fa fa-copy bigger-110 pink'></i> <span class='hidden'>Copy to clipboard</span>",
+					"className": "btn btn-white btn-primary btn-bold"
+				  },
+				  {
+					"extend": "csv",
+					"text": "<i class='fa fa-database bigger-110 orange'></i> <span class='hidden'>Export to CSV</span>",
+					"className": "btn btn-white btn-primary btn-bold"
+				  },
+				  {
+					"extend": "excel",
+					"text": "<i class='fa fa-file-excel-o bigger-110 green'></i> <span class='hidden'>Export to Excel</span>",
+					"className": "btn btn-white btn-primary btn-bold"
+				  },
+				  {
+					"extend": "pdf",
+					"text": "<i class='fa fa-file-pdf-o bigger-110 red'></i> <span class='hidden'>Export to PDF</span>",
+					"className": "btn btn-white btn-primary btn-bold"
+				  },
+				  {
+					"extend": "print",
+					"text": "<i class='fa fa-print bigger-110 grey'></i> <span class='hidden'>Print</span>",
+					"className": "btn btn-white btn-primary btn-bold",
+					autoPrint: false,
+					message: 'This print was produced using the Print button for DataTables'
+				  }		  
+				]
+			} );
+			myTable.buttons().container().appendTo( $('.tableTools-container') );
+			
+			//style the message box
+			var defaultCopyAction = myTable.button(1).action();
+			myTable.button(1).action(function (e, dt, button, config) {
+				defaultCopyAction(e, dt, button, config);
+				$('.dt-button-info').addClass('gritter-item-wrapper gritter-info gritter-center white');
+			});
 			//
 			//var defaultColvisAction = myTable.button(0).action();
 			//myTable.button(0).action(function (e, dt, button, config) {

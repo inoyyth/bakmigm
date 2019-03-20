@@ -1,90 +1,27 @@
 <?php
-//-----------------------------------------------------------------------------------------------//
 defined('BASEPATH') OR exit('No direct script access allowed');
-//-----------------------------------------------------------------------------------------------//
-$SESSION_ID = $this->session->userdata("session_bgm_edocument_id");
-$SESSION_EMAIL = $this->session->userdata("session_bgm_edocument_email");
-
-$SESSION_DIREKTORAT_ID = $this->session->userdata("session_bgm_edocument_direktorat_id");
-$SESSION_DIREKTORAT_NAME = $this->session->userdata("session_bgm_edocument_direktorat_name");
-
-$SESSION_DIVISI_ID = $this->session->userdata("session_bgm_edocument_divisi_id");
-$SESSION_DIVISI_CODE = $this->session->userdata("session_bgm_edocument_divisi_code");
-$SESSION_DIVISI_NAME = $this->session->userdata("session_bgm_edocument_divisi_name");
-
-$SESSION_DEPARTEMENT_ID = $this->session->userdata("session_bgm_edocument_departement_id");
-$SESSION_DEPARTEMENT_CODE = $this->session->userdata("session_bgm_edocument_departement_code");
-$SESSION_DEPARTEMENT_NAME = $this->session->userdata("session_bgm_edocument_departement_name");
-
-$SESSION_ROLES = $this->session->userdata("session_bgm_edocument_roles");
-
-$SESSION_JOB_LEVEL_ID = $this->session->userdata("session_bgm_edocument_job_level_id");
-$SESSION_JOB_LEVEL_NAME = $this->session->userdata("session_bgm_edocument_job_level_name");
-$SESSION_JOB_LEVEL_INDEX = $this->session->userdata("session_bgm_edocument_job_level_index");
-//-----------------------------------------------------------------------------------------------//
+include (APPPATH.'libraries/session_user.php');
+// Tools
 $is_continue = true;
 $count_notification = 0;
 $count_news = 0;
-//-----------------------------------------------------------------------------------------------//
-//NOTIFICATION
-if ($SESSION_ROLES == "PENDISTRIBUSI") {
-	$get_data_ext = $this->M_library_database->DB_GET_SEARCH_DATA_DOCUMENT_ARRAY("","","","","","");
-	if (empty($get_data_ext)) {
-		$is_continue = false;
-	}else{	
-		foreach ($get_data_ext as $data_row_ext) {
-			$DOC_PENDISTRIBUSI = $data_row_ext->DOC_PENDISTRIBUSI;
-			$DI_CODE = $data_row_ext->DI_CODE;
-		}
-		if ($SESSION_DEPARTEMENT_ID==$DOC_PENDISTRIBUSI) {
-			$count_notification = count($get_data_ext);
-		}else{
-			$is_continue = false;
-		}
-	}
-}
-if ($SESSION_ROLES == "ATASAN PENCIPTA") {
-	$get_data_ext = $this->M_library_database->DB_GET_SEARCH_DATA_DOCUMENT_ARRAY("","","","","","");
-	if (empty($get_data_ext)) {
-		$is_continue = false;
-	}else{	
-		foreach ($get_data_ext as $data_row_ext) {
-			$DOC_PENDISTRIBUSI = $data_row_ext->DOC_PENDISTRIBUSI;
-			$DI_CODE = $data_row_ext->DI_CODE;
-		}
-		if ($SESSION_DEPARTEMENT_ID==$DOC_PENDISTRIBUSI||$SESSION_DIVISI_CODE==$DI_CODE) {
-			$count_notification = count($get_data_ext);
-		}else{
-			$is_continue = false;
-		}
-	}
-}
-if($SESSION_ROLES=="PENCIPTA"){
-	//$DOC_ID,$DOC_NOMOR,$DOC_NAMA,$DOC_MAKER,$DOC_APPROVE,$DOC_STATUS,$DN_ID
-	$get_data_ext = $this->M_library_database->DB_GET_SEARCH_DATA_DOCUMENT_ARRAY("","","",$SESSION_ID,"","",$SESSION_DEPARTEMENT_ID);
-	if(empty($get_data_ext)||$get_data_ext==""){
-		$is_continue = false;
-	}else{
-		$count_notification = count($get_data_ext);
-	}
-}
-if($SESSION_ROLES=="PENGGUNA"){
+// Notification
+$get_data_ext = $this->M_notification->GET_NOTIFICATION_NEW($SESSION_ID);
+if (empty($get_data_ext)) {
 	$is_continue = false;
+}else{
+	$count_notification = count($get_data_ext);
 }
-//-----------------------------------------------------------------------------------------------//
-//NEWS
-//$DOC_AKSES_LEVEL,$DOC_PENGGUNA
-$get_data_count = $this->M_library_database->DB_GET_SEARCH_NEWS_DATA_DOCUMENT_ARRAY_EVO($SESSION_JOB_LEVEL_ID,$SESSION_DEPARTEMENT_ID);
+// News
+$get_data_count = $this->M_notification->GET_NEWS_NEW($SESSION_ID);
 if(empty($get_data_count)||$get_data_count==""){
-	//DO NOTHING
+
 }else{
 	$count_news = count($get_data_count);	
 }
-
+// Jumlah Notification
 $count_notification = $count_notification + $count_news;
-//-----------------------------------------------------------------------------------------------//
 ?>
-<!------------------------------------------------------------------------------------------------->
 <!DOCTYPE html>
 <html lang="en">
 <!------------------------------------------------------------------------------------------------->
@@ -179,15 +116,15 @@ $count_notification = $count_notification + $count_news;
 					<br />
 					<i class="menu-icon fa fa-user"></i>
 					<span class="menu-text">
-						<?php echo $SESSION_ID; ?>
+						<?php echo $SESSION_NAME; ?>
 					</span>
 					<br />
 				</div>
 			</div>
 			<ul class="nav nav-list">
-			
+
 				<li class="">
-					<a href="<?php echo base_url('C_recent_history'); ?>">
+					<a href="<?php echo base_url('menu'); ?>">
 						<i class="menu-icon fa fa-history"></i>
 						<span class="menu-text"> Pencarian </span>
 					</a>
@@ -195,7 +132,7 @@ $count_notification = $count_notification + $count_news;
 				</li>
 				
 				<li class="">
-					<a href="<?php echo base_url('C_bookmarks'); ?>">
+					<a href="<?php echo base_url('bookmarks'); ?>">
 						<i class="menu-icon fa fa-bookmark"></i>
 						<span class="menu-text"> Favorit </span>
 					</a>
@@ -206,23 +143,49 @@ $count_notification = $count_notification + $count_news;
 				$SESSION_ROLES=="PENGGUNA"||
 				$SESSION_ROLES=="PENCIPTA"||
 				$SESSION_ROLES=="PENDISTRIBUSI"||
-				$SESSION_ROLES=="ATASAN PENCIPTA"
+				$SESSION_ROLES=="ATASAN PENCIPTA" ||
+
+				$SESSION_ROLES_2=="PENGGUNA"||
+				$SESSION_ROLES_2=="PENCIPTA"||
+				$SESSION_ROLES_2=="PENDISTRIBUSI"||
+				$SESSION_ROLES_2=="ATASAN PENCIPTA" ||
+
+				$SESSION_ROLES_3=="PENGGUNA"||
+				$SESSION_ROLES_3=="PENCIPTA"||
+				$SESSION_ROLES_3=="PENDISTRIBUSI"||
+				$SESSION_ROLES_3=="ATASAN PENCIPTA" ||
+
+				$SESSION_ROLES_4=="PENGGUNA"||
+				$SESSION_ROLES_4=="PENCIPTA"||
+				$SESSION_ROLES_4=="PENDISTRIBUSI"||
+				$SESSION_ROLES_4=="ATASAN PENCIPTA" ||
+
+				$SESSION_ROLES_5=="PENGGUNA"||
+				$SESSION_ROLES_5=="PENCIPTA"||
+				$SESSION_ROLES_5=="PENDISTRIBUSI"||
+				$SESSION_ROLES_5=="ATASAN PENCIPTA"
 				){ ?>
 				<li class="">
-					<a href="<?php echo base_url('C_notification'); ?>">
+					<a href="<?php echo base_url('notification'); ?>">
 						<i class="menu-icon fa fa-exclamation"></i>
 						<span class="menu-text">
 							Aktifitas
-							<span class="badge badge-primary"><?php echo $count_notification; ?></span>
+							<span class="badge badge-primary nofication-count"></span>
 						</span>
 					</a>
 					<b class="arrow"></b>
 				</li>
 				<?php } ?>
 				
-				<?php if($SESSION_ROLES=="PENCIPTA"){ ?>
+				<?php if(
+				$SESSION_ROLES=="PENCIPTA" ||
+				$SESSION_ROLES_2=="PENCIPTA" ||
+				$SESSION_ROLES_3=="PENCIPTA" ||
+				$SESSION_ROLES_4=="PENCIPTA" ||
+				$SESSION_ROLES_5=="PENCIPTA"
+				){ ?>
 				<li class="">
-					<a href="<?php echo base_url('C_contribution'); ?>">
+					<a href="<?php echo base_url('contribution'); ?>">
 						<i class="menu-icon fa fa-database"></i>
 						<span class="menu-text"> Kontribusi </span>
 					</a>
@@ -232,10 +195,22 @@ $count_notification = $count_notification + $count_news;
 				
 				<?php if(
 				$SESSION_ROLES=="PENCIPTA"||
-				$SESSION_ROLES=="ADMIN DOKUMEN"
+				$SESSION_ROLES=="ADMIN DOKUMEN"||
+
+				$SESSION_ROLES_2=="PENCIPTA"||
+				$SESSION_ROLES_2=="ADMIN DOKUMEN"||
+
+				$SESSION_ROLES_3=="PENCIPTA"||
+				$SESSION_ROLES_3=="ADMIN DOKUMEN"||
+
+				$SESSION_ROLES_4=="PENCIPTA"||
+				$SESSION_ROLES_4=="ADMIN DOKUMEN"||
+
+				$SESSION_ROLES_5=="PENCIPTA"||
+				$SESSION_ROLES_5=="ADMIN DOKUMEN"
 				){ ?>
 				<li class="">
-					<a href="<?php echo base_url('C_report'); ?>">
+					<a href="<?php echo base_url('report'); ?>">
 						<i class="menu-icon fa fa-database"></i>
 						<span class="menu-text"> Laporan </span>
 					</a>
@@ -243,8 +218,14 @@ $count_notification = $count_notification + $count_news;
 				</li>
 				<?php } ?>
 
-				<?php if($SESSION_ROLES=="ADMIN KONFIGURASI"){ ?>
-				<li class="active open">
+				<?php if(
+				$SESSION_ROLES=="ADMIN KONFIGURASI"||
+				$SESSION_ROLES_2=="ADMIN KONFIGURASI"||
+				$SESSION_ROLES_3=="ADMIN KONFIGURASI"||
+				$SESSION_ROLES_4=="ADMIN KONFIGURASI"||
+				$SESSION_ROLES_5=="ADMIN KONFIGURASI"
+				){ ?>
+				<li class="">
 					<a href="#" class="dropdown-toggle">
 						<i class="menu-icon fa fa-cog"></i>
 						<span class="menu-text"> Setting </span>
@@ -252,7 +233,7 @@ $count_notification = $count_notification + $count_news;
 					</a>
 					<b class="arrow"></b>
 					<ul class="submenu">
-						<li class="active">
+						<li class="">
 							<a href="<?php echo base_url('C_setting_data_master'); ?>">
 								<i class="menu-icon fa fa-caret-right"></i>
 								Data Master
@@ -276,14 +257,14 @@ $count_notification = $count_notification + $count_news;
 						<li class="">
 							<a href="<?php echo base_url('C_setting_structure_document'); ?>">
 								<i class="menu-icon fa fa-caret-right"></i>
-								Aturan Bisnis
+								Struktur Dokumen
 							</a>
 							<b class="arrow"></b>
 						</li>
 						<li class="">
 							<a href="<?php echo base_url('C_setting_business_rule'); ?>">
 								<i class="menu-icon fa fa-caret-right"></i>
-								Bisnis Rule
+								Aturan Bisnis
 							</a>
 							<b class="arrow"></b>
 						</li>
@@ -291,6 +272,51 @@ $count_notification = $count_notification + $count_news;
 							<a href="<?php echo base_url('C_setting_document_level_access'); ?>">
 								<i class="menu-icon fa fa-caret-right"></i>
 								Tingkat Akses Dokumen
+							</a>
+							<b class="arrow"></b>
+						</li>
+					</ul>
+				</li>
+				<li class="">
+					<a href="#" class="dropdown-toggle">
+						<i class="menu-icon fa fa-cog"></i>
+						<span class="menu-text">General Setting </span>
+						<b class="arrow fa fa-angle-down"></b>
+					</a>
+					<b class="arrow"></b>
+					<ul class="submenu">
+						<li class="">
+							<a href="<?php echo base_url('C_general_setting/welcome_speech'); ?>">
+								<i class="menu-icon fa fa-caret-right"></i>
+								Welcome Speech
+							</a>
+							<b class="arrow"></b>
+						</li>
+						<li class="">
+							<a href="<?php echo base_url('C_general_setting/nomor'); ?>">
+								<i class="menu-icon fa fa-caret-right"></i>
+								Nomor Dokumen
+							</a>
+							<b class="arrow"></b>
+						</li>
+						<li class="">
+							<a href="<?php echo base_url('C_general_setting/format_dokumen'); ?>">
+								<i class="menu-icon fa fa-caret-right"></i>
+								Format Dokumen
+							</a>
+							<b class="arrow"></b>
+						</li>
+						<li class="">
+							<a href="<?php echo base_url('C_general_setting/sharelink'); ?>">
+								<i class="menu-icon fa fa-caret-right"></i>
+								Sharelink
+							</a>
+							<b class="arrow"></b>
+						</li>
+						<li class="">
+							<a href="<?php echo base_url('C_general_setting/watermark'); ?>">
+								<i class="menu-icon fa fa-caret-right"></i>
+								Watermark
 							</a>
 							<b class="arrow"></b>
 						</li>
@@ -305,167 +331,78 @@ $count_notification = $count_notification + $count_news;
 					</a>
 					<b class="arrow"></b>
 				</li>
-				
+
 			</ul><!-- /.nav-list -->
 		</div>
 
 		<div class="main-content">
 			<div class="main-content-inner">
 				<div class="page-content">
-					<!------------------------------------------------------------------------------------------------->
-					<!-- PAGE CONTENT BEGINS -->
-					<!------------------------------------------------------------------------------------------------->
 					<div class="row">
-						<!-- ??? -->
-					</div>
-					<div class="row">
-						<div class="col-xs-12 col-sm-12 col-md-12 col-lg-6 col-xl-6">
-							<div id="accordion" class="accordion-style1 panel-group">
-								<div class="panel panel-default">
-									<div class="panel-heading">
-										<h4 class="panel-title">
-											<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_new_data">
-												<i class="ace-icon fa fa-angle-right bigger-110" data-icon-hide="ace-icon fa fa-angle-down" data-icon-show="ace-icon fa fa-angle-right"></i>
-												&nbsp;Tambah Data&nbsp;>&nbsp;Data Master
-											</a>
-										</h4>
-									</div>
-									<div class="panel-collapse collapse in" id="collapse_new_data">
-										<div class="panel-body">
-											<form class="form-horizontal" id="form_new_data" name="form_new_data" action="<?php echo base_url('C_setting_data_master/insert'); ?>" method="post" enctype="multipart/form-data">
-												<div class="form-group">
-													<label for="si_kode_master" class="col-sm-4 control-label" style="text-align:left">Kode Master</label>
-													<div class="col-sm-8">
-														<input type="text" id="si_kode_master" name="si_kode_master" placeholder="Kode Master" class="form-control" maxlength="20" required="required">
-													</div>
-												</div>
-												<div class="form-group">
-													<label for="si_tabel" class="col-sm-4 control-label" style="text-align:left">Nama Tabel</label>
-													<div class="col-sm-8">
-														<input type="text" id="si_tabel" name="si_tabel" placeholder="Nama Tabel" class="form-control" maxlength="20" required="required">
-													</div>
-												</div>
-												<div class="form-group">
-													<label for="si_label" class="col-sm-4 control-label" style="text-align:left">Label</label>
-													<div class="col-sm-8">
-														<input type="text" id="si_label" name="si_label" placeholder="Label" class="form-control" maxlength="20" required="required">
-													</div>
-												</div>
-												<div class="form-group">
-													<label for="si_master_type" class="col-sm-4 control-label" style="text-align:left">Master Type</label>
-													<div class="col-sm-8">
-														<select id="si_master_type" name="si_master_type" class="form-control" required="required">
-															<option value="">Pilih</option>
-															<option value="TEXT">TEXT</option>
-															<option value="INTEGER">INTEGER</option>
-															<option value="FORMULA">FORMULA</option>
-														</select>
-													</div>
-												</div>
-												<div class="form-group">
-													<label for="si_formula" class="col-sm-4 control-label" style="text-align:left">Formula</label>
-													<div class="col-sm-8">
-														<input type="text" id="si_formula" name="si_formula" placeholder="Formula" class="form-control">
-													</div>
-												</div>
-												<div class="form-group">
-													<label for="si_formula_use" class="col-sm-4 control-label" style="text-align:left">Digunakan Pada Formulir</label>
-													<div class="col-sm-8">
-														<select id="si_formula_use" name="si_formula_use" class="form-control" required>
-															<option value="">Pilih</option>
-															<option value="FORM001">FORM001</option>
-														</select>
-													</div>
-												</div>
-												<div class="form-group">
-													<label for="si_order_number" class="col-sm-4 control-label" style="text-align:left">Nomor Order</label>
-													<div class="col-sm-8">
-														<input type="number" id="si_order_number" name="si_order_number" placeholder="Order Number" class="form-control" required="required">
-													</div>
-												</div>
-												
-												<input type="hidden" id="si_userid" name="si_userid" value="<?php echo $SESSION_ID; ?>" class="form-control" required/>
-												
-												<button type="submit" id="btn_new" name="btn_new" class="ace-icon fa fa-save btn btn-success btn-sm"></button>
-											</form>
-										</div>
-									</div>
+						<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 col-xl-6">
+							<div class="panel panel-warning">
+								<div class="panel-heading">
+									<h4 class="panel-title">
+										Data Master
+									</h4>
+								</div>
+								<div class="list-group">
+									<a href="<?= base_url('C_setting_data_master/group_proses');?>" class="list-group-item list-group-item-action">
+										Group Proses (5M)
+									</a>
+									<a href="<?= base_url('C_setting_data_master/proses');?>" class="list-group-item list-group-item-action">
+										Proses
+									</a>
+									<a href="<?= base_url('C_setting_data_master/wujud_dokumen');?>" class="list-group-item list-group-item-action">
+										Wujud Dokumen Master
+									</a>
+									<a href="<?= base_url('C_setting_data_master/metode_distribusi');?>" class="list-group-item list-group-item-action">
+										Metode Distribusi
+									</a>
+									<a href="<?= base_url('C_setting_data_master/kerahasiaan');?>" class="list-group-item list-group-item-action">
+										Standard Kerahasiaan
+									</a>
+									<a href="<?= base_url('C_setting_data_master/priode_review');?>" class="list-group-item list-group-item-action">
+										Periode Review
+									</a>
 								</div>
 							</div>
 						</div>
-						<div class="col-xs-12 col-sm-12 col-md-12 col-lg-3 col-xl-3"></div>
-						<div class="col-xs-12 col-sm-12 col-md-12 col-lg-3 col-xl-3"></div>
+						<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 col-xl-6">
+							<div class="panel panel-warning">
+								<div class="panel-heading">
+									<h4 class="panel-title">
+										Tambah Data Master
+									</h4>
+								</div>
+								<form action="<?= base_url('C_setting_data_master/insert'); ?>" method="POST" style="margin:10px 10px;">
+									<div class="form-group">
+										<label for="tipe">Tipe Data Master</label>
+										<select name="tipe" id="tipe" class="form-control" required>
+											<option value="">Pilih</option>
+											<option value="Group Proses (5M)">Group Proses (5M)</option>
+											<option value="Proses">Proses</option>
+											<option value="Wujud Dokumen Master">Wujud Dokumen Master</option>
+											<option value="Metode Distribusi">Metode Distribusi</option>
+											<option value="Standard Kerahasiaan">Standard Kerahasiaan</option>
+											<option value="Periode Review">Periode Review</option>
+										</select>
+									</div>
+									<div class="form-group">
+										<label for="id">ID</label>
+										<input type="text" name="id" id="id" class="form-control" required>
+									</div>
+									<div class="form-group">
+										<label for="nama">Nama</label>
+										<input type="text" name="nama" id="nama" class="form-control" required>
+									</div>
+									<div class="form-group" align="right">
+										<input type="submit" class="btn btn-sm btn-primary" value="Tambah Data">
+									</div>
+								</form>
+							</div>
+						</div>
 					</div>
-					<div class="row">
-						<table id="dynamic-table" class="table table-striped table-bordered table-hover">
-							<thead>
-								<tr>
-									<th>Kode Master</th>
-									<th>Nama Tabel</th>
-									<th>Label</th>
-									<th>Formula</th>
-									<th>Tgl Perbaharuan</th>
-									<th>Userid</th>
-									<th>Aksi</th>
-								</tr>
-							</thead>
-							<tbody>
-								<?php
-								$is_continue = true;
-								$get_data = $this->M_library_database->DB_GET_DATA_MASTER_ARRAY();
-								if(empty($get_data)||$get_data==""){
-									$is_continue = false;
-								}
-								?>
-								
-								<?php
-								if($is_continue){
-									foreach($get_data as $data_row){
-								?>
-								<tr>
-									<td><?php echo $data_row->MR_ID; ?></td>
-									<td><?php echo $data_row->MR_TABLE; ?></td>
-									<td><?php echo $data_row->MR_LABEL; ?></td>
-									<td><?php echo $data_row->MR_FORMULA; ?></td>
-									<td><?php echo $data_row->MR_DATE; ?></td>
-									<td><?php echo $data_row->UR_ID; ?></td>
-									
-									<td>
-										<form id="form_tool_table[]" name="form_tool_table[]" action="<?php echo base_url('C_setting_data_master/tool_table'); ?>" method="post" enctype="multipart/form-data">
-											<input type="hidden" id="si_tool_table_key[]" name="si_tool_table_key[]" value="<?php echo $data_row->MR_ID; ?>" class="form-control" required/>
-											<div class="hidden-sm hidden-xs action-buttons">
-												<button type="submit" id="btn_delete[]" name="btn_delete[]" class="btn btn-danger btn-xs" onclick="return confirm('ARE YOU SURE, DELETE THIS DATA ?')">
-													<i class="ace-icon fa fa-trash bigger-110 icon-only"></i>
-												</button>
-											</div>
-											<div class="hidden-md hidden-lg">
-												<div class="inline pos-rel">
-													<button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown" data-position="auto">
-														<i class="ace-icon fa fa-caret-down icon-only bigger-120"></i>
-													</button>
-													<ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
-														<li>
-															<button type="submit" id="btn_delete[]" name="btn_delete[]" class="btn btn-danger btn-xs" onclick="return confirm('ARE YOU SURE, DELETE THIS DATA ?')">
-																<i class="ace-icon fa fa-trash bigger-110 icon-only"></i>
-															</button>
-														</li>
-													</ul>
-												</div>
-											</div>
-										</form>
-									</td>
-								</tr>
-								<?php
-									}
-								}
-								?>
-								
-							</tbody>
-						</table>
-					</div>
-					<!------------------------------------------------------------------------------------------------->
-					<!-- PAGE CONTENT ENDS -->
-					<!------------------------------------------------------------------------------------------------->
 				</div><!-- /.page-content -->
 			</div>
 		</div><!-- /.main-content -->
@@ -620,6 +557,16 @@ $count_notification = $count_notification + $count_news;
 					return false;
 				});
 			});
+
+			$.ajax({
+        type: "GET",
+        url: "<?php echo base_url();?>C_notification/getNotification/<?php echo $this->session->userdata("session_bgm_edocument_id");?>/true/",             
+        dataType: "html",   //expect html to be returned                
+        success: function(response){
+					$(".nofication-count").text(JSON.parse(response).length);
+        }
+			});
+			
 			//------------------------------------------------------------------------------------------------//
 			//------------------------------------------------------------------------------------------------//
 			//------------------------------------------------------------------------------------------------//
@@ -1030,43 +977,12 @@ $count_notification = $count_notification + $count_news;
 				$('.limiterBox,.autosizejs').remove();
 				$('.daterangepicker.dropdown-menu,.colorpicker.dropdown-menu,.bootstrap-datetimepicker-widget.dropdown-menu').remove();
 			});
-			//------------------------------------------------------------------------------------------------//
-			//------------------------------------------------------------------------------------------------//
-			//------------------------------------------------------------------------------------------------//
 			//initiate dataTables plugin
 			var myTable = 
 			$('#dynamic-table')
-			//.wrap("<div class='dataTables_borderWrap' />")   //if you are applying horizontal scrolling (sScrollX)
 			.DataTable( {
 				bAutoWidth: false,
-				//PLEASE CHECK columns TABLE!!!
-				"aoColumns": [
-				  null, 
-				  null, 
-				  null, 
-				  null, 
-				  null, 
-				  null, 
-				  { "bSortable": false }
-				],
 				"aaSorting": [],
-				
-				//"bProcessing": true,
-			    //"bServerSide": true,
-			    //"sAjaxSource": "http://127.0.0.1/table.php"	,
-			
-				//,
-				//"sScrollY": "200px",
-				//"bPaginate": false,
-			
-				//"sScrollX": "100%",
-				//"sScrollXInner": "120%",
-				//"bScrollCollapse": true,
-				//Note: if you are applying horizontal scrolling (sScrollX) on a ".table-bordered"
-				//you may want to wrap the table inside a "div.dataTables_borderWrap" element
-			
-				//"iDisplayLength": 50
-			
 				select: {
 					style: 'multi'
 				}

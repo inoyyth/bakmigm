@@ -5,16 +5,109 @@ class C_notification extends CI_Controller {
 	{
         parent::__construct();
 		if($this->session->userdata('session_bgm_edocument_status') != "LOGIN"){
-			redirect(base_url(""));
+			redirect(base_url());
 		}
+		$SESSION_ID = $this->session->userdata("session_bgm_edocument_id");
+        $SESSION_NAME = $this->session->userdata("session_bgm_edocument_name");
+        $SESSION_EMAIL = $this->session->userdata("session_bgm_edocument_email");
+
+        $SESSION_DIREKTORAT_ID = $this->session->userdata("session_bgm_edocument_direktorat_id");
+        $SESSION_DIREKTORAT_NAME = $this->session->userdata("session_bgm_edocument_direktorat_name");
+
+        $SESSION_DIVISI_ID = $this->session->userdata("session_bgm_edocument_divisi_id");
+        $SESSION_DIVISI_CODE = $this->session->userdata("session_bgm_edocument_divisi_code");
+        $SESSION_DIVISI_NAME = $this->session->userdata("session_bgm_edocument_divisi_name");
+
+        $SESSION_DEPARTEMENT_ID = $this->session->userdata("session_bgm_edocument_departement_id");
+        $SESSION_DEPARTEMENT_CODE = $this->session->userdata("session_bgm_edocument_departement_code");
+        $SESSION_DEPARTEMENT_NAME = $this->session->userdata("session_bgm_edocument_departement_name");
+
+        $SESSION_ROLES = $this->session->userdata("session_bgm_edocument_roles");
+        $SESSION_ROLES_2 = $this->session->userdata("session_bgm_edocument_roles_2");
+        $SESSION_ROLES_3 = $this->session->userdata("session_bgm_edocument_roles_3");
+        $SESSION_ROLES_4 = $this->session->userdata("session_bgm_edocument_roles_4");
+        $SESSION_ROLES_5 = $this->session->userdata("session_bgm_edocument_roles_5");
+
+        $SESSION_JOB_LEVEL_ID = $this->session->userdata("session_bgm_edocument_job_level_id");
+        $SESSION_JOB_LEVEL_NAME = $this->session->userdata("session_bgm_edocument_job_level_name");
+		$SESSION_JOB_LEVEL_INDEX = $this->session->userdata("session_bgm_edocument_job_level_index");
+		$SESSION_ORG_PARENT = $this->session->userdata("session_bgm_edocument_org_parent");
     }
 
 	public function index()
 	{
-		$this->load->view('V_notification');
+		$nip  = $_SESSION['session_bgm_edocument_id'];
+		$data['notification'] = $this->getNotification($nip);
+		$data['news'] = $this->__getNews($nip, false);
+		$this->load->view('V_notification', $data);
+	}
+
+	public function getNotification($nip, $is_ajax = false){
+		$user_dept = $_SESSION['session_bgm_edocument_departement_id'];
+		$org = $_SESSION['session_bgm_edocument_org_parent'];
+		
+		$query_is_pendistribusi = $this->db
+				 ->select('*')
+				 ->from('tb_document_notification')
+				 ->where(array('PENDISTRIBUSI' => $user_dept))
+				 ->get()->result_array();
+		$query_is_pemilik = $this->db
+				 ->select('*')
+				 ->from('tb_document_notification')
+				 ->where(array('PEMILIK' => $user_dept))
+				 ->get()->result_array();
+		$query_is_pengguna = $this->db
+				 ->select('*')
+				 ->from('tb_document_notification')
+				 ->like(array('PENGGUNA' => $user_dept))
+				 ->get()->result_array();
+		$query_is_atasan = $this->db
+				 ->select('*')
+				 ->from('tb_departemen')
+				 ->where(array('DI_ID' => $user_dept))
+				 ->get()->result_array();
+		$data = [];
+		if (count($query_is_pendistribusi) > 0 || count($query_is_pemilik) > 0 || count($query_is_pengguna)) {
+			$data = array_merge($query_is_pendistribusi,$query_is_pemilik,$query_is_pengguna);
+			$data = array_unique($data,SORT_REGULAR);
+			$new_data = array();
+			foreach ($data as $k=>$v) {
+				$cek_doc_history = $this->db->select('*')->from('tb_notification_history')->where(array('USER_ID' => $nip, 'DOC_ID' => $v['DOC_ID']))->get()->result_array();
+				if (count($cek_doc_history) == 0) {
+					$qr = $this->db->select('*')->from('tb_document')
+							->join('tb_document_notification', 'tb_document_notification.DOC_ID = tb_document.DOC_ID')
+							->join('tb_document_detail', 'tb_document.DOC_ID = tb_document_detail.DOC_ID', 'left')
+							->join('tb_document_structure_kategori', 'tb_document.DOC_KATEGORI = tb_document_structure_kategori.DTSEKI_ID', 'left')
+							->join('tb_document_structure_jenis', 'tb_document.DOC_JENIS = tb_document_structure_jenis.DTSEJS_ID', 'left')
+							->join('tb_document_structure_tipe', 'tb_document.DOC_TIPE = tb_document_structure_tipe.DTSETE_ID', 'left')
+							->join('tb_document_form', 'tb_document.DOC_WUJUD = tb_document_form.DTFM_ID', 'left')
+							->join('tb_distribution_method', 'tb_document.DOC_DISTRIBUSI = tb_distribution_method.DNMD_ID', 'left')
+							->join('tb_confidential', 'tb_document.DOC_KERAHASIAAN = tb_confidential.CL_ID', 'left')
+							->join('tb_employee', 'tb_document.DOC_MAKER = tb_employee.NIP', 'left')
+							->join('tb_departemen', 'tb_employee.DEPCODE = tb_departemen.DN_ID', 'left outer')
+							->join('tb_divisi', 'tb_departemen.DI_ID = tb_divisi.DI_ID OR tb_employee.DEPCODE = tb_divisi.DI_ID', 'left outer')
+							->join('tb_direktorat', 'tb_divisi.DT_ID = tb_direktorat.DT_ID OR tb_employee.DEPCODE = tb_direktorat.DT_ID', 'left')
+							->where(array('tb_document.DOC_ID'=>$v['DOC_ID']))
+							->get()->row();
+					$new_data[] = $qr;
+				}
+			}
+			if ($is_ajax) {
+				echo json_encode($new_data);
+				return true;
+			}
+			return $new_data;
+		}
+		// var_dump($data);die;
+		return [];
+	}
+
+	private function __getNews($nip) {
+
 	}
 	public function document($docid,$doc)
 	{
+		include (APPPATH.'libraries/session_user.php');
 		$get = $this->M_library_database->DB_GET_DATA_DOCUMENT_DETAIL_BY_ID_EVO($docid);
 		foreach($get as $data_row_doc){
 			$DOCD_UTAMA = $data_row_doc->DOCD_UTAMA;
@@ -30,11 +123,28 @@ class C_notification extends CI_Controller {
 			$STATUS_2 = $data_row_doc->DOCD_PELENGKAP_2_STATUS;
 
 			$DOCD_PERSETUJUAN = $data_row_doc->DOCD_PERSETUJUAN;
+
+			$DOC_STATUS = $data_row_doc->DOC_STATUS;
 		}
+		// var_dump($DOC_STATUS);die;
+		if ($DOC_STATUS == "DIPUBLIKASI" || $DOC_STATUS == "KADALUARSA" || $DOC_STATUS == "DIARSIPKAN") {
+			$data = array(
+				'LogDoc' => $docid,
+				'LogAct' => 'Lihat',
+				'LogUserName' => $SESSION_ID,
+			);
+			$this->db->insert('m_log', $data);
+		}
+		$url['id'] = $docid;
 		if ($doc == $DOCD_UTAMA) {
+			if ($DOC_STATUS == "DIPUBLIKASI" || $DOC_STATUS == "KADALUARSA" || $DOC_STATUS == "DIARSIPKAN") {
+				$this->db->delete('tb_document_news', array('DOC_ID' => $docid, 'UR_ID' => $SESSION_ID));
+			}
+			$url['ket'] = 'Dokumen Utama';
 			$url['url'] = base_url('assets/pdf/'.$DOCD_UTAMA.'.pdf');
 			$url['ext'] = $EXT_UTAMA;
 		}elseif ($doc == $DOCD_PELENGKAP_1) {
+			$url['ket'] = 'Dokumen Pelengkap 1';
 			if ($EXT_1=='pdf' || $EXT_1=='doc' || $EXT_1=='docx' || $EXT_1=='xls' || $EXT_1=='xlsx' || $EXT_1=='ppt' || $EXT_1=='pptx' || $EXT_1=='vsd' || $EXT_1=='vsdx') {
 				$url['url'] = base_url('assets/pdf/'.$DOCD_PELENGKAP_1.'.pdf');
 				$url['ext'] = $EXT_1;
@@ -43,6 +153,7 @@ class C_notification extends CI_Controller {
 				$url['ext'] = $EXT_1;
 			}
 		}else{
+			$url['ket'] = 'Dokumen Pelengkap 2';
 			if ($EXT_2=='pdf' || $EXT_2=='doc' || $EXT_2=='docx' || $EXT_2=='xls' || $EXT_2=='xlsx' || $EXT_2=='ppt' || $EXT_2=='pptx' || $EXT_2=='vsd' || $EXT_2=='vsdx') {
 				$url['url'] = base_url('assets/pdf/'.$DOCD_PELENGKAP_2.'.pdf');
 				$url['ext'] = $EXT_2;
@@ -52,6 +163,520 @@ class C_notification extends CI_Controller {
 			}
 		}
 		$this->load->view('V_document', $url);
+	}
+
+	public function Email_receipt($si_key)
+	{
+		$AdminNo = '';
+		$AdminName = '';
+		include (APPPATH.'libraries/session_user.php');
+		$config = [
+			'useragent' => 'CodeIgniter',
+			'protocol'  => 'smtp',
+			'mailpath'  => '/usr/sbin/sendmail',
+			'smtp_host' => 'ssl://smtp.gmail.com',
+			'smtp_user' => 'akuntest437@gmail.com',
+			'smtp_pass' => 'akuntest123',
+			'smtp_port' => 465,
+			'smtp_keepalive' => TRUE,
+			'smtp_crypto' => 'SSL',
+			'wordwrap'  => TRUE,
+			'wrapchars' => 80,
+			'mailtype'  => 'html',
+			'charset'   => 'utf-8',
+			'validate'  => TRUE,
+			'crlf'      => "\r\n",
+			'newline'   => "\r\n",
+		];
+		$this->load->library('email', $config);
+
+		$get_data = $this->M_contribution->DB_GET_DOC_BY_ID($si_key);
+		foreach ($get_data as $g => $data) {
+			$DOC_ID = $data->DOC_ID;
+			$DOC_NAMA = $data->DOC_NAMA;
+			$DOC_TIPE = $data->DOC_TIPE;
+			$DOC_MAKER = $data->DOC_MAKER;
+			$DOC_APPROVE = $data->DOC_APPROVE;
+		}
+
+		$get_content = $this->db->get_where('m_format', array('nama' => 'Receipt'))->result_array();
+		if (empty($get_content)) {
+			
+		}else{
+			foreach ($get_content as $key => $value) {
+				$no = $value['nomor'];
+				$subject = $value['subject'];
+				$body = $value['isi'];
+			}
+		}
+		$get_tipe = $this->db->get_where('tb_document_structure_tipe', array('DTSETE_ID' => $DOC_TIPE))->result_array();
+		if (empty($get_tipe)) {
+			
+		}else{
+			foreach ($get_tipe as $key => $value) {
+				$singkatan = $value['DTSETE_SINGKATAN'];
+			}
+		}
+		$runing_no = $this->M_contribution->GET_RUNING_NOMOR($no);
+		$get_nomor = $this->db->get_where('m_nomor', array('Code' => $no))->result_array();
+		if (empty($get_nomor)) {
+
+		}else{
+			foreach ($get_nomor as $key => $value) {
+				$field_1 = $value['field_1'];
+				$field_2 = $value['field_2'];
+				$field_3 = $value['field_3'];
+				$field_4 = $value['field_4'];
+				$field_5 = $value['field_5'];
+			}
+			if ($field_1 == 'Table') {
+				$field_1 = $singkatan;
+			}elseif ($field_1 == 'Year') {
+				$field_1 = date('Y');
+			}elseif ($field_1 == 'Month') {
+				$field_1 = date('m');
+			}elseif ($field_1 == 'Delimeter') {
+				$field_1 = '/';
+			}elseif ($field_1 == 'Free Text') {
+				$field_1 = $runing_no;
+			}else{
+				$field_1 = '';
+			}
+
+			if ($field_2 == 'Table') {
+				$field_2 = $singkatan;
+			}elseif ($field_2 == 'Year') {
+				$field_2 = date('Y');
+			}elseif ($field_2 == 'Month') {
+				$field_2 = date('m');
+			}elseif ($field_2 == 'Delimeter') {
+				$field_2 = '/';
+			}elseif ($field_2 == 'Free Text') {
+				$field_2 = $runing_no;
+			}else{
+				$field_2 = '';
+			}
+
+			if ($field_3 == 'Table') {
+				$field_3 = $singkatan;
+			}elseif ($field_3 == 'Year') {
+				$field_3 = date('Y');
+			}elseif ($field_3 == 'Month') {
+				$field_3 = date('m');
+			}elseif ($field_3 == 'Delimeter') {
+				$field_3 = '/';
+			}elseif ($field_3 == 'Free Text') {
+				$field_3 = $runing_no;
+			}else{
+				$field_3 = '';
+			}
+
+			if ($field_4 == 'Table') {
+				$field_4 = $singkatan;
+			}elseif ($field_4 == 'Year') {
+				$field_4 = date('Y');
+			}elseif ($field_4 == 'Month') {
+				$field_4 = date('m');
+			}elseif ($field_4 == 'Delimeter') {
+				$field_4 = '/';
+			}elseif ($field_4 == 'Free Text') {
+				$field_4 = $runing_no;
+			}else{
+				$field_4 = '';
+			}
+
+			if ($field_5 == 'Table') {
+				$field_5 = $singkatan;
+			}elseif ($field_5 == 'Year') {
+				$field_5 = date('Y');
+			}elseif ($field_5 == 'Month') {
+				$field_5 = date('m');
+			}elseif ($field_5 == 'Delimeter') {
+				$field_5 = '/';
+			}elseif ($field_5 == 'Free Text') {
+				$field_5 = $runing_no;
+			}else{
+				$field_5 = '';
+			}
+
+			$nomor = $field_1.$field_2.$field_3.$field_4.$field_5;
+		}
+		$get_pencipta = $this->db->get_where('tb_employee', array('NIP' => $DOC_MAKER))->result_array();
+		if (empty($get_pencipta)) {
+			
+		}else{
+			foreach ($get_pencipta as $key => $value) {
+				$name = $value['FULL_NAME'];
+				$email_pencipta = $value['EMAIL'];
+				$depcode = $value['DEPCODE'];
+			}
+		}
+		$get_atasan = $this->db
+			->select('*')
+			->from('tb_employee')
+			->join('tb_departemen', 'tb_employee.DEPCODE = tb_departemen.DN_ID', 'left')
+			->join('tb_divisi', 'tb_departemen.DI_ID = tb_divisi.DI_ID OR tb_employee.DEPCODE = tb_divisi.DI_ID', 'left')
+			->join('tb_direktorat', 'tb_divisi.DT_ID = tb_direktorat.DT_ID OR tb_employee.DEPCODE = tb_direktorat.DT_ID', 'left')
+			->where('tb_employee.DEPCODE', $depcode)
+			->get()->result_array();
+		foreach ($get_atasan as $key => $value) {
+			$DN = $value['DN_ID'];
+			$DV = $value['DI_ID'];
+			$DT = $value['DT_ID'];
+		}
+		if (!empty($DN)) {
+			$get_atasan = $this->db->get_where('tb_employee', array('DEPCODE' => $DV))->result_array();
+		}else{
+			$get_atasan = $this->db->get_where('tb_employee', array('DEPCODE' => $DT))->result_array();
+		}
+		if (empty($get_atasan)) {
+			
+		}else{
+			foreach ($get_atasan as $key => $value) {
+				$AdminNo = $value['NIP'];
+				$AdminName = $value['FULL_NAME'];
+			}
+		}
+		$get_user = 
+		$this->db->select('*')
+			->from('tb_document_notification')
+			->join('tb_employee', 'tb_document_notification.UR_ID = tb_employee.NIP', 'left')
+			->join('tb_document', 'tb_document_notification.DOC_ID = tb_document.DOC_ID', 'left')
+			->where(array('tb_document_notification.DOC_ID' => $DOC_ID))
+			->get()->result_array();
+		if (empty($get_user)) {
+			
+		}else{
+			foreach ($get_user as $key => $value) {
+				$email[] = $value['EMAIL']; 
+			}
+		}
+
+		$url = base_url();
+		// Hari, Tanggal, Bulan, Tahun, Jam
+		$day = date('D');
+		$dayList = array(
+			'Sun' => 'Minggu',
+			'Mon' => 'Senin',
+			'Tue' => 'Selasa',
+			'Wed' => 'Rabu',
+			'Thu' => 'Kamis',
+			'Fri' => 'Jumat',
+			'Sat' => 'Sabtu'
+		);
+		$hari = $dayList[$day];
+		$tanggal = date('d/M/Y');
+		$bulan = date('M');
+		$tahun = date('Y');
+		$jam = date('H:i')." WIB";
+		// Proses Replace & Subject
+		$AdminNo = "";
+		$AdminName = "";
+		$find = array("/{NomorDok}/","/{NamaDok}/","/{Url}/","/{AdminNo}/","/{AdminName}/","/{Hari}/","/{Tanggal}/","/{Jam}/","/{EmpNo}/","/{EmpName}/");
+		$replace = array($nomor,$DOC_NAMA,$url,$AdminNo,$AdminName,$hari,$tanggal,$jam,$DOC_MAKER,$name);
+		$subject = preg_replace($find, $replace, $subject);
+		$body = preg_replace($find, $replace, $body);
+
+		$this->email->from($email_pencipta, $name);
+		$this->email->to($email_pencipta);
+		$this->email->subject($subject);
+		$this->email->message($body);
+		$this->email->send();
+	}
+
+	public function Email_news($si_key)
+	{
+		$AdminName = "";
+		$AdminNo = "";
+		include (APPPATH.'libraries/session_user.php');
+		$config = [
+			'useragent' => 'CodeIgniter',
+			'protocol'  => 'smtp',
+			'mailpath'  => '/usr/sbin/sendmail',
+			'smtp_host' => 'ssl://smtp.gmail.com',
+			'smtp_user' => 'akuntest437@gmail.com',
+			'smtp_pass' => 'akuntest123',
+			'smtp_port' => 465,
+			'smtp_keepalive' => TRUE,
+			'smtp_crypto' => 'SSL',
+			'wordwrap'  => TRUE,
+			'wrapchars' => 80,
+			'mailtype'  => 'html',
+			'charset'   => 'utf-8',
+			'validate'  => TRUE,
+			'crlf'      => "\r\n",
+			'newline'   => "\r\n",
+		];
+		$this->load->library('email', $config);
+		$get_data = $this->M_contribution->DB_GET_DOC_BY_ID($si_key);
+		foreach ($get_data as $g => $data) {
+			$DOC_ID = $data->DOC_ID;
+			$DOC_TIPE = $data->DOC_TIPE;
+			$DOC_NAMA = $data->DOC_NAMA;
+			$DOC_MAKER = $data->DOC_MAKER;
+			$DOC_LEVEL = $data->DOC_LEVEL;
+			$DOC_PENGGUNA = $data->DOC_PENGGUNA;
+			$DOC_AKSES_LEVEL = $data->DOC_AKSES_LEVEL;
+		}
+
+		$get_content = $this->db->get_where('m_format', array('nama' => 'News'))->result_array();
+		if (empty($get_content)) {
+			
+		}else{
+			foreach ($get_content as $key => $value) {
+				$no = $value['nomor'];
+				$subject = $value['subject'];
+				$body = $value['isi'];
+			}
+		}
+		$get_tipe = $this->db->get_where('tb_document_structure_tipe', array('DTSETE_ID' => $DOC_TIPE))->result_array();
+		if (empty($get_tipe)) {
+			
+		}else{
+			foreach ($get_tipe as $key => $value) {
+				$singkatan = $value['DTSETE_SINGKATAN'];
+			}
+		}
+		$runing_no = $this->M_contribution->GET_RUNING_NOMOR($no);
+		$get_nomor = $this->db->get_where('m_nomor', array('Code' => $no))->result_array();
+		if (empty($get_nomor)) {
+
+		}else{
+			foreach ($get_nomor as $key => $value) {
+				$field_1 = $value['field_1'];
+				$field_2 = $value['field_2'];
+				$field_3 = $value['field_3'];
+				$field_4 = $value['field_4'];
+				$field_5 = $value['field_5'];
+			}
+			if ($field_1 == 'Table') {
+				$field_1 = $singkatan;
+			}elseif ($field_1 == 'Year') {
+				$field_1 = date('Y');
+			}elseif ($field_1 == 'Month') {
+				$field_1 = date('m');
+			}elseif ($field_1 == 'Delimeter') {
+				$field_1 = '/';
+			}elseif ($field_1 == 'Free Text') {
+				$field_1 = $runing_no;
+			}else{
+				$field_1 = '';
+			}
+
+			if ($field_2 == 'Table') {
+				$field_2 = $singkatan;
+			}elseif ($field_2 == 'Year') {
+				$field_2 = date('Y');
+			}elseif ($field_2 == 'Month') {
+				$field_2 = date('m');
+			}elseif ($field_2 == 'Delimeter') {
+				$field_2 = '/';
+			}elseif ($field_2 == 'Free Text') {
+				$field_2 = $runing_no;
+			}else{
+				$field_2 = '';
+			}
+
+			if ($field_3 == 'Table') {
+				$field_3 = $singkatan;
+			}elseif ($field_3 == 'Year') {
+				$field_3 = date('Y');
+			}elseif ($field_3 == 'Month') {
+				$field_3 = date('m');
+			}elseif ($field_3 == 'Delimeter') {
+				$field_3 = '/';
+			}elseif ($field_3 == 'Free Text') {
+				$field_3 = $runing_no;
+			}else{
+				$field_3 = '';
+			}
+
+			if ($field_4 == 'Table') {
+				$field_4 = $singkatan;
+			}elseif ($field_4 == 'Year') {
+				$field_4 = date('Y');
+			}elseif ($field_4 == 'Month') {
+				$field_4 = date('m');
+			}elseif ($field_4 == 'Delimeter') {
+				$field_4 = '/';
+			}elseif ($field_4 == 'Free Text') {
+				$field_4 = $runing_no;
+			}else{
+				$field_4 = '';
+			}
+
+			if ($field_5 == 'Table') {
+				$field_5 = $singkatan;
+			}elseif ($field_5 == 'Year') {
+				$field_5 = date('Y');
+			}elseif ($field_5 == 'Month') {
+				$field_5 = date('m');
+			}elseif ($field_5 == 'Delimeter') {
+				$field_5 = '/';
+			}elseif ($field_5 == 'Free Text') {
+				$field_5 = $runing_no;
+			}else{
+				$field_5 = '';
+			}
+
+			$nomor = $field_1.$field_2.$field_3.$field_4.$field_5;
+		}
+		$get_pencipta = $this->db->get_where('tb_employee', array('NIP' => $DOC_MAKER))->result_array();
+		if (empty($get_pencipta)) {
+			
+		}else{
+			foreach ($get_pencipta as $key => $value) {
+				$name = $value['FULL_NAME'];
+				$email_pencipta = $value['EMAIL']; 
+			}
+		}
+		$get_user = 
+		$this->db->select('*')
+			->from('tb_document_news')
+			->join('tb_employee', 'tb_document_news.UR_ID = tb_employee.NIP', 'left')
+			->join('tb_document', 'tb_document_news.DOC_ID = tb_document.DOC_ID', 'left')
+			->where(array('tb_document_news.DOC_ID' => $DOC_ID))
+			->get()->result_array();
+		if (empty($get_user)) {
+			
+		}else{
+			foreach ($get_user as $key => $value) {
+				$email[] = $value['EMAIL']; 
+			}
+		}
+
+		$url = base_url('document-details-'.$DOC_ID);
+		// Hari, Tanggal, Bulan, Tahun, Jam
+		$day = date('D');
+		$dayList = array(
+			'Sun' => 'Minggu',
+			'Mon' => 'Senin',
+			'Tue' => 'Selasa',
+			'Wed' => 'Rabu',
+			'Thu' => 'Kamis',
+			'Fri' => 'Jumat',
+			'Sat' => 'Sabtu'
+		);
+		$hari = $dayList[$day];
+		$tanggal = date('d/M/Y');
+		$bulan = date('M');
+		$tahun = date('Y');
+		$jam = date('H:i')." WIB";
+		// Proses Replace & Subject
+		$find = array("/{NomorDok}/","/{NamaDok}/","/{Url}/","/{AdminNo}/","/{AdminName}/","/{Hari}/","/{Tanggal}/","/{Jam}/","/{EmpNo}/","/{EmpName}/");
+		$replace = array($nomor,$DOC_NAMA,$url,$AdminNo,$AdminName,$hari,$tanggal,$jam,$DOC_MAKER,$name);
+		$subject = preg_replace($find, $replace, $subject);
+		$body = preg_replace($find, $replace, $body);
+
+		$this->email->from($email_pencipta, $name);
+		$this->email->to($email);
+		$this->email->subject($subject);
+		$this->email->message($body);
+		$this->email->send();
+	}
+
+	public function news($si_key)
+	{
+		function remove_empty($array) {
+			return array_filter($array, '_remove_empty_internal');
+		}
+
+		function _remove_empty_internal($value) {
+			return !empty($value) || $value === 0;
+		}
+		$get_data = $this->M_contribution->DB_GET_DOC_BY_ID($si_key);
+		foreach ($get_data as $g => $data) {
+			$DOC_ID = $data->DOC_ID;
+			$DOC_TIPE = $data->DOC_TIPE;
+			$DOC_MAKER = $data->DOC_MAKER;
+			$DOC_LEVEL = $data->DOC_LEVEL;
+			$DOC_PENGGUNA = $data->DOC_PENGGUNA;
+			$DOC_AKSES_LEVEL = $data->DOC_AKSES_LEVEL;
+		}
+		// Delete News By DOC_ID
+		$this->db->delete('tb_document_news', array('DOC_ID' => $DOC_ID));
+		// Insert News By Job Level
+		$data_job_level = array();
+		if(strpos($DOC_AKSES_LEVEL,'|')!==false){
+			$data_array = explode('|',$DOC_AKSES_LEVEL);
+			$count = count($data_array);
+			for($x=0;$x<$count;$x++){
+				$get = $this->db->get_where('tb_employee', array('JOBLVL' => $data_array[$x]))->result();
+				foreach ($get as $key => $value) {
+					$data_job_level[] = array(
+						'DOC_ID' => $DOC_ID,
+						'UR_ID' => $value->NIP,
+						'DEPCODE' => $value->DEPCODE
+					);
+				}
+			}
+		}else{
+			$data_job_level[] = $this->db->get_where('tb_employee', array('JOBLVL' => $DOC_AKSES_LEVEL))->result();
+		}
+		$this->db->insert_batch('tb_document_news', $data_job_level);
+		// Delete News By != Departemen
+		if(strpos($DOC_PENGGUNA,'|')!==false){
+			$data_array = explode('|',$DOC_PENGGUNA);
+			$this->db->where_not_in('DEPCODE', $data_array);
+			$this->db->delete('tb_document_news');
+		}else{
+			$this->db->delete('tb_document_news', array('DEPCODE', $DOC_PENGGUNA));
+		}
+		// Insert News Divisi
+		if(strpos($DOC_PENGGUNA,'|')!==false){
+			$data_array = explode('|',$DOC_PENGGUNA);
+			$get_divisi = $this->db->select('DI_ID')
+				->where_in('DN_ID', $data_array)
+				->get('tb_departemen')
+				->result();
+			$divisi = array_values(array_unique($get_divisi, SORT_REGULAR));
+			$data = array();
+			foreach ($divisi as $key => $v) {
+				$data[] = $v->DI_ID;
+			}
+			$jml_dv = count($data);
+			$dt_usr_dv = array();
+			for ($x=0; $x < $jml_dv; $x++) { 
+				$get = $this->db->select('*')
+					->where('DEPCODE', $data[$x])
+					->get('tb_employee')
+					->result();
+
+				foreach ($get as $key => $value) {
+					$dt_usr_dv[] = array(
+						'DOC_ID' => $DOC_ID,
+						'UR_ID' => $value->NIP,
+						'DEPCODE' => $value->DEPCODE
+					);
+				}
+			}
+			$this->db->insert_batch('tb_document_news', $dt_usr_dv);
+		}else{
+			$get_divisi = $this->db->select('DI_ID')
+				->where_in('DN_ID', $DOC_PENGGUNA)
+				->get('tb_departemen')
+				->result();
+			foreach ($divisi as $key => $v) {
+				$data = $v->DI_ID;
+			}
+			$get = $this->db->select('*')
+				->where('DEPCODE', $data)
+				->get('tb_employee')
+				->result();
+			$dt_usr_dv = array();
+			foreach ($get as $key => $value) {
+				$dt_usr_dv[] = array(
+					'DOC_ID' => $DOC_ID,
+					'UR_ID' => $value->NIP,
+					'DEPCODE' => $value->DEPCODE
+				);
+			}
+			$this->db->insert_batch('tb_document_news', $dt_usr_dv);
+		}
+		// Get Direktorat
+
+		// Kirim Email
+		$this->Email_news($si_key);
 	}
 
 	public function approve()
@@ -65,6 +690,7 @@ class C_notification extends CI_Controller {
 			';
 			exit();
 		}
+		include (APPPATH.'libraries/session_user.php');
 		//-----------------------------------------------------------------------------------------------//
 		date_default_timezone_set('Asia/Jakarta');
 		$si_key 		= $this->input->post('si_key');
@@ -75,7 +701,7 @@ class C_notification extends CI_Controller {
 		$si_userid		= $this->session->userdata("session_bgm_edocument_id");
 		$date_now		= date('Y-m-d H:i:s');
 		//-----------------------------------------------------------------------------------------------//
-		$get_data = $this->M_library_database->DB_GET_SEARCH_DATA_DOCUMENT_BY_ID_EVO($si_key);
+		$get_data = $this->M_contribution->DB_GET_DOC_BY_ID($si_key);
 		if(empty($get_data)||$get_data==""){
 			echo '
 				<script>
@@ -85,87 +711,81 @@ class C_notification extends CI_Controller {
 			';
 			exit();
 		}
-		//-----------------------------------------------------------------------------------------------//
-		foreach($get_data as $data_row){
-			$DOC_ID					= $data_row->DOC_ID;
-			$DOC_DATE               = $data_row->DOC_DATE;
-			$DOC_KATEGORI           = $data_row->DOC_KATEGORI;
-			$DOC_JENIS              = $data_row->DOC_JENIS;
-			$DOC_TIPE               = $data_row->DOC_TIPE;
-			$DOC_GROUP_PROSES       = $data_row->DOC_GROUP_PROSES;
-			$DOC_PROSES             = $data_row->DOC_PROSES;
-			$DOC_NOMOR              = $data_row->DOC_NOMOR;
-			$DOC_NAMA               = $data_row->DOC_NAMA;
-			$DOC_WUJUD              = $data_row->DOC_WUJUD;
-			$DOC_DISTRIBUSI         = $data_row->DOC_DISTRIBUSI;
-			$DOC_KERAHASIAAN        = $data_row->DOC_KERAHASIAAN;
-			$DOC_AKSES_LEVEL        = $data_row->DOC_AKSES_LEVEL;
-			$DOC_PENGGUNA           = $data_row->DOC_PENGGUNA;
-			$DOC_PEMILIK_PROSES     = $data_row->DOC_PEMILIK_PROSES;
-			$DOC_PENYIMPAN          = $data_row->DOC_PENYIMPAN;
-			$DOC_PENDISTRIBUSI      = $data_row->DOC_PENDISTRIBUSI;
-			$DOC_VERSI              = $data_row->DOC_VERSI;
-			$DOC_TGL_EFEKTIF        = $data_row->DOC_TGL_EFEKTIF;
-			$DOC_PERIODE_PREVIEW	= $data_row->DOC_PERIODE_PREVIEW;
-			$DOC_KATA_KUNCI         = $data_row->DOC_KATA_KUNCI;
-			$DOC_ABSTRAK            = $data_row->DOC_ABSTRAK;
-			$DOC_TERKAIT            = $data_row->DOC_TERKAIT;
-			$DOC_MAKER              = $data_row->DOC_MAKER;
-			$DOC_APPROVE            = $data_row->DOC_APPROVE;
-			$DOC_STATUS             = $data_row->DOC_STATUS;
-			$DOC_STATUS_ACTIVITY	= $data_row->DOC_STATUS_ACTIVITY;
-			$DOC_NOTE               = $data_row->DOC_NOTE;
-			$DTSEKI_ID				= $data_row->DTSEKI_ID;
-			$DTSEKI_KATEGORI        = $data_row->DTSEKI_KATEGORI;
-			$DTSEJS_ID				= $data_row->DTSEJS_ID;
-			$DTSEJS_JENIS           = $data_row->DTSEJS_JENIS;
-			$DTSETE_ID				= $data_row->DTSETE_ID;
-			$DTSETE_TIPE            = $data_row->DTSETE_TIPE;
-			$DTSETE_SINGKATAN       = $data_row->DTSETE_SINGKATAN;
-			$DTFM_ID				= $data_row->DTFM_ID;
-			$DTFM_NAME              = $data_row->DTFM_NAME;
-			$DNMD_ID				= $data_row->DNMD_ID;
-			$DNMD_NAME              = $data_row->DNMD_NAME;
-			$CL_ID					= $data_row->CL_ID;
-			$CL_NAME                = $data_row->CL_NAME;
-			$DOCD_UTAMA				= $data_row->DOCD_UTAMA;
-			$DOCD_UTAMA_TYPE		= $data_row->DOCD_UTAMA_TYPE;
-			$DOCD_PELENGKAP_1		= $data_row->DOCD_PELENGKAP_1;
-			$DOCD_PELENGKAP_1_TYPE	= $data_row->DOCD_PELENGKAP_1_TYPE;
-			$DOCD_PELENGKAP_2		= $data_row->DOCD_PELENGKAP_2;
-			$DOCD_PELENGKAP_2_TYPE	= $data_row->DOCD_PELENGKAP_2_TYPE;
-			$DOCD_PERSETUJUAN		= $data_row->DOCD_PERSETUJUAN;
-			$DOCD_PERSETUJUAN_TYPE	= $data_row->DOCD_PERSETUJUAN_TYPE;
+		foreach ($get_data as $g => $data) {
+			$DOC_ID = $data->DOC_ID;
+			$DOC_MAKER = $data->DOC_MAKER;
+			$DOC_LEVEL = $data->DOC_LEVEL;
+			$DOC_PENGGUNA = $data->DOC_PENGGUNA;
+			$DOC_AKSES_LEVEL = $data->DOC_AKSES_LEVEL;
 		}
-		$getAtasan = $this->M_library_database->getAtasan($DOC_MAKER);
-		foreach ($getAtasan as $getAtasan) {
-			$DI_CODE = $getAtasan->DI_CODE;
-			$DI_NAME = $getAtasan->DI_NAME;
-		}
-		//-----------------------------------------------------------------------------------------------//
-		if($si_approver=="PENDISTRIBUSI"){
-			$data_update = array(
-				'DOC_ID' => $DOC_ID,
-				'DOC_APPROVE' => $si_userid,
-				'DOC_STATUS' => "MENUNGGU ATASAN PENCIPTA",
-				'DOC_STATUS_ACTIVITY' => "Menunggu Persetujuan dari ".$DI_CODE." (".$DI_NAME.")",
-				'DOC_NOTE' => "-"
-			);
+
+		// Get user approve
+		$get_user = $this->M_contribution->GET_USER_BY_ID_DEPARTEMEN($DOC_MAKER);
+		if (!empty($get_user)) {
+			foreach ($get_user as $a) {
+				$DI_ID = $a->DI_ID;
+				$DI_CODE = $a->DI_CODE;
+				$DI_NAME = $a->DI_NAME;
+			}
+			$PENDISTRIBUSI_FINAL = "Menunggu Persetujuan dari ".$DI_CODE." (".$DI_NAME.")";
+			$PENDISTRIBUSI_FINAL_CODE = $DI_ID;
 		}else{
+			$get_user = $this->M_contribution->GET_USER_BY_ID_DIVISI($DOC_MAKER);
+			if (!empty($get_user)) {
+				foreach ($get_user as $b) {
+					$DT_ID = $b->DT_ID;
+					$DT_NAME = $b->DT_NAME;
+				}
+				$PENDISTRIBUSI_FINAL = "Menunggu Persetujuan dari ".$DT_ID." (".$DT_NAME.")";
+				$PENDISTRIBUSI_FINAL_CODE = $DT_ID;
+			}
+		}
+		if ($DOC_LEVEL == "DEPARTEMEN") {
+			if ($SESSION_DEPARTEMENT_ID=='7550') {
+				$data_update = array(
+					'DOC_ID' => $DOC_ID,
+					'DOC_APPROVE' => $si_userid,
+					'DOC_STATUS' => $PENDISTRIBUSI_FINAL_CODE,
+					'DOC_STATUS_ACTIVITY' => $PENDISTRIBUSI_FINAL
+				);
+			}else{
+				$data_update = array(
+					'DOC_ID' => $DOC_ID,
+					'DOC_APPROVE' => $si_userid,
+					'DOC_STATUS' => "DIPUBLIKASI",
+					'DOC_STATUS_ACTIVITY' => "DIPUBLIKASI"
+				);
+				$this->news($si_key);
+			}
+		}elseif ($DOC_LEVEL == "DIVISI") {
+			if ($SESSION_DEPARTEMENT_ID=='7550') {
+				$data_update = array(
+					'DOC_ID' => $DOC_ID,
+					'DOC_APPROVE' => $si_userid,
+					'DOC_STATUS' => $PENDISTRIBUSI_FINAL_CODE,
+					'DOC_STATUS_ACTIVITY' => $PENDISTRIBUSI_FINAL
+				);
+			}else{
+				$data_update = array(
+					'DOC_ID' => $DOC_ID,
+					'DOC_APPROVE' => $si_userid,
+					'DOC_STATUS' => "DIPUBLIKASI",
+					'DOC_STATUS_ACTIVITY' => "DIPUBLIKASI"
+				);
+				$this->news($si_key);
+			}
+		}elseif($DOC_LEVEL == "DIREKTORAT"){
 			$data_update = array(
 				'DOC_ID' => $DOC_ID,
 				'DOC_APPROVE' => $si_userid,
 				'DOC_STATUS' => "DIPUBLIKASI",
-				'DOC_STATUS_ACTIVITY' => "DIPUBLIKASI",
-				'DOC_NOTE' => "-"
+				'DOC_STATUS_ACTIVITY' => "DIPUBLIKASI"
 			);
+			$this->news($si_key);
 		}
-		//-----------------------------------------------------------------------------------------------//
 		$is_ok = $this->M_library_database->DB_UPDATE_DATA_DOCUMENT($DOC_ID,$data_update);
-		//-----------------------------------------------------------------------------------------------//
 		if($is_ok){
-			//INSERT TO LOG ???
-			//-----------------------------------------------------------------------------------------------//
+			$this->db->delete('tb_notification_history', array('DOC_ID'=>$DOC_ID));
 			echo '
 				<script>
 					alert("Pemutakhiran Data Berhasil");
@@ -195,13 +815,14 @@ class C_notification extends CI_Controller {
 			';
 			exit();
 		}
+		include (APPPATH.'libraries/session_user.php');
 		//-----------------------------------------------------------------------------------------------//
 		$si_key 		= $this->input->post('si_key');
 		$si_note		= $this->input->post('si_note');
 		
 		$si_approver 	= $this->input->post('si_approver');
 		
-		$si_userid		= $this->session->userdata("session_bgm_edocument_id");
+		$si_userid		= $this->session->userdata("session_bgm_edocument_name");
 		date_default_timezone_set('Asia/Jakarta');
 		$date_now		= date('Y-m-d H:i:s');
 		//-----------------------------------------------------------------------------------------------//
@@ -277,12 +898,22 @@ class C_notification extends CI_Controller {
 			$DOCD_PERSETUJUAN		= $data_row->DOCD_PERSETUJUAN;
 			$DOCD_PERSETUJUAN_TYPE	= $data_row->DOCD_PERSETUJUAN_TYPE;
 		}
-		//-----------------------------------------------------------------------------------------------//
+		// Status Activity
+		if (empty($SESSION_DEPARTEMENT_ID) && !empty($SESSION_DIVISI_ID)) {
+			$Status = "DITOLAK ".$SESSION_DIVISI_ID;
+			$Activity = "Ditolak ".$SESSION_DIVISI_CODE." ( ".$SESSION_DIVISI_NAME." )";
+		}elseif (empty($SESSION_DIVISI_ID) && !empty($SESSION_DIREKTORAT_ID)) {
+			$Status = "DITOLAK ".$SESSION_DIREKTORAT_ID;
+			$Activity = "Ditolak ".$SESSION_DIREKTORAT_ID." ( ".$SESSION_DIREKTORAT_NAME." )";
+		}else{
+			$Status = "DITOLAK ".$SESSION_DEPARTEMENT_ID;
+			$Activity = "Ditolak ".$SESSION_DEPARTEMENT_CODE." ( ".$SESSION_DEPARTEMENT_NAME." )";
+		}
 		$data_update = array(
 			'DOC_ID' => $DOC_ID,
 			'DOC_APPROVE' => $si_userid,
-			'DOC_STATUS' => "DITOLAK ".$si_approver,
-			'DOC_STATUS_ACTIVITY' => "DITOLAK ".$si_approver,
+			'DOC_STATUS' => $Status,
+			'DOC_STATUS_ACTIVITY' => $Activity,
 			'DOC_NOTE' => "-"
 		);
 		//-----------------------------------------------------------------------------------------------//
@@ -293,11 +924,12 @@ class C_notification extends CI_Controller {
 			'DOC_ID' => $DOC_ID,
 			'DTDLSS_DATE' => $date_now,
 			'DTDLSS_MAKER' => $si_userid,
-			'DTDLSS_STATUS' => "DITOLAK ".$si_approver,
+			'DTDLSS_STATUS' => "Ditolak ".$si_approver,
 			'DTDLSS_NOTE' => $si_note
 		);
 		//-----------------------------------------------------------------------------------------------//
 		$is_ok = $this->M_library_database->DB_INSERT_DATA_DOCUMENT_DETAIL_STATUS_EVO($data_insert_status);
+
 		//-----------------------------------------------------------------------------------------------//
 		if($is_ok){
 			//INSERT TO LOG ???
@@ -494,6 +1126,12 @@ class C_notification extends CI_Controller {
 			'DOC_STATUS_ACTIVITY' => "Diarsipkan Oleh System"
 		);
 		$is_ok = $this->M_library_database->DB_UPDATE_DATA_DOCUMENT($DOC_ID,$data_update);
+		$log = array(
+			'LogDoc' => $DOC_ID,
+			'LogAct' => 'Archived',
+			'LogUserName' => 'System'
+		);
+		$this->db->insert('m_log', $log);
 		if($is_ok){
 			redirect(base_url('C_notification'),'refresh');
 		}else{
@@ -825,9 +1463,6 @@ class C_notification extends CI_Controller {
 		include (APPPATH.'libraries/FPDI/fpdi.php');
 		//STEP 1
 		$catatan_versi 							= $this->input->post('catatan_versi');
-		// $si_template_new_kategori				= $this->input->post('si_template_new_kategori');
-		// $si_template_new_jenis					= $this->input->post('si_template_new_jenis');
-		// $si_template_new_tipe					= $this->input->post('si_template_new_tipe');
 		$si_template_new_group_proses			= $this->input->post('si_template_new_group_proses');
 		$si_template_new_proses					= $this->input->post('si_template_new_proses');
 		//STEP 2
@@ -861,7 +1496,7 @@ class C_notification extends CI_Controller {
 		$si_history_date 						= date('Y-m-d', strtotime($si_history_date1));
 		$si_history_period						= $this->input->post('si_history_period');
 		$si_history_date_final1					= $this->input->post('si_history_date_final');
-		$si_history_date_final 					= date('Y-m-d', strtotime($si_history_date_final1));
+		// $si_history_date_final 					= date('Y-m-d', strtotime($si_history_date_final1));
 		$si_history_keyword						= $this->input->post('si_history_keyword');
 		$si_history_abstract					= $this->input->post('si_history_abstract');
 		//STEP 5
@@ -874,8 +1509,11 @@ class C_notification extends CI_Controller {
 			}
 			$duallistbox_dokumen_terkait_list 	= substr($duallistbox_dokumen_terkait_array,0,-1);
 		}else{
-			$duallistbox_dokumen_terkait_listerkait = "";
+			$duallistbox_dokumen_terkait_list = "";
 		}
+		$si_history_date_final 					= DateTime::createFromFormat('d/M/Y', $si_history_date_final1)->format('Y-m-d');
+		$watermark_text = $this->input->post('watermark');
+		$GLOBALS['watermark_text'] = $watermark_text;
 		//SYSTEM
 		$si_code								= $this->input->post('si_code');
 		$si_userid								= $this->input->post('si_userid');
@@ -906,17 +1544,8 @@ class C_notification extends CI_Controller {
 			'DOCD_PELENGKAP_1_STATUS' => $convert_dokumen_pelengkap_2
 		);
 		$is_ok = $this->M_library_database->DB_UPDATE_DATA_DOCUMENT_DETAIL_REFISI_EVO($si_code,$data_update_detail);
-		// Ambil Pendistribusi
+
 		if ($si_owner_dept_pendistribusi==$SESSION_DEPARTEMENT_ID) {
-			// $getPendistribusi = $this->M_library_database->getDEPARTEMEN($si_owner_dept_pendistribusi);
-			// foreach ($getPendistribusi as $data) {
-			// 	$dpt 		= $data->DN_ID;
-			// 	$dpt_code 	= $data->DN_CODE;
-			// 	$dpt_name 	= $data->DN_NAME;
-			// }
-			// $PENDISTRIBUSI_FINAL_CODE 	= $dpt_code;
-			// $PENDISTRIBUSI_FINAL_NAME 	= $dpt_name;
-			// $STATUS_FINAL				= "MENUNGGU PENDISTRIBUSI";
 			$getPendistribusi = $this->M_library_database->GET_DEPT_DIVISI($si_owner_dept_pendistribusi);
 			foreach ($getPendistribusi as $data) {
 				$dv 		= $data->DI_ID;
@@ -994,11 +1623,7 @@ class C_notification extends CI_Controller {
 				}
 				
 				$dokumen_utama_name = $file1Name;
-				// if (isset($dokumen_utama_on)) {
-				// 	$convert_dokumen_utama = 1;
-				// }else{
-				// 	$convert_dokumen_utama = 0;
-				// }
+	
 			}else{
 				$errors = $this->upload->display_errors();
 				die($errors);
@@ -1055,11 +1680,7 @@ class C_notification extends CI_Controller {
 					$pdf->Output($GLOBALS['dokumen_pelengkap_1'],'F');
 				}
 				$dokumen_pelengkap_1_name = $file2Name;
-				// if (isset($dokumen_pelengkap_1_on)) {
-				// 	$convert_dokumen_pelengkap_1 = 1;
-				// }else{
-				// 	$convert_dokumen_pelengkap_1 = 0;
-				// }
+
 			}else{
 				$errors = $this->upload->display_errors();
 				die($errors);
@@ -1183,10 +1804,7 @@ class C_notification extends CI_Controller {
 		}
 		//Dokumen Meta Data
 		$data_update = array(
-			'DOC_DATE' => $date_now,		
-			// 'DOC_KATEGORI' => $si_template_new_kategori,
-			// 'DOC_JENIS' => $si_template_new_jenis,
-			// 'DOC_TIPE' => $si_template_new_tipe,
+			'DOC_DATE' => $date_now,
 			'DOC_GROUP_PROSES' => $si_template_new_group_proses,
 			'DOC_PROSES' => $si_template_new_proses,
 			'DOC_NOMOR' => $si_header_no,
@@ -1209,7 +1827,8 @@ class C_notification extends CI_Controller {
 			'DOC_MAKER' => $si_userid,
 			'DOC_STATUS' => $STATUS_FINAL,
 			'DOC_STATUS_ACTIVITY' => "Menunggu Persetujuan dari ".$PENDISTRIBUSI_FINAL_CODE." (".$PENDISTRIBUSI_FINAL_NAME.")",
-			'DOC_NOTE' => "-"
+			'DOC_NOTE' => "-",
+			'DOC_APPROVE' => "-"
 		);
 		$is_ok = $this->M_library_database->DB_UPDATE_DATA_DOCUMENT_REFISI_EVO($si_code,$data_update);
 		// Insert Detail
@@ -1222,6 +1841,105 @@ class C_notification extends CI_Controller {
 		);
 		$is_ok = $this->M_library_database->DB_INPUT_DATA_VERSIONING($data_versi);
 		if($is_ok){
+			$this->db->delete('tb_document_notification', array('DOC_ID' => $si_code));
+			$this->db->delete('tb_document_notification', array('DOC_ID' =>$si_code));
+			$data_user_notif = array();
+			if ($DOC_LEVEL == "DEPARTEMEN") {
+				if ($si_owner_dept_pendistribusi == '7550') {
+					$get_user_bpi = $this->M_contribution->GET_USER_NOTIF_PENDISTRIBUSI($si_owner_dept_pendistribusi);
+					foreach ($get_user_bpi as $data => $v) {
+						$data_user_notif[] = array(
+							'DOC_ID' => $si_code,
+							'UR_ID' => $v->NIP,
+						);
+					}
+					$get_user_notif_atasan = $this->M_contribution->GET_USER_NOTIF_ATASAN($SESSION_DIVISI_ID);
+					foreach ($get_user_notif_atasan as $a => $b) {
+						$data_user_notif[] = array(
+							'DOC_ID' => $si_code,
+							'UR_ID' => $b->NIP,
+						);
+					}
+					$get_user_notif_pencipta = $this->M_contribution->GET_USER_NOTIF_PENCIPTA($SESSION_ID);
+					foreach ($get_user_notif_pencipta as $p => $e) {
+						$data_user_notif[] = array(
+							'DOC_ID' => $si_code,
+							'UR_ID' => $e->NIP,
+						);
+					}
+				}else{
+					$get_user_notif_atasan = $this->M_contribution->GET_USER_NOTIF_ATASAN($SESSION_DIVISI_ID);
+					foreach ($get_user_notif_atasan as $a => $b) {
+						$data_user_notif[] = array(
+							'DOC_ID' => $si_code,
+							'UR_ID' => $b->NIP,
+						);
+					}
+					$get_user_notif_pencipta = $this->M_contribution->GET_USER_NOTIF_PENCIPTA($SESSION_ID);
+					foreach ($get_user_notif_pencipta as $p => $e) {
+						$data_user_notif[] = array(
+							'DOC_ID' => $si_code,
+							'UR_ID' => $e->NIP,
+						);
+					}
+				}
+			}elseif ($DOC_LEVEL == "DIVISI") {
+				if ($si_owner_dept_pendistribusi == '7550') {
+					$get_user_bpi = $this->M_contribution->GET_USER_NOTIF_PENDISTRIBUSI($si_owner_dept_pendistribusi);
+					foreach ($get_user_bpi as $data => $v) {
+						$data_user_notif[] = array(
+							'DOC_ID' => $si_code,
+							'UR_ID' => $v->NIP,
+						);
+					}
+					$get_user_notif_atasan = $this->M_contribution->GET_USER_NOTIF_ATASAN($SESSION_DIVISI_ID);
+					foreach ($get_user_notif_atasan as $a => $b) {
+						$data_user_notif[] = array(
+							'DOC_ID' => $si_code,
+							'UR_ID' => $b->NIP,
+						);
+					}
+					$get_user_notif_atasan_nya_atasan = $this->M_contribution->GET_USER_NOTIF_ATASANNYA_ATASAN($SESSION_DIREKTORAT_ID);
+					foreach ($get_user_notif_atasan_nya_atasan as $a => $b) {
+						$data_user_notif[] = array(
+							'DOC_ID' => $si_code,
+							'UR_ID' => $b->NIP,
+						);
+					}
+				}else{
+					$get_user_notif_atasan = $this->M_contribution->GET_USER_NOTIF_ATASAN($SESSION_DIVISI_ID);
+					foreach ($get_user_notif_atasan as $a => $b) {
+						$data_user_notif[] = array(
+							'DOC_ID' => $si_code,
+							'UR_ID' => $b->NIP,
+						);
+					}
+					$get_user_notif_atasan_nya_atasan = $this->M_contribution->GET_USER_NOTIF_ATASANNYA_ATASAN($SESSION_DIREKTORAT_ID);
+					foreach ($get_user_notif_atasan_nya_atasan as $a => $b) {
+						$data_user_notif[] = array(
+							'DOC_ID' => $si_code,
+							'UR_ID' => $b->NIP,
+						);
+					}
+				}
+			}else{
+				$get_user_notif_atasan_nya_atasan = $this->M_contribution->GET_USER_NOTIF_ATASANNYA_ATASAN($SESSION_DIREKTORAT_ID);
+				foreach ($get_user_notif_atasan_nya_atasan as $a => $b) {
+					$data_user_notif[] = array(
+						'DOC_ID' => $si_code,
+						'UR_ID' => $b->NIP,
+					);
+				}
+			}
+			$dt_notification = array(
+				'DOC_ID' => $si_code,
+				'PENGGUNA' => $duallistbox_pengguna_dokumen_list,
+				'PEMILIK' => $si_owner_pemilik_proses,
+				'PENDISTRIBUSI' => $si_owner_dept_pendistribusi
+			);
+			$insert = $this->db->insert('tb_document_notification', $dt_notification);
+			$this->db->delete('tb_notification_history', array('DOC_ID' => $si_code));
+			// $insert = $this->db->insert_batch('tb_document_notification', $data_user_notif);
 			$this->session->set_flashdata('pesan','Berhasil!');
 			redirect(base_url('notification'),'refresh');
 		}else{
@@ -1256,7 +1974,7 @@ class C_notification extends CI_Controller {
 		$si_history_date 						= date('Y-m-d', strtotime($si_history_date1));
 		$si_history_period						= $this->input->post('si_history_period');
 		$si_history_date_final1					= $this->input->post('si_history_date_final');
-		$si_history_date_final 					= date('Y-m-d', strtotime($si_history_date_final1));
+		$si_history_date_final 					= DateTime::createFromFormat('d/M/Y', $si_history_date_final1)->format('Y-m-d');
 		$si_history_keyword						= $this->input->post('si_history_keyword');
 		$si_history_abstract					= $this->input->post('si_history_abstract');
 		$duallistbox_dokumen_terkait 			= $this->input->post('duallistbox_dokumen_terkait');
@@ -1346,6 +2064,97 @@ class C_notification extends CI_Controller {
 		);
 		$is_ok = $this->M_library_database->DB_INPUT_DATA_VERSIONING($data_versi);
 		if($is_ok){
+			$this->db->delete('tb_document_notification', array('DOC_ID' => $si_code));
+			$this->db->delete('tb_document_notification', array('DOC_ID' =>$si_code));
+			$data_user_notif = array();
+			if ($DOC_LEVEL == "DEPARTEMEN") {
+				if ($si_owner_dept_pendistribusi == '7550') {
+					$get_user_bpi = $this->M_contribution->GET_USER_NOTIF_PENDISTRIBUSI($si_owner_dept_pendistribusi);
+					foreach ($get_user_bpi as $data => $v) {
+						$data_user_notif[] = array(
+							'DOC_ID' => $si_code,
+							'UR_ID' => $v->NIP,
+						);
+					}
+					$get_user_notif_atasan = $this->M_contribution->GET_USER_NOTIF_ATASAN($SESSION_DIVISI_ID);
+					foreach ($get_user_notif_atasan as $a => $b) {
+						$data_user_notif[] = array(
+							'DOC_ID' => $si_code,
+							'UR_ID' => $b->NIP,
+						);
+					}
+					$get_user_notif_pencipta = $this->M_contribution->GET_USER_NOTIF_PENCIPTA($SESSION_ID);
+					foreach ($get_user_notif_pencipta as $p => $e) {
+						$data_user_notif[] = array(
+							'DOC_ID' => $si_code,
+							'UR_ID' => $e->NIP,
+						);
+					}
+				}else{
+					$get_user_notif_atasan = $this->M_contribution->GET_USER_NOTIF_ATASAN($SESSION_DIVISI_ID);
+					foreach ($get_user_notif_atasan as $a => $b) {
+						$data_user_notif[] = array(
+							'DOC_ID' => $si_code,
+							'UR_ID' => $b->NIP,
+						);
+					}
+					$get_user_notif_pencipta = $this->M_contribution->GET_USER_NOTIF_PENCIPTA($SESSION_ID);
+					foreach ($get_user_notif_pencipta as $p => $e) {
+						$data_user_notif[] = array(
+							'DOC_ID' => $si_code,
+							'UR_ID' => $e->NIP,
+						);
+					}
+				}
+			}elseif ($DOC_LEVEL == "DIVISI") {
+				if ($si_owner_dept_pendistribusi == '7550') {
+					$get_user_bpi = $this->M_contribution->GET_USER_NOTIF_PENDISTRIBUSI($si_owner_dept_pendistribusi);
+					foreach ($get_user_bpi as $data => $v) {
+						$data_user_notif[] = array(
+							'DOC_ID' => $si_code,
+							'UR_ID' => $v->NIP,
+						);
+					}
+					$get_user_notif_atasan = $this->M_contribution->GET_USER_NOTIF_ATASAN($SESSION_DIVISI_ID);
+					foreach ($get_user_notif_atasan as $a => $b) {
+						$data_user_notif[] = array(
+							'DOC_ID' => $si_code,
+							'UR_ID' => $b->NIP,
+						);
+					}
+					$get_user_notif_atasan_nya_atasan = $this->M_contribution->GET_USER_NOTIF_ATASANNYA_ATASAN($SESSION_DIREKTORAT_ID);
+					foreach ($get_user_notif_atasan_nya_atasan as $a => $b) {
+						$data_user_notif[] = array(
+							'DOC_ID' => $si_code,
+							'UR_ID' => $b->NIP,
+						);
+					}
+				}else{
+					$get_user_notif_atasan = $this->M_contribution->GET_USER_NOTIF_ATASAN($SESSION_DIVISI_ID);
+					foreach ($get_user_notif_atasan as $a => $b) {
+						$data_user_notif[] = array(
+							'DOC_ID' => $si_code,
+							'UR_ID' => $b->NIP,
+						);
+					}
+					$get_user_notif_atasan_nya_atasan = $this->M_contribution->GET_USER_NOTIF_ATASANNYA_ATASAN($SESSION_DIREKTORAT_ID);
+					foreach ($get_user_notif_atasan_nya_atasan as $a => $b) {
+						$data_user_notif[] = array(
+							'DOC_ID' => $si_code,
+							'UR_ID' => $b->NIP,
+						);
+					}
+				}
+			}else{
+				$get_user_notif_atasan_nya_atasan = $this->M_contribution->GET_USER_NOTIF_ATASANNYA_ATASAN($SESSION_DIREKTORAT_ID);
+				foreach ($get_user_notif_atasan_nya_atasan as $a => $b) {
+					$data_user_notif[] = array(
+						'DOC_ID' => $si_code,
+						'UR_ID' => $b->NIP,
+					);
+				}
+			}
+			$insert = $this->db->insert_batch('tb_document_notification', $data_user_notif);
 			$this->session->set_flashdata('pesan','Berhasil!');
 			redirect(base_url('notification'),'refresh');
 		}else{
@@ -1409,7 +2218,8 @@ class C_notification extends CI_Controller {
 		$si_history_date 						= date('Y-m-d', strtotime($si_history_date1));
 		$si_history_period						= $this->input->post('si_history_period');
 		$si_history_date_final1					= $this->input->post('si_history_date_final');
-		$si_history_date_final 					= date('Y-m-d', strtotime($si_history_date_final1));
+		// $si_history_date_final 					= date('Y-m-d', strtotime($si_history_date_final1));
+		$si_history_date_final 					= DateTime::createFromFormat('d/M/Y', $si_history_date_final1)->format('Y-m-d');
 		$si_history_keyword						= $this->input->post('si_history_keyword');
 		$si_history_abstract					= $this->input->post('si_history_abstract');
 		//STEP 5
@@ -1422,8 +2232,10 @@ class C_notification extends CI_Controller {
 			}
 			$duallistbox_dokumen_terkait_list 	= substr($duallistbox_dokumen_terkait_array,0,-1);
 		}else{
-			$duallistbox_dokumen_terkait_listerkait = "";
+			$duallistbox_dokumen_terkait_list = "";
 		}
+		$watermark_text = $this->input->post('watermark');
+		$GLOBALS['watermark_text'] = $watermark_text;
 		//SYSTEM
 		$si_code								= $this->input->post('si_code');
 		$si_userid								= $this->input->post('si_userid');
@@ -1455,32 +2267,22 @@ class C_notification extends CI_Controller {
 		);
 		$is_ok = $this->M_library_database->DB_UPDATE_DATA_DOCUMENT_DETAIL_REFISI_EVO($si_code,$data_update_detail);
 		// Ambil Pendistribusi
-		if ($si_approve == "PENDISTRIBUSI") {
-			if ($si_owner_dept_pendistribusi==$SESSION_DEPARTEMENT_ID) {
-				$getPendistribusi = $this->M_library_database->getDEPARTEMEN($si_owner_dept_pendistribusi);
-				foreach ($getPendistribusi as $data) {
-					$dpt 		= $data->DN_ID;
-					$dpt_code 	= $data->DN_CODE;
-					$dpt_name 	= $data->DN_NAME;
-				}
-				$PENDISTRIBUSI_FINAL_CODE 	= $dpt_code;
-				$PENDISTRIBUSI_FINAL_NAME 	= $dpt_name;
-				$STATUS_FINAL				= "Menunggu Persetujuan dari ".$PENDISTRIBUSI_FINAL_CODE." (".$PENDISTRIBUSI_FINAL_NAME.")";
-			}else{
-				$getPendistribusi = $this->M_library_database->getDEPARTEMEN($si_owner_dept_pendistribusi);
-				foreach ($getPendistribusi as $data) {
-					$dpt 		= $data->DN_ID;
-					$dpt_code 	= $data->DN_CODE;
-					$dpt_name 	= $data->DN_NAME;
-				}
-				$PENDISTRIBUSI_FINAL_CODE 	= $dpt_code;
-				$PENDISTRIBUSI_FINAL_NAME 	= $dpt_name;
-				$STATUS_FINAL				= "Menunggu Persetujuan dari ".$PENDISTRIBUSI_FINAL_CODE." (".$PENDISTRIBUSI_FINAL_NAME.")";
+		if ($si_approve == "DITOLAK 7550") {
+			$getPendistribusi = $this->db->get_where('tb_departemen', array('DN_ID' => '7550'))->result();
+			foreach ($getPendistribusi as $data) {
+				$dpt 		= $data->DN_ID;
+				$dpt_code 	= $data->DN_CODE;
+				$dpt_name 	= $data->DN_NAME;
 			}
+			$PENDISTRIBUSI_FINAL_CODE 	= $dpt_code;
+			$PENDISTRIBUSI_FINAL_NAME 	= $dpt_name;
+			$STATUS_FINAL				= "Menunggu Persetujuan dari ".$PENDISTRIBUSI_FINAL_CODE." (".$PENDISTRIBUSI_FINAL_NAME.")";
+			$Activity = $dpt;
 		}else{
 			$SESSION_DIVISI_CODE = $this->session->userdata("session_bgm_edocument_divisi_code");
 			$SESSION_DIVISI_NAME = $this->session->userdata("session_bgm_edocument_divisi_name");
-			$STATUS_FINAL				= "Menunggu Persetujuan dari ".$SESSION_DIVISI_CODE." (".$SESSION_DIVISI_NAME.")";
+			$STATUS_FINAL		= "Menunggu Persetujuan dari ".$SESSION_DIVISI_CODE." (".$SESSION_DIVISI_NAME.")";
+			$Activity = $SESSION_DIVISI_ID;
 		}
 		//Upload Doc
 		$config1['upload_path'] 				= './assets/original';
@@ -1726,9 +2528,10 @@ class C_notification extends CI_Controller {
 			'DOC_ABSTRAK' => $si_history_abstract,
 			'DOC_TERKAIT' => $duallistbox_dokumen_terkait_list,
 			'DOC_MAKER' => $si_userid,
-			'DOC_STATUS' => "MENUNGGU ".$si_approve,
+			'DOC_STATUS' => $Activity,
 			'DOC_STATUS_ACTIVITY' => $STATUS_FINAL,
-			'DOC_NOTE' => "-"
+			'DOC_NOTE' => "-",
+			'DOC_APPROVE' => "-"
 		);
 		$is_ok = $this->M_library_database->DB_UPDATE_DATA_DOCUMENT_REFISI_EVO($si_code,$data_update);
 		if($is_ok){
@@ -1742,10 +2545,12 @@ class C_notification extends CI_Controller {
 	public function download_pdf($file)
 	{
 		date_default_timezone_set('Asia/Jakarta');
+		include (APPPATH.'libraries/session_user.php');
 		include (APPPATH.'libraries/FPDF/Fpdf.php');
 		include (APPPATH.'libraries/FPDI/fpdi.php');
 		$SESSION_ID = $this->session->userdata('session_bgm_edocument_id');
-		$GLOBALS['nama'] = $SESSION_ID." - ".date('d/m/Y H:i')." WIB";
+		$GLOBALS['nip'] = $SESSION_ID;
+		$GLOBALS['nama'] = date('d/M/Y H:i')." WIB";
 		$GLOBALS['document'] = './assets/pdf/'.$file;
 		chmod($GLOBALS['document'], 0777);
 		include (APPPATH.'libraries/watermark_footer.php');
@@ -1767,6 +2572,7 @@ class C_notification extends CI_Controller {
 	}
 	public function download_ori($file)
 	{
+		include (APPPATH.'libraries/session_user.php');
 		$this->load->helper('download');
 		$name = $file;
 		$data = file_get_contents('./assets/original/'.$file); 
@@ -1924,10 +2730,21 @@ class C_notification extends CI_Controller {
 			exit();
 		}
 	}
-	//-----------------------------------------------------------------------------------------------//
-	//-----------------------------------------------------------------------------------------------//
-	//-----------------------------------------------------------------------------------------------//
-	//-----------------------------------------------------------------------------------------------//
-	//-----------------------------------------------------------------------------------------------//
+	public function delete_notification()
+	{
+		$user_id = $_SESSION['session_bgm_edocument_id'];
+		$doc_id = $this->input->post('doc_id');
+		$delete = $this->db->insert('tb_notification_history',
+			array(
+				'DOC_ID' => $doc_id,
+				'USER_ID' => $user_id,
+				'DELETE_DATE' => date('Y-m-d H:i:s')
+			)
+		);
+
+		if ($delete) {
+			redirect('C_notification');
+		}
+	}
 }
 //-----------------------------------------------------------------------------------------------//

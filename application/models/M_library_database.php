@@ -35,7 +35,7 @@ class M_library_database extends CI_Model {
 	private $tb_departemen					= "tb_departemen";
 	private $tb_document_versioning			= "tb_document_versioning";
 	private $tb_document_bookmark			= "tb_document_bookmark";
-
+	
 	public function GET_COMMENT($DOC_ID)
 	{
 		$result = "";
@@ -134,9 +134,8 @@ class M_library_database extends CI_Model {
 		try {
 			$this->db->select('*');
 			$this->db->from('tb_document_comment');
-			$this->db->join('tb_document_comment_reply', 'tb_document_comment.DTCT_ID = tb_document_comment_reply.DTCT_ID', 'left');
-			$this->db->where('tb_document_comment.DOC_ID', $DOC_ID);
-			$this->db->where('tb_document_comment.DTCT_USER', $SESSION_ID);
+			$this->db->where('DOC_ID', $DOC_ID);
+			$this->db->where('DTCT_USER', $SESSION_ID);
 			$query = $this->db->get();
 			if ($query->num_rows() > 0) {
 				return $query->result();
@@ -274,10 +273,10 @@ class M_library_database extends CI_Model {
 		$result = "";
 		try {
 			$this->db->select('*');
-			$this->db->from('tb_user');
-			$this->db->join('tb_departemen', 'tb_departemen.DN_ID = tb_user.DN_ID', 'left');
+			$this->db->from('tb_employee');
+			$this->db->join('tb_departemen', 'tb_departemen.DN_ID = tb_employee.DEPCODE', 'left');
 			$this->db->join('tb_divisi', 'tb_divisi.DI_ID = tb_departemen.DI_ID', 'left');
-			$this->db->where('tb_user.UR_ID', $DOC_MAKER);
+			$this->db->where('tb_employee.NIP', $DOC_MAKER);
 			$query = $this->db->get();
 			if ($query->num_rows()>0) {
 				return $query->result();
@@ -288,94 +287,13 @@ class M_library_database extends CI_Model {
 		}
 		return $result;
 	}
-	// New session Notification
-	public function getPendistribusiDEPARTEMEN($SESSION_ROLES,$SESSION_DEPARTEMENT_CODE)
-	{
-		$result = "";
-		try {
-			$query = $this->db->query('
-			SELECT
-			tb_document.DOC_ID,
-			tb_document.DOC_DATE,
-			tb_document.DOC_KATEGORI,
-			tb_document.DOC_JENIS,
-			tb_document.DOC_TIPE,
-			tb_document.DOC_GROUP_PROSES,
-			tb_document.DOC_PROSES,
-			tb_document.DOC_NOMOR,
-			tb_document.DOC_NAMA,
-			tb_document.DOC_WUJUD,
-			tb_document.DOC_DISTRIBUSI,
-			tb_document.DOC_KERAHASIAAN,
-			tb_document.DOC_AKSES_LEVEL,
-			tb_document.DOC_PENGGUNA,
-			tb_document.DOC_PEMILIK_PROSES,
-			tb_document.DOC_PENYIMPAN,
-			tb_document.DOC_PENDISTRIBUSI,
-			tb_document.DOC_VERSI,
-			tb_document.DOC_TGL_EFEKTIF,
-			tb_document.DOC_PERIODE_PREVIEW,
-			tb_document.DOC_TGL_EXPIRED,
-			tb_document.DOC_KATA_KUNCI,
-			tb_document.DOC_ABSTRAK,
-			tb_document.DOC_TERKAIT,
-			tb_document.DOC_MAKER,
-			tb_document.DOC_APPROVE,
-			tb_document.DOC_STATUS,
-			tb_document.DOC_STATUS_ACTIVITY,
-			tb_document.DOC_NOTE,
-			tb_document_structure_kategori.DTSEKI_KATEGORI,
-			tb_document_structure_jenis.DTSEJS_JENIS,
-			tb_document_structure_tipe.DTSETE_TIPE,
-			tb_document_structure_tipe.DTSETE_SINGKATAN,
-			tb_document_form.DTFM_NAME,
-			tb_distribution_method.DNMD_NAME,
-			tb_confidential.CL_NAME,
-			tb_user.DN_ID,
-			tb_departemen.DN_CODE,
-			tb_departemen.DN_NAME,
-			tb_divisi.DI_CODE,
-			tb_divisi.DI_NAME,
-			tb_direktorat.DT_NAME
-			FROM
-			tb_document
-			INNER JOIN tb_document_structure_kategori ON tb_document_structure_kategori.DTSEKI_ID = tb_document.DOC_KATEGORI
-			INNER JOIN tb_document_structure_jenis ON tb_document_structure_jenis.DTSEJS_ID = tb_document.DOC_JENIS
-			INNER JOIN tb_document_structure_tipe ON tb_document_structure_tipe.DTSETE_ID = tb_document.DOC_TIPE
-			INNER JOIN tb_document_form ON tb_document_form.DTFM_ID = tb_document.DOC_WUJUD
-			INNER JOIN tb_distribution_method ON tb_distribution_method.DNMD_ID = tb_document.DOC_DISTRIBUSI
-			INNER JOIN tb_confidential ON tb_confidential.CL_ID = tb_document.DOC_KERAHASIAAN
-			INNER JOIN tb_user ON tb_document.DOC_MAKER = tb_user.UR_ID
-			INNER JOIN tb_departemen ON tb_user.DN_ID = tb_departemen.DN_ID
-			INNER JOIN tb_divisi ON tb_departemen.DI_ID = tb_divisi.DI_ID
-			INNER JOIN tb_direktorat ON tb_divisi.DT_ID = tb_direktorat.DT_ID
-			WHERE tb_document.DOC_STATUS LIKE "%'.$SESSION_ROLES.'%"
-			AND tb_document.DOC_STATUS_ACTIVITY LIKE "%'.$SESSION_DEPARTEMENT_CODE.'%"
-			');
-			if ($query->num_rows() > 0) {
-				return $query->result();
-			}
-		} catch (Exception $exc) {
-			$error = $exc->getMessage();
-			echo "[ERROR][M_LIBRARY_DATABASE][getPendistribusiDEPARTEMEN]".$error;
-		}
-		return $result;
-	}
 	public function DB_GET_DATA_DOCUMENT_TEMPLATE_OR_DOCUMENT_STRUCTURE_TIPE($ID_KEY){
 		$result = "";
 		try{
 			if(strpos($ID_KEY,'DTSETE')!==false){
 				$query = $this->db->query('
 				SELECT
-				tb_document_structure_tipe.DTSETE_ID,
-				tb_document_structure_tipe.DTSEJS_ID,
-				tb_document_structure_tipe.DTSEKI_ID,
-				tb_document_structure_tipe.DTSETE_TIPE,
-				tb_document_structure_tipe.DTSETE_SINGKATAN,
-				tb_document_structure_tipe.CL_ID,
-				tb_document_structure_tipe.JBLL_ID,
-				tb_job_level.JBLL_NAME,
-				tb_job_level.JBLL_INDEX
+				*
 				FROM
 				tb_document_structure_tipe
 				INNER JOIN tb_job_level ON tb_document_structure_tipe.JBLL_ID = tb_job_level.JBLL_ID
@@ -385,32 +303,12 @@ class M_library_database extends CI_Model {
 			}else{
 				$query = $this->db->query('
 				SELECT
-				tb_document_template.DOCTEMP_ID,
-				tb_document_template.DOCTEMP_NAME,
-				tb_document_template.DTSEKI_ID,
-				tb_document_template.DTSEJS_ID,
-				tb_document_template.DTSETE_ID,
-				tb_document_template.DOCTEMP_GROUP_PROSES,
-				tb_document_template.DOCTEMP_PROSES,
-				tb_document_template.DOCTEMP_NOMOR,
-				tb_document_template.DOCTEMP_NAMA,
-				tb_document_template.DOC_WUJUD,
-				tb_document_template.DOC_DISTRIBUSI,
-				tb_document_template.DOC_KERAHASIAAN,
-				tb_document_template.UR_ID,
-				tb_document_structure_tipe.DTSEJS_ID,
-				tb_document_structure_tipe.DTSEKI_ID,
-				tb_document_structure_tipe.DTSETE_TIPE,
-				tb_document_structure_tipe.DTSETE_SINGKATAN,
-				tb_document_structure_tipe.CL_ID,
-				tb_document_structure_tipe.JBLL_ID,
-				tb_job_level.JBLL_NAME,
-				tb_job_level.JBLL_INDEX
+				*
 				FROM
 				tb_document_template
 				INNER JOIN tb_document_structure_tipe ON tb_document_template.DTSETE_ID = tb_document_structure_tipe.DTSETE_ID
 				INNER JOIN tb_job_level ON tb_document_structure_tipe.JBLL_ID = tb_job_level.JBLL_ID
-				WHERE tb_document_template.DOCTEMP_ID = "'.$ID_KEY.'"
+				WHERE tb_document_structure_tipe.DTSETE_ACTIVE = "1" AND tb_document_template.DOCTEMP_ID = "'.$ID_KEY.'"
 				LIMIT 1
 				');
 			}
@@ -451,164 +349,61 @@ class M_library_database extends CI_Model {
 		}
 		return $status;
 	}
-	//-----------------------------------------------------------------------------------------------//
-	//-----------------------------------------------------------------------------------------------//
-	//-----------------------------------------------------------------------------------------------//
-	//-----------------------------------------------------------------------------------------------//
-	//-----------------------------------------------------------------------------------------------//
-	//public function DB_GET_DATA_EXAMPLE_ARRAY($ID){
-	//	$result = "";
-	//	try{
-	//		$this->db->select('*');
-	//		$this->db->from($this->tb_example);
-	//		$this->db->like('ID', $ID);
-	//		$query = $this->db->get();
-	//		if ($query->num_rows() > 0) {
-	//			return $query->result();
-	//		}
-	//	}catch(Exception $exc){
-	//		$error = $exc->getMessage();
-	//		echo "[ERROR][M_LIBRARY_DATABASE][DB_GET_DATA_EXAMPLE_ARRAY]".$error;
-	//	}
-	//	return $result;
-	//}
-	////-----------------------------------------------------------------------------------------------//
-	//public function DB_GET_DATA_EXAMPLE($ID){
-	//	$result = "";
-	//	try{
-	//		$this->db->select('*');
-	//		$this->db->from($this->tb_example);
-	//		$this->db->where('ID', $ID);
-	//		$this->db->limit(1);
-	//		$query = $this->db->get();
-	//		if ($query->num_rows() > 0) {
-	//			return $query->result();
-	//		}
-	//	}catch(Exception $exc){
-	//		$error = $exc->getMessage();
-	//		echo "[ERROR][M_LIBRARY_DATABASE][DB_GET_DATA_EXAMPLE]".$error;
-	//	}
-	//	return $result;
-	//}
-	////-----------------------------------------------------------------------------------------------//
-	//public function DB_INSERT_DATA_EXAMPLE($data){
-	//	$status = false;
-	//	try{
-	//		$this->db->insert($this->tb_example, $data);
-	//		if($this->db->affected_rows() == 1){
-	//			$status = true;
-	//		}
-	//	}catch(Exception $exc){
-	//		$error = $exc->getMessage();
-	//		echo "[ERROR][M_LIBRARY_DATABASE][DB_INSERT_DATA_EXAMPLE]".$error;
-	//	}
-	//	return $status;
-	//}
-	////-----------------------------------------------------------------------------------------------//
-	//public function DB_UPDATE_DATA_EXAMPLE($ID,$data){
-	//	$status = false;
-	//	try{
-	//		$this->db->where('ID', $ID);
-	//		$this->db->update($this->tb_example, $data);
-	//		if($this->db->affected_rows() == 1){
-	//			$status = true;
-	//		}
-	//	}catch(Exception $exc){
-	//		$error = $exc->getMessage();
-	//		echo "[ERROR][M_LIBRARY_DATABASE][DB_UPDATE_DATA_EXAMPLE]".$error;
-	//	}
-	//	return $status;
-	//}
-	////-----------------------------------------------------------------------------------------------//
-	//public function DB_DELETE_DATA_EXAMPLE($ID){
-	//	$status = false;
-	//	try{
-	//		$this->db->where('ID', $ID);
-	//		$this->db->delete($this->tb_example);
-	//		if($this->db->affected_rows() == 1){
-	//			$status = true;
-	//		}
-	//	}catch(Exception $exc){
-	//		$error = $exc->getMessage();
-	//		echo "[ERROR][M_LIBRARY_DATABASE][DB_DELETE_DATA_EXAMPLE]".$error;
-	//	}
-	//	return $status;
-	//}
-	//-----------------------------------------------------------------------------------------------//
-	//-----------------------------------------------------------------------------------------------//
-	//-----------------------------------------------------------------------------------------------//
-	//-----------------------------------------------------------------------------------------------//
-	//-----------------------------------------------------------------------------------------------//
-	public function DB_GET_DATA_LOGIN($UR_ID,$UR_PASSWORD){
-		$result = "";
-		try{
-			//OLD
-			//$this->db->select('*');
-			//$this->db->from($this->tb_user);
-			//$this->db->where('UR_ID', $UR_ID);
-			//$this->db->where('UR_PASSWORD', $UR_PASSWORD);
-			//$query = $this->db->get();
-			//if ($query->num_rows() > 0) {
-			//	return $query->result();
-			//}
-			//
-			//NEW
-			$query = $this->db->query('
-			SELECT
-			tb_user.UR_ID,
-			tb_user.UR_PASSWORD,
-			tb_user.UR_EMAIL,
-			tb_user.DN_ID,
-			tb_user.RS_ID,
-			tb_user.JBLL_ID,
-			tb_user.UR_DATE,
-			tb_departemen.DN_CODE,
-			tb_departemen.DN_NAME,
-			tb_departemen.DI_ID,
-			tb_divisi.DI_CODE,
-			tb_divisi.DI_NAME,
-			tb_divisi.DT_ID,
-			tb_direktorat.DT_NAME,
-			tb_job_level.JBLL_NAME,
-			tb_job_level.JBLL_INDEX
-			FROM
-			tb_user
-			INNER JOIN tb_departemen ON tb_user.DN_ID = tb_departemen.DN_ID
-			INNER JOIN tb_divisi ON tb_departemen.DI_ID = tb_divisi.DI_ID
-			INNER JOIN tb_direktorat ON tb_divisi.DT_ID = tb_direktorat.DT_ID
-			INNER JOIN tb_roles ON tb_user.RS_ID = tb_roles.RS_ID
-			INNER JOIN tb_job_level ON tb_user.JBLL_ID = tb_job_level.JBLL_ID
-			WHERE tb_user.UR_ID = "'.$UR_ID.'"
-			AND tb_user.UR_PASSWORD = "'.$UR_PASSWORD.'"
-			LIMIT 1
-			');
-			if ($query->num_rows() > 0) {
-				return $query->result();
-			}
-		}catch(Exception $exc){
-			$error = $exc->getMessage();
-			echo "[ERROR][M_LIBRARY_DATABASE][DB_GET_DATA_LOGIN]".$error;
-		}
-		return $result;
+	public function DB_GET_DATA_LOGIN_TOKEN($USERNAME)
+	{
+		$this->db->select('*');
+		$this->db->from('tb_employee');
+		$this->db->join('tb_employee_detail', 'tb_employee_detail.NIP = tb_employee.NIP', 'left');
+		$this->db->join('tb_departemen', 'tb_employee.DEPCODE = tb_departemen.DN_ID', 'left');
+		$this->db->join('tb_divisi', 'tb_departemen.DI_ID = tb_divisi.DI_ID', 'left');
+		$this->db->join('tb_direktorat', 'tb_divisi.DT_ID = tb_direktorat.DT_ID', 'left');
+		$this->db->join('tb_job_level', 'tb_employee.JOBLVL = tb_job_level.JBLL_ID', 'left');
+		$this->db->join('tb_roles', 'tb_employee_detail.ROLES = tb_roles.RS_ID', 'left');
+		$this->db->where('tb_employee.NIP = "'.$USERNAME.'" OR tb_employee.USER_NAME = "'.$USERNAME.'" ');
+		return $this->db->get()->result();
 	}
-
-	public function DB_GET_DATA_LOGIN_DIRECT($UR_ID){
-		$result = "";
-		try{
-			//NEW
-			$query = $this->db->query('
-			SELECT * FROM tb_employee
-			WHERE tb_employee.NIP = "'.$UR_ID.'"
-			LIMIT 1
-			');
-			if ($query->num_rows() > 0) {
-				return $query->result();
-			}
-		}catch(Exception $exc){
-			$error = $exc->getMessage();
-			echo "[ERROR][M_LIBRARY_DATABASE][DB_GET_DATA_LOGIN_DIRECT]".$error;
-		}
-		return $result;
+	public function CEK_TOKEN($TOKEN)
+	{
+		$this->db->select('*');
+		$this->db->from('tb_document_link');
+		$this->db->where('TOKEN', $TOKEN);
+		return $this->db->get()->result();
+	}
+	public function DB_GET_DATA_LOGIN_DIRECT($NIP)
+	{
+		$this->db->select('*');
+		$this->db->from('tb_employee');
+		$this->db->join('tb_employee_detail', 'tb_employee_detail.NIP = tb_employee.NIP', 'left');
+		$this->db->join('tb_departemen', 'tb_employee.DEPCODE = tb_departemen.DN_ID', 'left');
+		$this->db->join('tb_divisi', 'tb_departemen.DI_ID = tb_divisi.DI_ID', 'left');
+		$this->db->join('tb_direktorat', 'tb_divisi.DT_ID = tb_direktorat.DT_ID', 'left');
+		$this->db->join('tb_job_level', 'tb_employee.JOBLVL = tb_job_level.JBLL_ID', 'left');
+		$this->db->join('tb_roles', 'tb_employee_detail.ROLES = tb_roles.RS_ID', 'left');
+		$this->db->where('tb_employee.NIP = "'.$NIP.'" OR tb_employee.USER_NAME = "'.$NIP.'"');
+		return $this->db->get()->result();
+	}
+	public function DB_GET_DATA_LOGIN($UR_ID,$UR_PASSWORD){
+		$this->db->select('*');
+		$this->db->from('tb_employee');
+		$this->db->join('tb_employee_detail', 'tb_employee_detail.NIP = tb_employee.NIP', 'left');
+		$this->db->join('tb_departemen', 'tb_employee.DEPCODE = tb_departemen.DN_ID', 'left');
+		$this->db->join('tb_divisi', 'tb_departemen.DI_ID = tb_divisi.DI_ID', 'left');
+		$this->db->join('tb_direktorat', 'tb_divisi.DT_ID = tb_direktorat.DT_ID', 'left');
+		$this->db->join('tb_job_level', 'tb_employee.JOBLVL = tb_job_level.JBLL_ID', 'left');
+		$this->db->join('tb_roles', 'tb_employee_detail.ROLES = tb_roles.RS_ID', 'left');
+		$this->db->where('tb_employee.NIP = "'.$UR_ID.'" OR tb_employee.USER_NAME = "'.$UR_ID.'"');
+		return $this->db->get()->result();
+	}
+	public function DB_GET_DATA_LOGIN_TB_USER($UR_ID,$UR_PASSWORD){
+		$this->db->select('*');
+		$this->db->from('tb_user');
+		$this->db->join('tb_departemen', 'tb_user.DN_ID = tb_departemen.DN_ID', 'left');
+		$this->db->join('tb_divisi', 'tb_departemen.DI_ID = tb_divisi.DI_ID', 'left');
+		$this->db->join('tb_direktorat', 'tb_divisi.DT_ID = tb_direktorat.DT_ID', 'left');
+		$this->db->join('tb_job_level', 'tb_user.JBLL_ID = tb_job_level.JBLL_ID', 'left');
+		$this->db->join('tb_roles', 'tb_user.ROLES = tb_roles.RS_ID', 'left');
+		$this->db->where('(tb_user.UR_ID = "'.$UR_ID.'" OR tb_user.NIP = "'.$UR_ID.'") AND tb_user.UR_PASSWORD = "'.$UR_PASSWORD.'"');
+		return $this->db->get()->result();
 	}
 	//-----------------------------------------------------------------------------------------------//
 	public function DB_GET_DATA_MASTER_ARRAY(){
@@ -872,48 +667,7 @@ class M_library_database extends CI_Model {
 		try{
 			$query = $this->db->query('
 			SELECT
-			tb_document.DOC_ID,
-			tb_document.DOC_DATE,
-			tb_document.DOC_KATEGORI,
-			tb_document.DOC_JENIS,
-			tb_document.DOC_TIPE,
-			tb_document.DOC_GROUP_PROSES,
-			tb_document.DOC_PROSES,
-			tb_document.DOC_NOMOR,
-			tb_document.DOC_NAMA,
-			tb_document.DOC_WUJUD,
-			tb_document.DOC_DISTRIBUSI,
-			tb_document.DOC_KERAHASIAAN,
-			tb_document.DOC_AKSES_LEVEL,
-			tb_document.DOC_PENGGUNA,
-			tb_document.DOC_PEMILIK_PROSES,
-			tb_document.DOC_PENYIMPAN,
-			tb_document.DOC_PENDISTRIBUSI,
-			tb_document.DOC_VERSI,
-			tb_document.DOC_TGL_EFEKTIF,
-			tb_document.DOC_PERIODE_PREVIEW,
-			tb_document.DOC_TGL_EXPIRED,
-			tb_document.DOC_KATA_KUNCI,
-			tb_document.DOC_ABSTRAK,
-			tb_document.DOC_TERKAIT,
-			tb_document.DOC_MAKER,
-			tb_document.DOC_APPROVE,
-			tb_document.DOC_STATUS,
-			tb_document.DOC_STATUS_ACTIVITY,
-			tb_document.DOC_NOTE,
-			tb_document_structure_kategori.DTSEKI_KATEGORI,
-			tb_document_structure_jenis.DTSEJS_JENIS,
-			tb_document_structure_tipe.DTSETE_TIPE,
-			tb_document_structure_tipe.DTSETE_SINGKATAN,
-			tb_document_form.DTFM_NAME,
-			tb_distribution_method.DNMD_NAME,
-			tb_confidential.CL_NAME,
-			tb_user.DN_ID,
-			tb_departemen.DN_CODE,
-			tb_departemen.DN_NAME,
-			tb_divisi.DI_CODE,
-			tb_divisi.DI_NAME,
-			tb_direktorat.DT_NAME
+			*
 			FROM
 			tb_document
 			INNER JOIN tb_document_structure_kategori ON tb_document_structure_kategori.DTSEKI_ID = tb_document.DOC_KATEGORI
@@ -947,48 +701,7 @@ class M_library_database extends CI_Model {
 		try{
 			$query = $this->db->query('
 			SELECT
-			tb_document.DOC_ID,
-			tb_document.DOC_DATE,
-			tb_document.DOC_KATEGORI,
-			tb_document.DOC_JENIS,
-			tb_document.DOC_TIPE,
-			tb_document.DOC_GROUP_PROSES,
-			tb_document.DOC_PROSES,
-			tb_document.DOC_NOMOR,
-			tb_document.DOC_NAMA,
-			tb_document.DOC_WUJUD,
-			tb_document.DOC_DISTRIBUSI,
-			tb_document.DOC_KERAHASIAAN,
-			tb_document.DOC_AKSES_LEVEL,
-			tb_document.DOC_PENGGUNA,
-			tb_document.DOC_PEMILIK_PROSES,
-			tb_document.DOC_PENYIMPAN,
-			tb_document.DOC_PENDISTRIBUSI,
-			tb_document.DOC_VERSI,
-			tb_document.DOC_TGL_EFEKTIF,
-			tb_document.DOC_PERIODE_PREVIEW,
-			tb_document.DOC_TGL_EXPIRED,
-			tb_document.DOC_KATA_KUNCI,
-			tb_document.DOC_ABSTRAK,
-			tb_document.DOC_TERKAIT,
-			tb_document.DOC_MAKER,
-			tb_document.DOC_APPROVE,
-			tb_document.DOC_STATUS,
-			tb_document.DOC_STATUS_ACTIVITY,
-			tb_document.DOC_NOTE,
-			tb_document_structure_kategori.DTSEKI_KATEGORI,
-			tb_document_structure_jenis.DTSEJS_JENIS,
-			tb_document_structure_tipe.DTSETE_TIPE,
-			tb_document_structure_tipe.DTSETE_SINGKATAN,
-			tb_document_form.DTFM_NAME,
-			tb_distribution_method.DNMD_NAME,
-			tb_confidential.CL_NAME,
-			tb_user.DN_ID,
-			tb_departemen.DN_CODE,
-			tb_departemen.DN_NAME,
-			tb_divisi.DI_CODE,
-			tb_divisi.DI_NAME,
-			tb_direktorat.DT_NAME
+			*
 			FROM
 			tb_document
 			INNER JOIN tb_document_structure_kategori ON tb_document_structure_kategori.DTSEKI_ID = tb_document.DOC_KATEGORI
@@ -1050,48 +763,7 @@ class M_library_database extends CI_Model {
 			//NEW
 			$query = $this->db->query('
 			SELECT
-			tb_document.DOC_ID,
-			tb_document.DOC_DATE,
-			tb_document.DOC_KATEGORI,
-			tb_document.DOC_JENIS,
-			tb_document.DOC_TIPE,
-			tb_document.DOC_GROUP_PROSES,
-			tb_document.DOC_PROSES,
-			tb_document.DOC_NOMOR,
-			tb_document.DOC_NAMA,
-			tb_document.DOC_WUJUD,
-			tb_document.DOC_DISTRIBUSI,
-			tb_document.DOC_KERAHASIAAN,
-			tb_document.DOC_AKSES_LEVEL,
-			tb_document.DOC_PENGGUNA,
-			tb_document.DOC_PEMILIK_PROSES,
-			tb_document.DOC_PENYIMPAN,
-			tb_document.DOC_PENDISTRIBUSI,
-			tb_document.DOC_VERSI,
-			tb_document.DOC_TGL_EFEKTIF,
-			tb_document.DOC_PERIODE_PREVIEW,
-			tb_document.DOC_TGL_EXPIRED,
-			tb_document.DOC_KATA_KUNCI,
-			tb_document.DOC_ABSTRAK,
-			tb_document.DOC_TERKAIT,
-			tb_document.DOC_MAKER,
-			tb_document.DOC_APPROVE,
-			tb_document.DOC_STATUS,
-			tb_document.DOC_STATUS_ACTIVITY,
-			tb_document.DOC_NOTE,
-			tb_document_structure_kategori.DTSEKI_KATEGORI,
-			tb_document_structure_jenis.DTSEJS_JENIS,
-			tb_document_structure_tipe.DTSETE_TIPE,
-			tb_document_structure_tipe.DTSETE_SINGKATAN,
-			tb_document_form.DTFM_NAME,
-			tb_distribution_method.DNMD_NAME,
-			tb_confidential.CL_NAME,
-			tb_user.DN_ID,
-			tb_departemen.DN_CODE,
-			tb_departemen.DN_NAME,
-			tb_divisi.DI_CODE,
-			tb_divisi.DI_NAME,
-			tb_direktorat.DT_NAME
+			*
 			FROM
 			tb_document
 			INNER JOIN tb_document_structure_kategori ON tb_document_structure_kategori.DTSEKI_ID = tb_document.DOC_KATEGORI
@@ -1123,65 +795,10 @@ class M_library_database extends CI_Model {
 	public function DB_GET_SEARCH_NEWS_DATA_DOCUMENT_ARRAY($DOC_AKSES_LEVEL,$DOC_PENGGUNA){
 		$result = "";
 		try{
-			//OLD
-			//$this->db->select('*');
-			//$this->db->from($this->tb_document);
-			//$this->db->like('DOC_ID', $DOC_ID);
-			//$this->db->like('DOC_NOMOR', $DOC_NOMOR);
-			//$this->db->like('DOC_NAMA', $DOC_NAMA);
-			//$this->db->like('DOC_MAKER', $DOC_MAKER);
-			//$this->db->like('DOC_APPROVE', $DOC_APPROVE);
-			//$this->db->like('DOC_STATUS', $DOC_STATUS);
-			//$query = $this->db->get();
-			//if ($query->num_rows() > 0) {
-			//	return $query->result();
-			//}
-			//
 			//NEW
 			$query = $this->db->query('
 			SELECT
-			tb_document.DOC_ID,
-			tb_document.DOC_DATE,
-			tb_document.DOC_KATEGORI,
-			tb_document.DOC_JENIS,
-			tb_document.DOC_TIPE,
-			tb_document.DOC_GROUP_PROSES,
-			tb_document.DOC_PROSES,
-			tb_document.DOC_NOMOR,
-			tb_document.DOC_NAMA,
-			tb_document.DOC_WUJUD,
-			tb_document.DOC_DISTRIBUSI,
-			tb_document.DOC_KERAHASIAAN,
-			tb_document.DOC_AKSES_LEVEL,
-			tb_document.DOC_PENGGUNA,
-			tb_document.DOC_PEMILIK_PROSES,
-			tb_document.DOC_PENYIMPAN,
-			tb_document.DOC_PENDISTRIBUSI,
-			tb_document.DOC_VERSI,
-			tb_document.DOC_TGL_EFEKTIF,
-			tb_document.DOC_PERIODE_PREVIEW,
-			tb_document.DOC_TGL_EXPIRED,
-			tb_document.DOC_KATA_KUNCI,
-			tb_document.DOC_ABSTRAK,
-			tb_document.DOC_TERKAIT,
-			tb_document.DOC_MAKER,
-			tb_document.DOC_APPROVE,
-			tb_document.DOC_STATUS,
-			tb_document.DOC_STATUS_ACTIVITY,
-			tb_document.DOC_NOTE,
-			tb_document_structure_kategori.DTSEKI_KATEGORI,
-			tb_document_structure_jenis.DTSEJS_JENIS,
-			tb_document_structure_tipe.DTSETE_TIPE,
-			tb_document_structure_tipe.DTSETE_SINGKATAN,
-			tb_document_form.DTFM_NAME,
-			tb_distribution_method.DNMD_NAME,
-			tb_confidential.CL_NAME,
-			tb_user.DN_ID,
-			tb_departemen.DN_CODE,
-			tb_departemen.DN_NAME,
-			tb_divisi.DI_CODE,
-			tb_divisi.DI_NAME,
-			tb_direktorat.DT_NAME
+			*
 			FROM
 			tb_document
 			INNER JOIN tb_document_structure_kategori ON tb_document_structure_kategori.DTSEKI_ID = tb_document.DOC_KATEGORI
@@ -1190,8 +807,8 @@ class M_library_database extends CI_Model {
 			INNER JOIN tb_document_form ON tb_document_form.DTFM_ID = tb_document.DOC_WUJUD
 			INNER JOIN tb_distribution_method ON tb_distribution_method.DNMD_ID = tb_document.DOC_DISTRIBUSI
 			INNER JOIN tb_confidential ON tb_confidential.CL_ID = tb_document.DOC_KERAHASIAAN
-			INNER JOIN tb_user ON tb_document.DOC_MAKER = tb_user.UR_ID
-			INNER JOIN tb_departemen ON tb_user.DN_ID = tb_departemen.DN_ID
+			INNER JOIN tb_employee ON tb_document.DOC_MAKER = tb_employee.UR_ID
+			INNER JOIN tb_departemen ON tb_employee.DEPCODE = tb_departemen.DN_ID
 			INNER JOIN tb_divisi ON tb_departemen.DI_ID = tb_divisi.DI_ID
 			INNER JOIN tb_direktorat ON tb_divisi.DT_ID = tb_direktorat.DT_ID
 			WHERE tb_document.DOC_AKSES_LEVEL LIKE "%'.$DOC_AKSES_LEVEL.'%"
@@ -1466,22 +1083,13 @@ class M_library_database extends CI_Model {
 		try{
 			$query = $this->db->query('
 			SELECT
-			tb_document_structure_tipe.DTSETE_ID,
-			tb_document_structure_tipe.DTSEJS_ID,
-			tb_document_structure_tipe.DTSEKI_ID,
-			tb_document_structure_tipe.DTSETE_TIPE,
-			tb_document_structure_tipe.DTSETE_SINGKATAN,
-			tb_document_structure_tipe.CL_ID,
-			tb_document_structure_tipe.JBLL_ID,
-			tb_confidential.CL_NAME,
-			tb_document_structure_kategori.DTSEKI_KATEGORI,
-			tb_document_structure_jenis.DTSEJS_JENIS
+			*
 			FROM
 			tb_document_structure_tipe
 			INNER JOIN tb_confidential ON
 			tb_document_structure_tipe.CL_ID = tb_confidential.CL_ID 
 			INNER JOIN tb_document_structure_jenis ON tb_document_structure_tipe.DTSEJS_ID = tb_document_structure_jenis.DTSEJS_ID 
-			INNER JOIN tb_document_structure_kategori ON tb_document_structure_tipe.DTSEKI_ID = tb_document_structure_kategori.DTSEKI_ID 
+			INNER JOIN tb_document_structure_kategori ON tb_document_structure_tipe.DTSEKI_ID = tb_document_structure_kategori.DTSEKI_ID
 			WHERE tb_document_structure_tipe.DTSETE_ID = "'.$DTSETE_ID.'"
 			LIMIT 1
 			');
@@ -1533,7 +1141,8 @@ class M_library_database extends CI_Model {
 		try{
 			$this->db->select('*');
 			$this->db->from($this->tb_document_detail);
-			$this->db->where('DOC_ID', $DOC_ID);
+			$this->db->join('tb_document', 'tb_document_detail.DOC_ID = tb_document_detail.DOC_ID', 'left');
+			$this->db->where('tb_document_detail.DOC_ID', $DOC_ID);
 			$query = $this->db->get();
 			if ($query->num_rows() > 0) {
 				return $query->result();
@@ -1613,27 +1222,7 @@ class M_library_database extends CI_Model {
 		try{
 			$query = $this->db->query('
 			SELECT
-			tb_document_template.DOCTEMP_ID,
-			tb_document_template.DOCTEMP_NAME,
-			tb_document_template.DTSEKI_ID,
-			tb_document_structure_kategori.DTSEKI_KATEGORI,
-			tb_document_template.DTSEJS_ID,
-			tb_document_structure_jenis.DTSEJS_JENIS,
-			tb_document_template.DTSETE_ID,
-			tb_document_structure_tipe.DTSETE_TIPE,
-			tb_document_structure_tipe.DTSETE_SINGKATAN,
-			tb_document_structure_tipe.JBLL_ID,
-			tb_document_template.DOCTEMP_GROUP_PROSES,
-			tb_document_template.DOCTEMP_PROSES,
-			tb_document_template.DOCTEMP_NOMOR,
-			tb_document_template.DOCTEMP_NAMA,
-			tb_document_template.DOC_WUJUD,
-			tb_document_template.DOC_DISTRIBUSI,
-			tb_document_template.DOC_KERAHASIAAN,
-			tb_document_template.UR_ID,
-			tb_confidential.CL_NAME,
-			tb_document_form.DTFM_NAME,
-			tb_distribution_method.DNMD_NAME
+			*
 			FROM
 			tb_document_template
 			INNER JOIN tb_document_structure_tipe ON tb_document_template.DTSETE_ID = tb_document_structure_tipe.DTSETE_ID
@@ -1721,62 +1310,7 @@ class M_library_database extends CI_Model {
 		try{
 			$query = $this->db->query('
 			SELECT
-			tb_document.DOC_ID,
-			tb_document.DOC_DATE,
-			tb_document.DOC_KATEGORI,
-			tb_document.DOC_JENIS,
-			tb_document.DOC_TIPE,
-			tb_document.DOC_GROUP_PROSES,
-			tb_document.DOC_PROSES,
-			tb_document.DOC_NOMOR,
-			tb_document.DOC_NAMA,
-			tb_document.DOC_WUJUD,
-			tb_document.DOC_DISTRIBUSI,
-			tb_document.DOC_KERAHASIAAN,
-			tb_document.DOC_AKSES_LEVEL,
-			tb_document.DOC_PENGGUNA,
-			tb_document.DOC_PEMILIK_PROSES,
-			tb_document.DOC_PENYIMPAN,
-			tb_document.DOC_PENDISTRIBUSI,
-			tb_document.DOC_VERSI,
-			tb_document.DOC_TGL_EFEKTIF,
-			tb_document.DOC_PERIODE_PREVIEW,
-			tb_document.DOC_TGL_EXPIRED,
-			tb_document.DOC_KATA_KUNCI,
-			tb_document.DOC_ABSTRAK,
-			tb_document.DOC_TERKAIT,
-			tb_document.DOC_MAKER,
-			tb_document.DOC_APPROVE,
-			tb_document.DOC_STATUS,
-			tb_document.DOC_STATUS_ACTIVITY,
-			tb_document.DOC_NOTE,
-			tb_document_structure_kategori.DTSEKI_ID,
-			tb_document_structure_kategori.DTSEKI_KATEGORI,
-			tb_document_structure_jenis.DTSEJS_ID,
-			tb_document_structure_jenis.DTSEJS_JENIS,
-			tb_document_structure_tipe.DTSETE_ID,
-			tb_document_structure_tipe.DTSETE_TIPE,
-			tb_document_structure_tipe.DTSETE_SINGKATAN,
-			tb_document_form.DTFM_ID,
-			tb_document_form.DTFM_NAME,
-			tb_distribution_method.DNMD_ID,
-			tb_distribution_method.DNMD_NAME,
-			tb_confidential.CL_ID,
-			tb_confidential.CL_NAME,
-			tb_document_detail.DOCD_UTAMA,
-			tb_document_detail.DOCD_UTAMA_TYPE,
-			tb_document_detail.DOCD_UTAMA_STATUS,
-			tb_document_detail.DOCD_UTAMA_EXT,
-			tb_document_detail.DOCD_PELENGKAP_1,
-			tb_document_detail.DOCD_PELENGKAP_1_TYPE,
-			tb_document_detail.DOCD_PELENGKAP_1_STATUS,
-			tb_document_detail.DOCD_PELENGKAP_1_EXT,
-			tb_document_detail.DOCD_PELENGKAP_2,
-			tb_document_detail.DOCD_PELENGKAP_2_TYPE,
-			tb_document_detail.DOCD_PELENGKAP_2_STATUS,
-			tb_document_detail.DOCD_PELENGKAP_2_EXT,
-			tb_document_detail.DOCD_PERSETUJUAN,
-			tb_document_detail.DOCD_PERSETUJUAN_TYPE
+			*
 			FROM
 			tb_document
 			INNER JOIN tb_document_structure_kategori ON tb_document_structure_kategori.DTSEKI_ID = tb_document.DOC_KATEGORI
@@ -1845,11 +1379,21 @@ class M_library_database extends CI_Model {
 	public function DB_GET_DATA_DOCUMENT_COMMENT_BY_AUTHOR($DTCT_AUTHOR,$DOC_ID){
 		$result = "";
 		try{
-			$this->db->select('*');
-			$this->db->from($this->tb_document_comment);
-			$this->db->where('DTCT_AUTHOR', $DTCT_AUTHOR);
-			$this->db->where('DOC_ID', $DOC_ID);
-			$query = $this->db->get();
+			$query = $this->db->query('
+			SELECT tbe.NIP 
+			,tbe.FULL_NAME
+			,tbe.DEPNAME 
+			,dcc.DTCT_USER
+			,dcc.DTCT_DATE
+			,dcc.DTCT_ID
+			,dcc.DTCT_NOTE
+			FROM tb_document_comment dcc
+			INNER JOIN tb_employee tbe ON dcc.DTCT_USER = tbe.NIP
+			WHERE 1=1
+			AND DTCT_AUTHOR="'.$DTCT_AUTHOR.'"
+			AND DOC_ID ="'.$DOC_ID.'"
+			');
+		
 			if ($query->num_rows() > 0) {
 				return $query->result();
 			}
@@ -1866,14 +1410,7 @@ class M_library_database extends CI_Model {
 		try{
 			$query = $this->db->query('
 			SELECT
-			tb_direktorat.DT_ID,
-			tb_direktorat.DT_NAME,
-			tb_divisi.DI_ID,
-			tb_divisi.DI_CODE,
-			tb_divisi.DI_NAME,
-			tb_departemen.DN_ID,
-			tb_departemen.DN_CODE,
-			tb_departemen.DN_NAME
+			*
 			FROM
 			tb_direktorat
 			INNER JOIN tb_divisi ON tb_divisi.DT_ID = tb_direktorat.DT_ID
@@ -1890,11 +1427,12 @@ class M_library_database extends CI_Model {
 		return $result;
 	}
 	//-----------------------------------------------------------------------------------------------//
-	public function DB_GET_DATA_DEPARTEMENT_ARRAY(){
+	public function DB_GET_DATA_DEPARTEMENT_ARRAY($DN_ID){
 		$result = "";
 		try{
 			$this->db->select('*');
 			$this->db->from($this->tb_departemen);
+			$this->db->where('DN_ID !=', $DN_ID);
 			$this->db->order_by('DN_NAME','ASC');
 			$query = $this->db->get();
 			if ($query->num_rows() > 0) {
@@ -1992,65 +1530,11 @@ class M_library_database extends CI_Model {
 	public function DB_GET_SEARCH_DATA_DOCUMENT_ARRAY_EVO($DOC_ID,$DOC_NOMOR,$DOC_NAMA,$DOC_MAKER,$DOC_APPROVE,$DOC_STATUS,$DN_ID){
 		$result = "";
 		try{
-			//OLD
-			//$this->db->select('*');
-			//$this->db->from($this->tb_document);
-			//$this->db->like('DOC_ID', $DOC_ID);
-			//$this->db->like('DOC_NOMOR', $DOC_NOMOR);
-			//$this->db->like('DOC_NAMA', $DOC_NAMA);
-			//$this->db->like('DOC_MAKER', $DOC_MAKER);
-			//$this->db->like('DOC_APPROVE', $DOC_APPROVE);
-			//$this->db->like('DOC_STATUS', $DOC_STATUS);
-			//$query = $this->db->get();
-			//if ($query->num_rows() > 0) {
-			//	return $query->result();
-			//}
-			//
+			
 			//NEW
 			$query = $this->db->query('
 			SELECT
-			tb_document.DOC_ID,
-			tb_document.DOC_DATE,
-			tb_document.DOC_KATEGORI,
-			tb_document.DOC_JENIS,
-			tb_document.DOC_TIPE,
-			tb_document.DOC_GROUP_PROSES,
-			tb_document.DOC_PROSES,
-			tb_document.DOC_NOMOR,
-			tb_document.DOC_NAMA,
-			tb_document.DOC_WUJUD,
-			tb_document.DOC_DISTRIBUSI,
-			tb_document.DOC_KERAHASIAAN,
-			tb_document.DOC_AKSES_LEVEL,
-			tb_document.DOC_PENGGUNA,
-			tb_document.DOC_PEMILIK_PROSES,
-			tb_document.DOC_PENYIMPAN,
-			tb_document.DOC_PENDISTRIBUSI,
-			tb_document.DOC_VERSI,
-			tb_document.DOC_TGL_EFEKTIF,
-			tb_document.DOC_PERIODE_PREVIEW,
-			tb_document.DOC_TGL_EXPIRED,
-			tb_document.DOC_KATA_KUNCI,
-			tb_document.DOC_ABSTRAK,
-			tb_document.DOC_TERKAIT,
-			tb_document.DOC_MAKER,
-			tb_document.DOC_APPROVE,
-			tb_document.DOC_STATUS,
-			tb_document.DOC_STATUS_ACTIVITY,
-			tb_document.DOC_NOTE,
-			tb_document_structure_kategori.DTSEKI_KATEGORI,
-			tb_document_structure_jenis.DTSEJS_JENIS,
-			tb_document_structure_tipe.DTSETE_TIPE,
-			tb_document_structure_tipe.DTSETE_SINGKATAN,
-			tb_document_form.DTFM_NAME,
-			tb_distribution_method.DNMD_NAME,
-			tb_confidential.CL_NAME,
-			tb_user.DN_ID,
-			tb_departemen.DN_CODE,
-			tb_departemen.DN_NAME,
-			tb_divisi.DI_CODE,
-			tb_divisi.DI_NAME,
-			tb_direktorat.DT_NAME
+			*
 			FROM
 			tb_document
 			INNER JOIN tb_document_structure_kategori ON tb_document_structure_kategori.DTSEKI_ID = tb_document.DOC_KATEGORI
@@ -2085,65 +1569,9 @@ class M_library_database extends CI_Model {
 
 		$result = "";
 		try{
-			//OLD
-			//$this->db->select('*');
-			//$this->db->from($this->tb_document);
-			//$this->db->like('DOC_ID', $DOC_ID);
-			//$this->db->like('DOC_NOMOR', $DOC_NOMOR);
-			//$this->db->like('DOC_NAMA', $DOC_NAMA);
-			//$this->db->like('DOC_MAKER', $DOC_MAKER);
-			//$this->db->like('DOC_APPROVE', $DOC_APPROVE);
-			//$this->db->like('DOC_STATUS', $DOC_STATUS);
-			//$query = $this->db->get();
-			//if ($query->num_rows() > 0) {
-			//	return $query->result();
-			//}
-			//
-			//NEW
 			$query = $this->db->query('
 			SELECT
-			tb_document.DOC_ID,
-			tb_document.DOC_DATE,
-			tb_document.DOC_KATEGORI,
-			tb_document.DOC_JENIS,
-			tb_document.DOC_TIPE,
-			tb_document.DOC_GROUP_PROSES,
-			tb_document.DOC_PROSES,
-			tb_document.DOC_NOMOR,
-			tb_document.DOC_NAMA,
-			tb_document.DOC_WUJUD,
-			tb_document.DOC_DISTRIBUSI,
-			tb_document.DOC_KERAHASIAAN,
-			tb_document.DOC_AKSES_LEVEL,
-			tb_document.DOC_PENGGUNA,
-			tb_document.DOC_PEMILIK_PROSES,
-			tb_document.DOC_PENYIMPAN,
-			tb_document.DOC_PENDISTRIBUSI,
-			tb_document.DOC_VERSI,
-			tb_document.DOC_TGL_EFEKTIF,
-			tb_document.DOC_PERIODE_PREVIEW,
-			tb_document.DOC_TGL_EXPIRED,
-			tb_document.DOC_KATA_KUNCI,
-			tb_document.DOC_ABSTRAK,
-			tb_document.DOC_TERKAIT,
-			tb_document.DOC_MAKER,
-			tb_document.DOC_APPROVE,
-			tb_document.DOC_STATUS,
-			tb_document.DOC_STATUS_ACTIVITY,
-			tb_document.DOC_NOTE,
-			tb_document_structure_kategori.DTSEKI_KATEGORI,
-			tb_document_structure_jenis.DTSEJS_JENIS,
-			tb_document_structure_tipe.DTSETE_TIPE,
-			tb_document_structure_tipe.DTSETE_SINGKATAN,
-			tb_document_form.DTFM_NAME,
-			tb_distribution_method.DNMD_NAME,
-			tb_confidential.CL_NAME,
-			tb_user.DN_ID,
-			tb_departemen.DN_CODE,
-			tb_departemen.DN_NAME,
-			tb_divisi.DI_CODE,
-			tb_divisi.DI_NAME,
-			tb_direktorat.DT_NAME
+			*
 			FROM
 			tb_document
 			INNER JOIN tb_document_structure_kategori ON tb_document_structure_kategori.DTSEKI_ID = tb_document.DOC_KATEGORI
@@ -2152,8 +1580,8 @@ class M_library_database extends CI_Model {
 			INNER JOIN tb_document_form ON tb_document_form.DTFM_ID = tb_document.DOC_WUJUD
 			INNER JOIN tb_distribution_method ON tb_distribution_method.DNMD_ID = tb_document.DOC_DISTRIBUSI
 			INNER JOIN tb_confidential ON tb_confidential.CL_ID = tb_document.DOC_KERAHASIAAN
-			INNER JOIN tb_user ON tb_document.DOC_MAKER = tb_user.UR_ID
-			INNER JOIN tb_departemen ON tb_user.DN_ID = tb_departemen.DN_ID
+			INNER JOIN tb_employee ON tb_document.DOC_MAKER = tb_employee.NIP
+			INNER JOIN tb_departemen ON tb_employee.DEPCODE = tb_departemen.DN_ID
 			INNER JOIN tb_divisi ON tb_departemen.DI_ID = tb_divisi.DI_ID
 			INNER JOIN tb_direktorat ON tb_divisi.DT_ID = tb_direktorat.DT_ID
 			WHERE tb_document.DOC_AKSES_LEVEL LIKE "%'.$DOC_AKSES_LEVEL.'%"

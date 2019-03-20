@@ -1,94 +1,30 @@
 <?php
-//-----------------------------------------------------------------------------------------------//
 defined('BASEPATH') OR exit('No direct script access allowed');
-//-----------------------------------------------------------------------------------------------//
-$SESSION_ID = $this->session->userdata("session_bgm_edocument_id");
-$SESSION_EMAIL = $this->session->userdata("session_bgm_edocument_email");
-
-$SESSION_DIREKTORAT_ID = $this->session->userdata("session_bgm_edocument_direktorat_id");
-$SESSION_DIREKTORAT_NAME = $this->session->userdata("session_bgm_edocument_direktorat_name");
-
-$SESSION_DIVISI_ID = $this->session->userdata("session_bgm_edocument_divisi_id");
-$SESSION_DIVISI_CODE = $this->session->userdata("session_bgm_edocument_divisi_code");
-$SESSION_DIVISI_NAME = $this->session->userdata("session_bgm_edocument_divisi_name");
-
-$SESSION_DEPARTEMENT_ID = $this->session->userdata("session_bgm_edocument_departement_id");
-$SESSION_DEPARTEMENT_CODE = $this->session->userdata("session_bgm_edocument_departement_code");
-$SESSION_DEPARTEMENT_NAME = $this->session->userdata("session_bgm_edocument_departement_name");
-
-$SESSION_ROLES = $this->session->userdata("session_bgm_edocument_roles");
-
-$SESSION_JOB_LEVEL_ID = $this->session->userdata("session_bgm_edocument_job_level_id");
-$SESSION_JOB_LEVEL_NAME = $this->session->userdata("session_bgm_edocument_job_level_name");
-$SESSION_JOB_LEVEL_INDEX = $this->session->userdata("session_bgm_edocument_job_level_index");
-//-----------------------------------------------------------------------------------------------//
+include (APPPATH.'libraries/session_user.php');
+// Tools
 $is_continue = true;
 $count_notification = 0;
 $count_news = 0;
-//-----------------------------------------------------------------------------------------------//
-
-// New Notifiacation
-if ($SESSION_ROLES == "PENDISTRIBUSI") {
-	$get_data_ext = $this->M_library_database->DB_GET_SEARCH_DATA_DOCUMENT_ARRAY("","","","","","");
-	if (empty($get_data_ext)) {
-		$is_continue = false;
-	}else{	
-		foreach ($get_data_ext as $data_row_ext) {
-			$DOC_PENDISTRIBUSI = $data_row_ext->DOC_PENDISTRIBUSI;
-			$DI_CODE = $data_row_ext->DI_CODE;
-		}
-		if ($SESSION_DEPARTEMENT_ID==$DOC_PENDISTRIBUSI) {
-			$count_notification = count($get_data_ext);
-		}else{
-			$is_continue = false;
-		}
-	}
-}
-if ($SESSION_ROLES == "ATASAN PENCIPTA") {
-	$get_data_ext = $this->M_library_database->DB_GET_SEARCH_DATA_DOCUMENT_ARRAY("","","","","","");
-	if (empty($get_data_ext)) {
-		$is_continue = false;
-	}else{	
-		foreach ($get_data_ext as $data_row_ext) {
-			$DOC_PENDISTRIBUSI = $data_row_ext->DOC_PENDISTRIBUSI;
-			$DI_CODE = $data_row_ext->DI_CODE;
-		}
-		if ($SESSION_DEPARTEMENT_ID==$DOC_PENDISTRIBUSI||$SESSION_DIVISI_CODE==$DI_CODE) {
-			$count_notification = count($get_data_ext);
-		}else{
-			$is_continue = false;
-		}
-	}
-}
-if($SESSION_ROLES=="PENCIPTA"){
-	//$DOC_ID,$DOC_NOMOR,$DOC_NAMA,$DOC_MAKER,$DOC_APPROVE,$DOC_STATUS,$DN_ID
-	$get_data_ext = $this->M_library_database->DB_GET_SEARCH_DATA_DOCUMENT_ARRAY("","","",$SESSION_ID,"","",$SESSION_DEPARTEMENT_ID);
-	if(empty($get_data_ext)||$get_data_ext==""){
-		$is_continue = false;
-	}else{
-		$count_notification = count($get_data_ext);
-	}
-}
-if($SESSION_ROLES=="PENGGUNA"){
+// Notification
+$get_data_ext = $this->M_notification->GET_NOTIFICATION_NEW($SESSION_ID);
+if (empty($get_data_ext)) {
 	$is_continue = false;
+}else{
+	$count_notification = count($get_data_ext);
 }
-//-----------------------------------------------------------------------------------------------//
-//NEWS
-//$DOC_AKSES_LEVEL,$DOC_PENGGUNA
-$get_data_count = $this->M_library_database->DB_GET_SEARCH_NEWS_DATA_DOCUMENT_ARRAY_EVO($SESSION_JOB_LEVEL_ID,$SESSION_DEPARTEMENT_ID);
+// News
+$get_data_count = $this->M_notification->GET_NEWS_NEW($SESSION_ID);
 if(empty($get_data_count)||$get_data_count==""){
-	//DO NOTHING
+
 }else{
 	$count_news = count($get_data_count);	
 }
-
+// Jumlah Notification
+$count_notif = $count_notification;
 $count_notification = $count_notification + $count_news;
-//-----------------------------------------------------------------------------------------------//
 ?>
-<!------------------------------------------------------------------------------------------------->
 <!DOCTYPE html>
 <html lang="en">
-<!------------------------------------------------------------------------------------------------->
 <head>
 	<meta charset="utf-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
@@ -199,7 +135,7 @@ input[readonly] {
 					<br />
 					<i class="menu-icon fa fa-user"></i>
 					<span class="menu-text">
-						<?php echo $SESSION_ID; ?>
+						<?php echo $SESSION_NAME; ?>
 					</span>
 					<br />
 				</div>
@@ -207,8 +143,9 @@ input[readonly] {
 			
 
 			<ul class="nav nav-list">
+
 				<li class="">
-					<a href="<?php echo base_url('document-search'); ?>">
+					<a href="<?php echo base_url('menu'); ?>">
 						<i class="menu-icon fa fa-history"></i>
 						<span class="menu-text"> Pencarian </span>
 					</a>
@@ -227,21 +164,47 @@ input[readonly] {
 				$SESSION_ROLES=="PENGGUNA"||
 				$SESSION_ROLES=="PENCIPTA"||
 				$SESSION_ROLES=="PENDISTRIBUSI"||
-				$SESSION_ROLES=="ATASAN PENCIPTA"
+				$SESSION_ROLES=="ATASAN PENCIPTA" ||
+
+				$SESSION_ROLES_2=="PENGGUNA"||
+				$SESSION_ROLES_2=="PENCIPTA"||
+				$SESSION_ROLES_2=="PENDISTRIBUSI"||
+				$SESSION_ROLES_2=="ATASAN PENCIPTA" ||
+
+				$SESSION_ROLES_3=="PENGGUNA"||
+				$SESSION_ROLES_3=="PENCIPTA"||
+				$SESSION_ROLES_3=="PENDISTRIBUSI"||
+				$SESSION_ROLES_3=="ATASAN PENCIPTA" ||
+
+				$SESSION_ROLES_4=="PENGGUNA"||
+				$SESSION_ROLES_4=="PENCIPTA"||
+				$SESSION_ROLES_4=="PENDISTRIBUSI"||
+				$SESSION_ROLES_4=="ATASAN PENCIPTA" ||
+
+				$SESSION_ROLES_5=="PENGGUNA"||
+				$SESSION_ROLES_5=="PENCIPTA"||
+				$SESSION_ROLES_5=="PENDISTRIBUSI"||
+				$SESSION_ROLES_5=="ATASAN PENCIPTA"
 				){ ?>
 				<li class="active">
 					<a href="<?php echo base_url('notification'); ?>">
 						<i class="menu-icon fa fa-exclamation"></i>
 						<span class="menu-text">
 							Aktifitas
-							<span class="badge badge-primary"><?php echo $count_notification; ?></span>
+							<span class="badge badge-primary nofication-count"></span>
 						</span>
 					</a>
 					<b class="arrow"></b>
 				</li>
 				<?php } ?>
 				
-				<?php if($SESSION_ROLES=="PENCIPTA"){ ?>
+				<?php if(
+				$SESSION_ROLES=="PENCIPTA" ||
+				$SESSION_ROLES_2=="PENCIPTA" ||
+				$SESSION_ROLES_3=="PENCIPTA" ||
+				$SESSION_ROLES_4=="PENCIPTA" ||
+				$SESSION_ROLES_5=="PENCIPTA"
+				){ ?>
 				<li class="">
 					<a href="<?php echo base_url('contribution'); ?>">
 						<i class="menu-icon fa fa-database"></i>
@@ -253,7 +216,19 @@ input[readonly] {
 				
 				<?php if(
 				$SESSION_ROLES=="PENCIPTA"||
-				$SESSION_ROLES=="ADMIN DOKUMEN"
+				$SESSION_ROLES=="ADMIN DOKUMEN"||
+
+				$SESSION_ROLES_2=="PENCIPTA"||
+				$SESSION_ROLES_2=="ADMIN DOKUMEN"||
+
+				$SESSION_ROLES_3=="PENCIPTA"||
+				$SESSION_ROLES_3=="ADMIN DOKUMEN"||
+
+				$SESSION_ROLES_4=="PENCIPTA"||
+				$SESSION_ROLES_4=="ADMIN DOKUMEN"||
+
+				$SESSION_ROLES_5=="PENCIPTA"||
+				$SESSION_ROLES_5=="ADMIN DOKUMEN"
 				){ ?>
 				<li class="">
 					<a href="<?php echo base_url('report'); ?>">
@@ -264,7 +239,13 @@ input[readonly] {
 				</li>
 				<?php } ?>
 
-				<?php if($SESSION_ROLES=="ADMIN KONFIGURASI"){ ?>
+				<?php if(
+				$SESSION_ROLES=="ADMIN KONFIGURASI"||
+				$SESSION_ROLES_2=="ADMIN KONFIGURASI"||
+				$SESSION_ROLES_3=="ADMIN KONFIGURASI"||
+				$SESSION_ROLES_4=="ADMIN KONFIGURASI"||
+				$SESSION_ROLES_5=="ADMIN KONFIGURASI"
+				){ ?>
 				<li class="">
 					<a href="#" class="dropdown-toggle">
 						<i class="menu-icon fa fa-cog"></i>
@@ -317,6 +298,51 @@ input[readonly] {
 						</li>
 					</ul>
 				</li>
+				<li class="">
+					<a href="#" class="dropdown-toggle">
+						<i class="menu-icon fa fa-cog"></i>
+						<span class="menu-text">General Setting </span>
+						<b class="arrow fa fa-angle-down"></b>
+					</a>
+					<b class="arrow"></b>
+					<ul class="submenu">
+						<li class="">
+							<a href="<?php echo base_url('C_general_setting/welcome_speech'); ?>">
+								<i class="menu-icon fa fa-caret-right"></i>
+								Welcome Speech
+							</a>
+							<b class="arrow"></b>
+						</li>
+						<li class="">
+							<a href="<?php echo base_url('C_general_setting/nomor'); ?>">
+								<i class="menu-icon fa fa-caret-right"></i>
+								Nomor Dokumen
+							</a>
+							<b class="arrow"></b>
+						</li>
+						<li class="">
+							<a href="<?php echo base_url('C_general_setting/format_dokumen'); ?>">
+								<i class="menu-icon fa fa-caret-right"></i>
+								Format Dokumen
+							</a>
+							<b class="arrow"></b>
+						</li>
+						<li class="">
+							<a href="<?php echo base_url('C_general_setting/sharelink'); ?>">
+								<i class="menu-icon fa fa-caret-right"></i>
+								Sharelink
+							</a>
+							<b class="arrow"></b>
+						</li>
+						<li class="">
+							<a href="<?php echo base_url('C_general_setting/watermark'); ?>">
+								<i class="menu-icon fa fa-caret-right"></i>
+								Watermark
+							</a>
+							<b class="arrow"></b>
+						</li>
+					</ul>
+				</li>
 				<?php } ?>
 
 				<li class="">
@@ -326,6 +352,7 @@ input[readonly] {
 					</a>
 					<b class="arrow"></b>
 				</li>
+
 			</ul><!-- /.nav-list -->
 		</div>
 
@@ -339,18 +366,19 @@ input[readonly] {
 							<div class="widget-header">
 								<h4 class="smaller">
 									Notification
+									<span class="badge badge-primary"><?php echo count($notification); ?></span>
 								</h4>
 							</div>
 						</div>
 						<?php
-						if($is_continue):
-							foreach ($get_data_ext as $data_row_ext):
+						if(count($notification) > 0):
+							foreach ($notification as $data_row_ext):
 								$FILTER = $data_row_ext->DOC_STATUS;
 								// Tanggal
 								date_default_timezone_set('Asia/Jakarta');
 								$sekarang = date('Y-m-d');
 								$exp = $data_row_ext->DOC_TGL_EXPIRED;
-								$sebulan = date('Y-m-d', strtotime('+1 month', strtotime($data_row_ext->DOC_TGL_EXPIRED)));
+								$sebulan = date('Y-m-d', strtotime('+30 days', strtotime($data_row_ext->DOC_TGL_EXPIRED)));
 								$tgl_efektif = new DateTime($sekarang);
 								$kadaluarsa = new DateTime($exp);
 								$tgl_final = $kadaluarsa->diff($tgl_efektif)->format("%a");
@@ -358,132 +386,70 @@ input[readonly] {
 								$sebulan2 = new DateTime($sebulan);
 								$arcived = $sebulan2->diff($tgl_efektif)->format("%a");
 						?>
-						<!-- Notification Pendistribusi -->
-						<?php if ($SESSION_ROLES=="PENDISTRIBUSI" && $FILTER=="MENUNGGU PENDISTRIBUSI"): ?>
+						<!-- Menunggu Persetujuan Anda -->
+						<?php 
+						if ($SESSION_DEPARTEMENT_ID==$FILTER): 
+						?>
 							<div class="alert alert-warning fade in">
 								<div class="row">
 									<div class="col-xs-10">
 										Dokumen <?php echo $data_row_ext->DOC_NAMA; ?>, perlu persetujuan Anda!
 										<br/>
-										<?php echo date('d/m/Y G:i', strtotime($data_row_ext->DOC_DATE));?> WIB
-									</div>
-									<div class="col-xs-2" style="text-align:right;">
-										<a data-toggle="modal" data-target="#modal-preview<?=$data_row_ext->DOC_ID;?>" class="ace-icon fa fa-eye btn btn-sm btn-warning" data-popup="tooltip" data-placement="top" title="Preview"></a>
-									</div>
-									<!-- <div class="col-xs-2">
-										<form id="form_approve[]" name="form_approve[]" action="<?php echo base_url('C_notification/approve'); ?>" method="post" enctype="multipart/form-data">
-										<input type="hidden" id="si_key[]" name="si_key[]" value="<?php echo $data_row_ext->DOC_ID; ?>" class="form-control" required/>
-										<input type="hidden" id="si_approver" name="si_approver" class="form-control" value="<?=$SESSION_ROLES;?>">
-										<button type="submit" class="ace-icon fa fa-check btn btn-sm btn-primary"></button>
-										<a data-toggle="modal" data-target="#modal-reject<?=$data_row_ext->DOC_ID;?>" class="ace-icon fa fa-ban btn btn-sm btn-danger" data-popup="tooltip" data-placement="top" title="Reject"></a>
-										<a data-toggle="modal" data-target="#modal-preview<?=$data_row_ext->DOC_ID;?>" class="ace-icon fa fa-eye btn btn-sm btn-warning" data-popup="tooltip" data-placement="top" title="Preview"></a>
-										</form>
-									</div> -->
-								</div>
-							</div>
-						<?php elseif ($SESSION_ROLES=="PENDISTRIBUSI" && $FILTER=="MENUNGGU ATASAN PENCIPTA"): ?>
-							<div class="alert alert-warning fade in">
-								<div class="row">
-									<div class="col-xs-10">
-										Dokumen <?php echo $data_row_ext->DOC_NAMA; ?>, <?php echo $data_row_ext->DOC_STATUS_ACTIVITY; ?>
-										<br/>
-										<?php echo date('d/m/Y G:i', strtotime($data_row_ext->DOC_DATE));?> WIB
+										<?php echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));?> WIB
 									</div>
 									<div class="col-xs-2" style="text-align:right;">
 										<a data-toggle="modal" data-target="#modal-preview<?=$data_row_ext->DOC_ID;?>" class="ace-icon fa fa-eye btn btn-sm btn-warning" data-popup="tooltip" data-placement="top" title="Preview"></a>
 									</div>
 								</div>
 							</div>
-						<?php elseif ($SESSION_ROLES=="PENDISTRIBUSI" && $FILTER=="DITOLAK PENDISTRIBUSI"): ?>
-							<div class="alert alert-warning fade in">
-								<div class="row">
-									<div class="col-xs-10">
-										Dokumen <?php echo $data_row_ext->DOC_NAMA; ?>, <?php echo $data_row_ext->DOC_STATUS_ACTIVITY; ?>
-										<br/>
-										<?php echo date('d/m/Y G:i', strtotime($data_row_ext->DOC_DATE));?> WIB
-									</div>
-									<div class="col-xs-2" style="text-align:right;">
-										<a data-toggle="modal" data-target="#modal-preview<?=$data_row_ext->DOC_ID;?>" class="ace-icon fa fa-eye btn btn-sm btn-warning" data-popup="tooltip" data-placement="top" title="Preview"></a>
-									</div>
-								</div>
-							</div>
-						<?php elseif ($SESSION_ROLES=="PENDISTRIBUSI" && $FILTER=="DITOLAK ATASAN PENCIPTA"): ?>
-							<div class="alert alert-warning fade in">
-								<div class="row">
-									<div class="col-xs-10">
-										Dokumen <?php echo $data_row_ext->DOC_NAMA; ?>, <?php echo $data_row_ext->DOC_STATUS_ACTIVITY; ?>
-										<br/>
-										<?php echo date('d/m/Y G:i', strtotime($data_row_ext->DOC_DATE));?> WIB
-									</div>
-									<div class="col-xs-2" style="text-align:right;">
-										<a data-toggle="modal" data-target="#modal-preview<?=$data_row_ext->DOC_ID;?>" class="ace-icon fa fa-eye btn btn-sm btn-warning" data-popup="tooltip" data-placement="top" title="Preview"></a>
-									</div>
-								</div>
-							</div>
-						<!-- Notification Atasan Pencipta -->
-						<?php elseif ($SESSION_ROLES=="ATASAN PENCIPTA" && $FILTER=="MENUNGGU ATASAN PENCIPTA"): ?>
+						<?php 
+						elseif ($SESSION_DIVISI_ID==$FILTER && $SESSION_ID != $data_row_ext->DOC_MAKER):
+						?>
 							<div class="alert alert-warning fade in">
 								<div class="row">
 									<div class="col-xs-10">
 										Dokumen <?php echo $data_row_ext->DOC_NAMA; ?>, perlu persetujuan Anda!
 										<br/>
-										<?php echo date('d/m/Y G:i', strtotime($data_row_ext->DOC_DATE));?> WIB
+										<?php echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));?> WIB
 									</div>
 									<div class="col-xs-2" style="text-align:right;">
 										<a data-toggle="modal" data-target="#modal-preview<?=$data_row_ext->DOC_ID;?>" class="ace-icon fa fa-eye btn btn-sm btn-warning" data-popup="tooltip" data-placement="top" title="Preview"></a>
 									</div>
-									<!-- <div class="col-xs-2">
-										<form id="form_approve[]" name="form_approve[]" action="<?php echo base_url('C_notification/approve'); ?>" method="post" enctype="multipart/form-data">
-										<input type="hidden" id="si_key[]" name="si_key[]" value="<?php echo $data_row_ext->DOC_ID; ?>" class="form-control" required/>
-										<input type="hidden" id="si_approver" name="si_approver" class="form-control" value="<?=$SESSION_ROLES;?>">
-										<button type="submit" class="ace-icon fa fa-check btn btn-sm btn-primary"></button>
-										<a data-toggle="modal" data-target="#modal-reject<?=$data_row_ext->DOC_ID;?>" class="ace-icon fa fa-ban btn btn-sm btn-danger" data-popup="tooltip" data-placement="top" title="Reject"></a>
-										<a data-toggle="modal" data-target="#modal-preview<?=$data_row_ext->DOC_ID;?>" class="ace-icon fa fa-eye btn btn-sm btn-warning" data-popup="tooltip" data-placement="top" title="Preview"></a>
-										</form>
-									</div> -->
 								</div>
 							</div>
-						<?php elseif ($SESSION_ROLES=="ATASAN PENCIPTA" && $FILTER=="MENUNGGU PENDISTRIBUSI"): ?>
+						<?php 
+						elseif ($SESSION_DIREKTORAT_ID==$FILTER):
+						?>
+							<div class="alert alert-warning fade in">
+								<div class="row">
+									<div class="col-xs-10">
+										Dokumen <?php echo $data_row_ext->DOC_NAMA; ?>, perlu persetujuan Anda!
+										<br/>
+										<?php echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));?> WIB
+									</div>
+									<div class="col-xs-2" style="text-align:right;">
+										<a data-toggle="modal" data-target="#modal-preview<?=$data_row_ext->DOC_ID;?>" class="ace-icon fa fa-eye btn btn-sm btn-warning" data-popup="tooltip" data-placement="top" title="Preview"></a>
+									</div>
+								</div>
+							</div>
+						<?php
+						elseif (($SESSION_DEPARTEMENT_ID == $FILTER || $SESSION_DIVISI_CODE == $FILTER || $SESSION_DIREKTORAT_ID == $FILTER) && strrpos($data_row_ext->DOC_STATUS, 'DITOLAK') !== FALSE): 
+						?>
 							<div class="alert alert-warning fade in">
 								<div class="row">
 									<div class="col-xs-10">
 										Dokumen <?php echo $data_row_ext->DOC_NAMA; ?>, <?php echo $data_row_ext->DOC_STATUS_ACTIVITY; ?>
 										<br/>
-										<?php echo date('d/m/Y G:i', strtotime($data_row_ext->DOC_DATE));?> WIB
+										<?php echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));?> WIB
 									</div>
 									<div class="col-xs-2" style="text-align:right;">
 										<a data-toggle="modal" data-target="#modal-preview<?=$data_row_ext->DOC_ID;?>" class="ace-icon fa fa-eye btn btn-sm btn-warning" data-popup="tooltip" data-placement="top" title="Preview"></a>
 									</div>
 								</div>
 							</div>
-						<?php elseif ($SESSION_ROLES=="ATASAN PENCIPTA" && $FILTER=="DITOLAK PENDISTRIBUSI"): ?>
-							<div class="alert alert-warning fade in">
-								<div class="row">
-									<div class="col-xs-10">
-										Dokumen <?php echo $data_row_ext->DOC_NAMA; ?>, <?php echo $data_row_ext->DOC_STATUS_ACTIVITY; ?>
-										<br/>
-										<?php echo date('d/m/Y G:i', strtotime($data_row_ext->DOC_DATE));?> WIB
-									</div>
-									<div class="col-xs-2" style="text-align:right;">
-										<a data-toggle="modal" data-target="#modal-preview<?=$data_row_ext->DOC_ID;?>" class="ace-icon fa fa-eye btn btn-sm btn-warning" data-popup="tooltip" data-placement="top" title="Preview"></a>
-									</div>
-								</div>
-							</div>
-						<?php elseif ($SESSION_ROLES=="ATASAN PENCIPTA" && $FILTER=="DITOLAK ATASAN PENCIPTA"): ?>
-							<div class="alert alert-warning fade in">
-								<div class="row">
-									<div class="col-xs-10">
-										Dokumen <?php echo $data_row_ext->DOC_NAMA; ?>, <?php echo $data_row_ext->DOC_STATUS_ACTIVITY; ?>
-										<br/>
-										<?php echo date('d/m/Y G:i', strtotime($data_row_ext->DOC_DATE));?> WIB
-									</div>
-									<div class="col-xs-2" style="text-align:right;">
-										<a data-toggle="modal" data-target="#modal-preview<?=$data_row_ext->DOC_ID;?>" class="ace-icon fa fa-eye btn btn-sm btn-warning" data-popup="tooltip" data-placement="top" title="Preview"></a>
-									</div>
-								</div>
-							</div>
-						<!-- Notification Pencipta -->
-						<?php elseif($SESSION_ROLES=="PENCIPTA" && $FILTER == "DITOLAK PENDISTRIBUSI"): ?>
+						<?php 
+						elseif($SESSION_ID == $data_row_ext->DOC_MAKER && strrpos($data_row_ext->DOC_STATUS, 'DITOLAK') !== FALSE):
+						?>
 							<div class="alert alert-danger fade in">
 								<div class="row">
 									<div class="col-xs-10">
@@ -495,7 +461,7 @@ input[readonly] {
 											foreach($get_data_info_reject as $data_row_info_reject){
 										?>
 												<b>
-												<?php echo $index_info_reject; ?>. Oleh : <?php echo $data_row_info_reject->DTDLSS_MAKER; ?>, Note : <?php echo $data_row_info_reject->DTDLSS_NOTE; ?>. Pada : <?php echo date('d/m/Y G:i', strtotime($data_row_info_reject->DTDLSS_DATE)); ?> WIB
+												<?php echo $index_info_reject; ?>. Oleh : <?php echo $data_row_info_reject->DTDLSS_MAKER; ?>, Note : <?php echo $data_row_info_reject->DTDLSS_NOTE; ?>. Pada : <?php echo date('d/M/Y G:i', strtotime($data_row_info_reject->DTDLSS_DATE)); ?> WIB
 												<br/>
 												</b>
 										<?php
@@ -511,45 +477,27 @@ input[readonly] {
 									</div>
 								</div>
 							</div>
-						<?php elseif($SESSION_ROLES=="PENCIPTA" && $FILTER == "DITOLAK ATASAN PENCIPTA"): ?>
-							<div class="alert alert-danger fade in">
-								<div class="row">
-									<div class="col-xs-10">
-										Dokumen <?php echo $data_row_ext->DOC_NAMA; ?>, <?php echo $data_row_ext->DOC_STATUS_ACTIVITY; ?>. Mohon untuk segera di perbaiki!
-										<br/>
-										<?php
-										$get_data_info_reject = $this->M_library_database->DB_GET_DATA_DOCUMENT_DETAIL_STATUS_BY_ID_EVO($data_row_ext->DOC_ID);
-										$index_info_reject = 1;
-											foreach($get_data_info_reject as $data_row_info_reject){
-										?>
-												<b>
-												<?php echo $index_info_reject; ?>. Oleh : <?php echo $data_row_info_reject->DTDLSS_MAKER; ?>, Note : <?php echo $data_row_info_reject->DTDLSS_NOTE; ?>. Pada : <?php echo date('d/m/Y G:i', strtotime($data_row_info_reject->DTDLSS_DATE)); ?> WIB
-												<br/>
-												</b>
-										<?php
-												$index_info_reject++;
-											}
-										?>
-									</div>
-									<div class="col-xs-2" style="text-align:right;">
-										<form id="form_revisi[]" name="form_revisi[]" action="<?php echo base_url('C_notification/revisi'); ?>" method="post" enctype="multipart/form-data">
-										<input type="hidden" id="si_key[]" name="si_key[]" value="<?php echo $data_row_ext->DOC_ID; ?>" class="form-control" required/>
-										<button type="submit" class="ace-icon fa fa-pencil btn btn-sm btn-danger"></button>
-										</form>
-									</div>
-								</div>
-							</div>
-						<?php elseif($SESSION_ROLES == "ATASAN PENCIPTA" || $SESSION_ROLES == "PENDISTRIBUSI" || $SESSION_ROLES == "PENCIPTA" && $FILTER =="DIPUBLIKASI"): ?>
+						<?php 
+						elseif($FILTER =="DIPUBLIKASI"): 
+						?>
 							<div class="alert alert-success fade in">
+								<form action="<?= base_url('C_notification/delete_notification'); ?>" method="POST">
+									<input type="hidden" name="doc_id" value="<?= $data_row_ext->DOC_ID; ?>">
+									<input type="hidden" name="user_id" value="<?= $data_row_ext->NIP; ?>">
+									<input type="hidden" name="notif_id" value="<?= $data_row_ext->NOTIF_ID; ?>">
+									<button type="submit" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+								</form>
 								<div class="row">
 									<div class="col-xs-10">
 										Dokumen <?php echo $data_row_ext->DOC_NAMA; ?>, <?php echo $data_row_ext->DOC_STATUS_ACTIVITY; ?>
 										<br/>
-										<?php echo date('d/m/Y G:i', strtotime($data_row_ext->DOC_DATE));?> WIB
+										<?php echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));?> WIB
 									</div>
 								</div>
 							</div>
-						<?php elseif($SESSION_ROLES == "PENCIPTA" && $FILTER =="DIPUBLIKASI" && $tgl_final <= 90 && $tgl_final >= 1): ?>
+						<?php 
+						elseif($SESSION_ID == $data_row_ext->DOC_MAKER && $FILTER =="DIPUBLIKASI" && $tgl_final <= 90 && $tgl_final >= 1): 
+						?>
 							<div class="alert alert-warning fade in">
 								<div class="row">
 									<div class="col-xs-10">
@@ -575,14 +523,9 @@ input[readonly] {
 									</div>
 								</div>
 							</div>
-						<?php elseif($SESSION_ROLES == "PENCIPTA" && $FILTER == "DIPUBLIKASI" && $tgl_final == 0): ?>
-							<form id="form_obselete" name="form_obselete" action="<?php echo base_url('C_notification/obsolete'); ?>" method="post" enctype="multipart/form-data">
-							<input type="hidden" id="si_key" name="si_key" value="<?php echo $data_row_ext->DOC_ID; ?>" class="form-control" required/>
-							</form>
-							<script>
-							document.getElementById("form_obselete").submit();
-							</script>
-						<?php elseif($SESSION_ROLES == "PENCIPTA" && $FILTER == "KADALUARSA" && $arcived <= 30 && $arcived >= 1): ?>
+						<?php 
+						elseif($SESSION_ID == $data_row_ext->DOC_MAKER && $FILTER == "KADALUARSA" && $arcived <= 30 && $arcived >= 1): 
+						?>
 							<div class="alert alert-warning fade in">
 								<div class="row">
 									<div class="col-xs-10">
@@ -608,20 +551,33 @@ input[readonly] {
 									</div>
 								</div>
 							</div>
-						<?php elseif($SESSION_ROLES == "PENCIPTA" && $FILTER == "KADALUARSA" && $arcived == 0): ?>
-							<form id="form_archived" name="form_archived" action="<?php echo base_url('C_notification/archived'); ?>" method="post" enctype="multipart/form-data">
-							<input type="hidden" id="si_key" name="si_key" value="<?php echo $data_row_ext->DOC_ID; ?>" class="form-control" required/>
-							</form>
-							<script>
-							document.getElementById("form_archived").submit();
-							</script>
-						<?php else: ?>
+						<?php elseif ($FILTER == "DIARSIPKAN"):?>
 							<div class="alert alert-info fade in">
+								<form action="<?= base_url('C_notification/delete_notification'); ?>" method="POST">
+									<input type="hidden" name="id" value="<?= $data_row_ext->DOC_ID; ?>">
+									<button type="submit" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+								</form>
 								<div class="row">
 									<div class="col-xs-10">
 										Dokumen <?php echo $data_row_ext->DOC_NAMA; ?>, <?php echo $data_row_ext->DOC_STATUS_ACTIVITY; ?>
 										<br/>
-										<?php echo date('d/m/Y G:i', strtotime($data_row_ext->DOC_DATE));?> WIB
+										<?php echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));?> WIB
+									</div>
+								</div>
+							</div>
+						<?php else: ?>
+							<div class="alert alert-info fade in">
+								<form action="<?= base_url('C_notification/delete_notification'); ?>" method="POST">
+									<input type="hidden" name="doc_id" value="<?= $data_row_ext->DOC_ID; ?>">
+									<input type="hidden" name="user_id" value="<?= $data_row_ext->NIP; ?>">
+									<input type="hidden" name="notif_id" value="<?= $data_row_ext->NOTIF_ID; ?>">
+									<button type="submit" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+								</form>
+								<div class="row">
+									<div class="col-xs-10">
+										Dokumen <?php echo $data_row_ext->DOC_NAMA; ?>, <?php echo $data_row_ext->DOC_STATUS_ACTIVITY; ?>
+										<br/>
+										<?php echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));?> WIB
 									</div>
 								</div>
 							</div>
@@ -636,83 +592,41 @@ input[readonly] {
 							<div class="widget-header">
 								<h4 class="smaller">
 									News
+									<span class="badge badge-primary"><?php echo $count_news; ?></span>
 								</h4>
 							</div>
 						</div>
-						<div class="widget-box transparent">
-							<div class="widget-header widget-header-small">
-								<div class="widget-toolbar action-buttons">
-									<a href="#" data-action="reload">
-										<i class="ace-icon fa fa-refresh blue"></i>
-									</a>
-								</div>
-							</div>
-							<div class="widget-body">
-								<div class="widget-main padding-8">
-									
-									<div id="profile-feed-1" class="profile-feed">
-										<?php
-										if($count_news > 0){
-											foreach($get_data_count as $data_row){
-												?>
-												<div class="profile-activity clearfix">
-													<div>
-														<img class="pull-left" src="<?php echo base_url('template/backend/assets/images/avatars/avatar2.png'); ?>" />
-														<a class="user"> <?php echo $data_row->DOC_MAKER; ?> </a>
-														<div>
-															<p>
-																
-																<?php
-																if($data_row->DOC_MAKER==$SESSION_ID){
-																	?>
-																	<table width="100%">
-																		<tr>
-																			<th class="pull-left">
-																				ID Dokumen : <?php echo $data_row->DOC_NOMOR; ?>, Nama Dokumen : <?php echo $data_row->DOC_NAMA; ?>
-																			</th>
-																			<th class="pull-right">
-																				<a href="<?php echo base_url('document-details-'.$data_row->DOC_ID) ?>" class="fa fa-eye btn btn-link" style="font-size: 1.5rem;text-decoration: none;color: black;" target="_blank">Lihat</a>
-																				<form id="form_comment[]" name="form_comment[]" action="<?php echo base_url('list-comments'); ?>" method="post" enctype="multipart/form-data">
-																					<input type="hidden" id="si_key[]" name="si_key[]" value="<?php echo $data_row->DOC_ID; ?>" class="form-control" required/>
-																					<button type="submit" class="ace-icon fa fa-list btn btn-sm btn-link" style="font-size: 1.5rem;text-decoration: none;"> Komentar </button>
-																				</form>
-																			</th>
-																		</tr>
-																	</table>
-																	<?php
-																}else{
-																	?>
-																	<table width="100%">
-																		<tr>
-																			<th class="pull-left">
-																				ID Dokumen : <?php echo $data_row->DOC_NOMOR; ?>, Nama Dokumen : <?php echo $data_row->DOC_NAMA; ?>
-																			</th>
-																			<th class="pull-right">
-																				<a href="<?php echo base_url('document-details-'.$data_row->DOC_ID) ?>" class="fa fa-eye btn btn-link" style="font-size: 1.5rem;text-decoration: none;color: black;" target="_blank">Lihat</a>
-																			</th>
-																		</tr>
-																	</table>
-																	<?php
-																}
-																?>
+						<div class="row">
+							<div class="col-xs-12">
+								<?php
+								if($count_news > 0){
+									foreach($get_data_count as $data_row){
+								?>
+								<div class="media search-media">
+									<div class="media-body">
+										<div>
+											<h5 class="media-heading">
+												<a class="black"><?= $data_row->FULL_NAME; ?></a>
+											</h5>
+										</div>
+										<div class="space-1"></div>
+										<p>
+											Nomor Dokumen : <?= $data_row->DOC_NOMOR; ?>
+											<br/>
+											Nama Dokumen : <?= $data_row->DOC_NAMA; ?>
+										</p>
 
-															</p>
-														</div>
-														<div class="time">
-															<i class="ace-icon fa fa-clock-o bigger-110"></i>
-															<?php echo date('d/m/Y G:s', strtotime($data_row->DOC_DATE)); ?> WIB
-														</div>
-													</div>
-												</div>
-												<?php
-											}
-										}
-										?>
+										<div class="search-actions text-center">
+											<span class="text-info"><?php echo date('d M Y', strtotime($data_row->DOC_DATE)); ?></span>
+											<br/>
+											<span class="text-info"><?php echo date('G:i', strtotime($data_row->DOC_DATE))." WIB"; ?></span>
+											<a href="<?php echo base_url('document-details-'.$data_row->DOC_ID) ?>" class="search-btn-action btn btn-sm btn-block btn-info">Lihat</a>
+										</div>
 									</div>
-									
 								</div>
+								<?php } } ?>
 							</div>
-						</div>
+						</div><!-- Row News -->
 					</div><!-- END Row -->
 				</div>
 			</div>
@@ -721,8 +635,8 @@ input[readonly] {
 
 		<!-- Modal Preview-->
 		<?php
-		if($is_continue):
-			foreach($get_data_ext as $data_row_ext):
+		if(count($notification)):
+			foreach($notification as $data_row_ext):
 		?>
 
 		<div id="modal-preview<?=$data_row_ext->DOC_ID;?>" class="modal" tabindex="-1">
@@ -731,6 +645,7 @@ input[readonly] {
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal">&times;</button>
 						<h5 class="blue bigger">Preview</h5>
+						<h5>Dokumen Persetujuan</h5>
 					</div>
 					<div class="modal-body">
 						<div class="row">
@@ -821,15 +736,21 @@ input[readonly] {
 							<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-xl-6">
 								<div class="row">
 									<div class="form-group">
-										<label for="" class="col-sm-12 control-label" style="text-align:left">Abstrak</label>
+										<label for="" class="col-sm-12 control-label" style="text-align:left">Nama Dokumen</label>
 										<div class="col-sm-12">
-											<textarea readonly type="text" rows="3" class="form-control" style="resize:none;background-color:white;"><?=$data_row_ext->DOC_ABSTRAK;?></textarea>
+											<input type="text" class="form-control" value="<?=$data_row_ext->DOC_NAMA;?>" readonly>
 										</div>
 									</div>
 									<div class="form-group">
 										<label for="" class="col-sm-12 control-label" style="text-align:left">Nomor Dokumen</label>
 										<div class="col-sm-12">
-											<input type="text" class="form-control" value="<?=$data_row_ext->DOC_NOMOR;?>"c>
+											<input type="text" class="form-control" value="<?=$data_row_ext->DOC_NOMOR;?>"readonly>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="" class="col-sm-12 control-label" style="text-align:left">Versi</label>
+										<div class="col-sm-12">
+											<input type="text" class="form-control" value="<?=$data_row_ext->DOC_VERSI;?>" readonly>
 										</div>
 									</div>
 									<div class="form-group">
@@ -839,94 +760,42 @@ input[readonly] {
 										</div>
 									</div>
 									<div class="form-group">
+										<label for="" class="col-sm-12 control-label" style="text-align:left">Standar Kerahasian</label>
+										<div class="col-sm-12">
+											<input type="text" class="form-control" value="<?=$data_row_ext->CL_NAME;?>" readonly>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="" class="col-sm-12 control-label" style="text-align:left">Abstrak</label>
+										<div class="col-sm-12">
+											<textarea readonly type="text" rows="3" class="form-control" style="resize:none;background-color:white;"><?=$data_row_ext->DOC_ABSTRAK;?></textarea>
+										</div>
+									</div>
+									<div class="form-group">
 										<label for="" class="col-sm-12 control-label" style="text-align:left">Dept Pemilik Proses</label>
 										<div class="col-sm-12">
-											<textarea type="text" rows="3" class="form-control" style="resize:none;background-color:white;" readonly><?=$DOC_PEMILIK_PROSES_FINAL;?></textarea>
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="" class="col-sm-12 control-label" style="text-align:left">Group Proses (5M)</label>
-										<div class="col-sm-12">
-											<input type="text" class="form-control" value="<?=$data_row_ext->DOC_GROUP_PROSES;?>" readonly>
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="" class="col-sm-12 control-label" style="text-align:left">Proses</label>
-										<div class="col-sm-12">
-											<input type="text" class="form-control" value="<?=$data_row_ext->DOC_PROSES;?>" readonly>
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="" class="col-sm-12 control-label" style="text-align:left">Jenis Dokumen</label>
-										<div class="col-sm-12">
-											<input type="text" class="form-control" value="<?=$data_row_ext->DTSEJS_JENIS;?>" readonly>
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="" class="col-sm-12 control-label" style="text-align:left">Nama Dokumen</label>
-										<div class="col-sm-12">
-											<input type="text" class="form-control" value="<?=$data_row_ext->DOC_NAMA;?>" readonly>
+											<textarea type="text" rows="1" class="form-control" style="resize:none;background-color:white;" readonly><?=$DOC_PEMILIK_PROSES_FINAL;?></textarea>
 										</div>
 									</div>
 									<div class="form-group">
 										<label for="" class="col-sm-12 control-label" style="text-align:left">Tanggal Berlaku</label>
 										<div class="col-sm-12">
-											<input type="text" class="form-control" value="<?= date('d/m/Y', strtotime($data_row_ext->DOC_TGL_EFEKTIF)); ?>" readonly>
+											<input type="text" class="form-control" value="<?= date('d/M/Y', strtotime($data_row_ext->DOC_TGL_EFEKTIF)); ?>" readonly>
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="" class="col-sm-12 control-label" style="text-align:left">Sampai Dengan</label>
+										<label for="" class="col-sm-12 control-label" style="text-align:left">Tanggal Kadaluarsa</label>
 										<div class="col-sm-12">
-											<input type="text" class="form-control" value="<?= date('d/m/Y', strtotime($data_row_ext->DOC_TGL_EXPIRED));?>" readonly>
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="" class="col-sm-12 control-label" style="text-align:left">Versi</label>
-										<div class="col-sm-12">
-											<input type="text" class="form-control" value="<?=$data_row_ext->DOC_VERSI;?>" readonly>
+											<input type="text" class="form-control" value="<?= date('d/M/Y', strtotime($data_row_ext->DOC_TGL_EXPIRED));?>" readonly>
 										</div>
 									</div>
 								</div>
-								
-								<!-- <div class="row">
-									<div class="form-group">
-										<label for="" class="col-sm-12 control-label" style="text-align:left">
-											<form id="form_detail" name="form_view[]" action="<?php echo base_url('C_notification/detail'); ?>" method="post" enctype="multipart/form-data" target="_blank">
-												<input type="text" id="si_key[]" name="si_key[]" value="<?php echo $data_row_ext->DOC_ID; ?>" class="form-control" required/>
-												<button type="submit" class="ace-icon fa fa-eye btn btn-sm btn-success"> Detail PMD </button>
-											</form>
-										</label>
-									</div>
-								</div> -->
 							</div>
 						</div>
 					</div>
 					<div class="modal-footer">
 						<div class="row">
-							<?php if($data_row_ext->DOC_STATUS == "MENUNGGU PENDISTRIBUSI" && $SESSION_ROLES == "PENDISTRIBUSI"): ?>
-							<div class="col-sm-6" style="text-align:left;">
-								<form id="form_approve[]" name="form_approve[]" action="<?php echo base_url('C_notification/approve'); ?>" method="post" enctype="multipart/form-data">
-									<input type="hidden" id="si_key[]" name="si_key[]" value="<?php echo $data_row_ext->DOC_ID; ?>" class="form-control" required/>
-									<input type="hidden" id="si_approver" name="si_approver" class="form-control" value="<?=$SESSION_ROLES;?>">
-									<button type="submit" class="ace-icon fa fa-check btn btn-sm btn-primary">Terima</button>
-									<a data-toggle="modal" data-target="#modal-reject<?=$data_row_ext->DOC_ID;?>" class="ace-icon fa fa-ban btn btn-sm btn-danger" data-popup="tooltip" data-placement="top" title="Reject">Tolak Sirkulasi</a>
-								</form>
-							</div>
-						<?php elseif($data_row_ext->DOC_STATUS == "MENUNGGU ATASAN PENCIPTA" && $SESSION_ROLES == "ATASAN PENCIPTA"): ?>
-							<div class="col-sm-6" style="text-align:left;">
-								<form id="form_approve[]" name="form_approve[]" action="<?php echo base_url('C_notification/approve'); ?>" method="post" enctype="multipart/form-data">
-									<input type="hidden" id="si_key[]" name="si_key[]" value="<?php echo $data_row_ext->DOC_ID; ?>" class="form-control" required/>
-									<input type="hidden" id="si_approver" name="si_approver" class="form-control" value="<?=$SESSION_ROLES;?>">
-									<button type="submit" class="ace-icon fa fa-check btn btn-sm btn-primary">Terima</button>
-									<a data-toggle="modal" data-target="#modal-reject<?=$data_row_ext->DOC_ID;?>" class="ace-icon fa fa-ban btn btn-sm btn-danger" data-popup="tooltip" data-placement="top" title="Reject">Tolak Sirkulasi</a>
-								</form>
-							</div>
-						<?php else: ?>
-							<div class="col-sm-6">
-								
-							</div>
-						<?php endif; ?>
-							<div class="col-sm-6">
+							<div class="col-sm-12">
 								<form id="form_detail" name="form_view[]" action="<?php echo base_url('pmd-details'); ?>" method="post" enctype="multipart/form-data" target="_blank">
 									<input type="hidden" id="si_key[]" name="si_key[]" value="<?php echo $data_row_ext->DOC_ID; ?>" class="form-control" required/>
 									<button type="button" class="btn btn-sm" data-dismiss="modal">
@@ -937,15 +806,6 @@ input[readonly] {
 								</form>
 							</div>
 						</div>
-						<!-- <form id="form_detail" name="form_view[]" action="<?php echo base_url('pmd-details'); ?>" method="post" enctype="multipart/form-data" target="_blank">
-							<input type="hidden" id="si_key[]" name="si_key[]" value="<?php echo $data_row_ext->DOC_ID; ?>" class="form-control" required/>
-							<button type="button" class="btn btn-sm" data-dismiss="modal">
-								<i class="ace-icon fa fa-times"></i>
-								Close
-							</button>
-							<button type="submit" class="ace-icon fa fa-eye btn btn-sm btn-success"> Detail PMD </button>
-						</form> -->
-
 					</div>
 				</div>
 			</div>
@@ -956,59 +816,6 @@ input[readonly] {
 		endif;
 		?>
 		<!-- END Modal Preview-->
-
-		<!-- Modal Reject -->
-		<?php
-		if($is_continue):
-			foreach($get_data_ext as $data_row_ext):
-		?>
-
-		<div id="modal-reject<?=$data_row_ext->DOC_ID;?>" class="modal" tabindex="-1">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<form class="form-horizontal" action="<?php echo base_url('C_notification/reject'); ?>" method="post" enctype="multipart/form-data">
-						<div class="modal-header">
-							<button type="button" class="close" data-dismiss="modal">&times;</button>
-							<h5 class="blue bigger">Tolak Sirkulasi</h5>
-						</div>
-						<div class="modal-body">
-							<div class="row">
-								<div class="form-group">
-									<label class="col-sm-12 control-label" style="text-align:left">Catatan Untuk Diperhatikan</label>
-								</div>
-								<div class="form-group">
-									<label class="col-sm-12 control-label" style="text-align:left">Maksimum 400 Karakter</label>
-								</div>
-								<div class="form-group">
-									<div class="col-sm-12">
-										<input type="hidden" id="si_key" name="si_key" class="form-control" value="<?=$data_row_ext->DOC_ID;?>">
-										<input type="hidden" id="si_approver" name="si_approver" class="form-control" value="<?=$SESSION_ROLES;?>">
-										<textarea type="text" id="si_note" name="si_note" rows="3" maxlength="400" class="form-control"></textarea>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="modal-footer">
-							<button class="btn btn-sm" data-dismiss="modal">
-								<i class="ace-icon fa fa-times"></i>
-								Cancel
-							</button>
-							<button type="submit" class="btn btn-sm btn-primary">
-								<i class="ace-icon fa fa-check"></i>
-								Submit
-							</button>
-						</div>
-					</form>
-					
-				</div>
-			</div>
-		</div>
-
-		<?php
-			endforeach;
-		endif;
-		?>
-		<!-- END Modal Reject -->
 
 	</div><!-- /.main-container -->
 	<!------------------------------------------------------------------------------------------------->
@@ -1076,6 +883,7 @@ input[readonly] {
 	<?php endif; ?>
 	<script type="text/javascript">
 		jQuery(function($) {
+			$('[data-toggle="tooltip"]').tooltip();
 			$('#avatar').on('click', function(){
 				var modal = 
 				'<div class="modal fade">\
@@ -1799,6 +1607,15 @@ input[readonly] {
 				displayKey: 'value',
 				source: substringMatcher(ace.vars['US_STATES']),
 				limit: 10
+			});
+
+			$.ajax({    //create an ajax request to display.php
+        type: "GET",
+        url: "<?php echo base_url();?>C_notification/getNotification/<?php echo $this->session->userdata("session_bgm_edocument_id");?>/true/",             
+        dataType: "html",   //expect html to be returned                
+        success: function(response){
+					$(".nofication-count").text(JSON.parse(response).length);
+        }
 			});
 			
 			//in ajax mode, remove remaining elements before leaving page

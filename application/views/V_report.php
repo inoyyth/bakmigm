@@ -1,90 +1,27 @@
 <?php
-//-----------------------------------------------------------------------------------------------//
 defined('BASEPATH') OR exit('No direct script access allowed');
-//-----------------------------------------------------------------------------------------------//
-$SESSION_ID = $this->session->userdata("session_bgm_edocument_id");
-$SESSION_EMAIL = $this->session->userdata("session_bgm_edocument_email");
-
-$SESSION_DIREKTORAT_ID = $this->session->userdata("session_bgm_edocument_direktorat_id");
-$SESSION_DIREKTORAT_NAME = $this->session->userdata("session_bgm_edocument_direktorat_name");
-
-$SESSION_DIVISI_ID = $this->session->userdata("session_bgm_edocument_divisi_id");
-$SESSION_DIVISI_CODE = $this->session->userdata("session_bgm_edocument_divisi_code");
-$SESSION_DIVISI_NAME = $this->session->userdata("session_bgm_edocument_divisi_name");
-
-$SESSION_DEPARTEMENT_ID = $this->session->userdata("session_bgm_edocument_departement_id");
-$SESSION_DEPARTEMENT_CODE = $this->session->userdata("session_bgm_edocument_departement_code");
-$SESSION_DEPARTEMENT_NAME = $this->session->userdata("session_bgm_edocument_departement_name");
-
-$SESSION_ROLES = $this->session->userdata("session_bgm_edocument_roles");
-
-$SESSION_JOB_LEVEL_ID = $this->session->userdata("session_bgm_edocument_job_level_id");
-$SESSION_JOB_LEVEL_NAME = $this->session->userdata("session_bgm_edocument_job_level_name");
-$SESSION_JOB_LEVEL_INDEX = $this->session->userdata("session_bgm_edocument_job_level_index");
-//-----------------------------------------------------------------------------------------------//
+include (APPPATH.'libraries/session_user.php');
+// Tools
 $is_continue = true;
 $count_notification = 0;
 $count_news = 0;
-//-----------------------------------------------------------------------------------------------//
-//NOTIFICATION
-if ($SESSION_ROLES == "PENDISTRIBUSI") {
-	$get_data_ext = $this->M_library_database->DB_GET_SEARCH_DATA_DOCUMENT_ARRAY("","","","","","");
-	if (empty($get_data_ext)) {
-		$is_continue = false;
-	}else{	
-		foreach ($get_data_ext as $data_row_ext) {
-			$DOC_PENDISTRIBUSI = $data_row_ext->DOC_PENDISTRIBUSI;
-			$DI_CODE = $data_row_ext->DI_CODE;
-		}
-		if ($SESSION_DEPARTEMENT_ID==$DOC_PENDISTRIBUSI) {
-			$count_notification = count($get_data_ext);
-		}else{
-			$is_continue = false;
-		}
-	}
-}
-if ($SESSION_ROLES == "ATASAN PENCIPTA") {
-	$get_data_ext = $this->M_library_database->DB_GET_SEARCH_DATA_DOCUMENT_ARRAY("","","","","","");
-	if (empty($get_data_ext)) {
-		$is_continue = false;
-	}else{	
-		foreach ($get_data_ext as $data_row_ext) {
-			$DOC_PENDISTRIBUSI = $data_row_ext->DOC_PENDISTRIBUSI;
-			$DI_CODE = $data_row_ext->DI_CODE;
-		}
-		if ($SESSION_DEPARTEMENT_ID==$DOC_PENDISTRIBUSI||$SESSION_DIVISI_CODE==$DI_CODE) {
-			$count_notification = count($get_data_ext);
-		}else{
-			$is_continue = false;
-		}
-	}
-}
-if($SESSION_ROLES=="PENCIPTA"){
-	//$DOC_ID,$DOC_NOMOR,$DOC_NAMA,$DOC_MAKER,$DOC_APPROVE,$DOC_STATUS,$DN_ID
-	$get_data_ext = $this->M_library_database->DB_GET_SEARCH_DATA_DOCUMENT_ARRAY("","","",$SESSION_ID,"","",$SESSION_DEPARTEMENT_ID);
-	if(empty($get_data_ext)||$get_data_ext==""){
-		$is_continue = false;
-	}else{
-		$count_notification = count($get_data_ext);
-	}
-}
-if($SESSION_ROLES=="PENGGUNA"){
+// Notification
+$get_data_ext = $this->M_notification->GET_NOTIFICATION_NEW($SESSION_ID);
+if (empty($get_data_ext)) {
 	$is_continue = false;
+}else{
+	$count_notification = count($get_data_ext);
 }
-//-----------------------------------------------------------------------------------------------//
-//NEWS
-//$DOC_AKSES_LEVEL,$DOC_PENGGUNA
-$get_data_count = $this->M_library_database->DB_GET_SEARCH_NEWS_DATA_DOCUMENT_ARRAY_EVO($SESSION_JOB_LEVEL_ID,$SESSION_DEPARTEMENT_ID);
+// News
+$get_data_count = $this->M_notification->GET_NEWS_NEW($SESSION_ID);
 if(empty($get_data_count)||$get_data_count==""){
-	//DO NOTHING
+
 }else{
 	$count_news = count($get_data_count);	
 }
-
+// Jumlah Notification
 $count_notification = $count_notification + $count_news;
-//-----------------------------------------------------------------------------------------------//
 ?>
-<!------------------------------------------------------------------------------------------------->
 <!DOCTYPE html>
 <html lang="en">
 <!------------------------------------------------------------------------------------------------->
@@ -179,14 +116,15 @@ $count_notification = $count_notification + $count_news;
 					<br />
 					<i class="menu-icon fa fa-user"></i>
 					<span class="menu-text">
-						<?php echo $SESSION_ID; ?>
+						<?php echo $SESSION_NAME; ?>
 					</span>
 					<br />
 				</div>
 			</div>
 			<ul class="nav nav-list">
+
 				<li class="">
-					<a href="<?php echo base_url('document-search'); ?>">
+					<a href="<?php echo base_url('menu'); ?>">
 						<i class="menu-icon fa fa-history"></i>
 						<span class="menu-text"> Pencarian </span>
 					</a>
@@ -205,21 +143,47 @@ $count_notification = $count_notification + $count_news;
 				$SESSION_ROLES=="PENGGUNA"||
 				$SESSION_ROLES=="PENCIPTA"||
 				$SESSION_ROLES=="PENDISTRIBUSI"||
-				$SESSION_ROLES=="ATASAN PENCIPTA"
+				$SESSION_ROLES=="ATASAN PENCIPTA" ||
+
+				$SESSION_ROLES_2=="PENGGUNA"||
+				$SESSION_ROLES_2=="PENCIPTA"||
+				$SESSION_ROLES_2=="PENDISTRIBUSI"||
+				$SESSION_ROLES_2=="ATASAN PENCIPTA" ||
+
+				$SESSION_ROLES_3=="PENGGUNA"||
+				$SESSION_ROLES_3=="PENCIPTA"||
+				$SESSION_ROLES_3=="PENDISTRIBUSI"||
+				$SESSION_ROLES_3=="ATASAN PENCIPTA" ||
+
+				$SESSION_ROLES_4=="PENGGUNA"||
+				$SESSION_ROLES_4=="PENCIPTA"||
+				$SESSION_ROLES_4=="PENDISTRIBUSI"||
+				$SESSION_ROLES_4=="ATASAN PENCIPTA" ||
+
+				$SESSION_ROLES_5=="PENGGUNA"||
+				$SESSION_ROLES_5=="PENCIPTA"||
+				$SESSION_ROLES_5=="PENDISTRIBUSI"||
+				$SESSION_ROLES_5=="ATASAN PENCIPTA"
 				){ ?>
 				<li class="">
 					<a href="<?php echo base_url('notification'); ?>">
 						<i class="menu-icon fa fa-exclamation"></i>
 						<span class="menu-text">
 							Aktifitas
-							<span class="badge badge-primary"><?php echo $count_notification; ?></span>
+							<span class="badge badge-primary nofication-count"></span>
 						</span>
 					</a>
 					<b class="arrow"></b>
 				</li>
 				<?php } ?>
 				
-				<?php if($SESSION_ROLES=="PENCIPTA"){ ?>
+				<?php if(
+				$SESSION_ROLES=="PENCIPTA" ||
+				$SESSION_ROLES_2=="PENCIPTA" ||
+				$SESSION_ROLES_3=="PENCIPTA" ||
+				$SESSION_ROLES_4=="PENCIPTA" ||
+				$SESSION_ROLES_5=="PENCIPTA"
+				){ ?>
 				<li class="">
 					<a href="<?php echo base_url('contribution'); ?>">
 						<i class="menu-icon fa fa-database"></i>
@@ -231,7 +195,19 @@ $count_notification = $count_notification + $count_news;
 				
 				<?php if(
 				$SESSION_ROLES=="PENCIPTA"||
-				$SESSION_ROLES=="ADMIN DOKUMEN"
+				$SESSION_ROLES=="ADMIN DOKUMEN"||
+
+				$SESSION_ROLES_2=="PENCIPTA"||
+				$SESSION_ROLES_2=="ADMIN DOKUMEN"||
+
+				$SESSION_ROLES_3=="PENCIPTA"||
+				$SESSION_ROLES_3=="ADMIN DOKUMEN"||
+
+				$SESSION_ROLES_4=="PENCIPTA"||
+				$SESSION_ROLES_4=="ADMIN DOKUMEN"||
+
+				$SESSION_ROLES_5=="PENCIPTA"||
+				$SESSION_ROLES_5=="ADMIN DOKUMEN"
 				){ ?>
 				<li class="active">
 					<a href="<?php echo base_url('report'); ?>">
@@ -242,7 +218,13 @@ $count_notification = $count_notification + $count_news;
 				</li>
 				<?php } ?>
 
-				<?php if($SESSION_ROLES=="ADMIN KONFIGURASI"){ ?>
+				<?php if(
+				$SESSION_ROLES=="ADMIN KONFIGURASI"||
+				$SESSION_ROLES_2=="ADMIN KONFIGURASI"||
+				$SESSION_ROLES_3=="ADMIN KONFIGURASI"||
+				$SESSION_ROLES_4=="ADMIN KONFIGURASI"||
+				$SESSION_ROLES_5=="ADMIN KONFIGURASI"
+				){ ?>
 				<li class="">
 					<a href="#" class="dropdown-toggle">
 						<i class="menu-icon fa fa-cog"></i>
@@ -295,6 +277,51 @@ $count_notification = $count_notification + $count_news;
 						</li>
 					</ul>
 				</li>
+				<li class="">
+					<a href="#" class="dropdown-toggle">
+						<i class="menu-icon fa fa-cog"></i>
+						<span class="menu-text">General Setting </span>
+						<b class="arrow fa fa-angle-down"></b>
+					</a>
+					<b class="arrow"></b>
+					<ul class="submenu">
+						<li class="">
+							<a href="<?php echo base_url('C_general_setting/welcome_speech'); ?>">
+								<i class="menu-icon fa fa-caret-right"></i>
+								Welcome Speech
+							</a>
+							<b class="arrow"></b>
+						</li>
+						<li class="">
+							<a href="<?php echo base_url('C_general_setting/nomor'); ?>">
+								<i class="menu-icon fa fa-caret-right"></i>
+								Nomor Dokumen
+							</a>
+							<b class="arrow"></b>
+						</li>
+						<li class="">
+							<a href="<?php echo base_url('C_general_setting/format_dokumen'); ?>">
+								<i class="menu-icon fa fa-caret-right"></i>
+								Format Dokumen
+							</a>
+							<b class="arrow"></b>
+						</li>
+						<li class="">
+							<a href="<?php echo base_url('C_general_setting/sharelink'); ?>">
+								<i class="menu-icon fa fa-caret-right"></i>
+								Sharelink
+							</a>
+							<b class="arrow"></b>
+						</li>
+						<li class="">
+							<a href="<?php echo base_url('C_general_setting/watermark'); ?>">
+								<i class="menu-icon fa fa-caret-right"></i>
+								Watermark
+							</a>
+							<b class="arrow"></b>
+						</li>
+					</ul>
+				</li>
 				<?php } ?>
 
 				<li class="">
@@ -304,6 +331,7 @@ $count_notification = $count_notification + $count_news;
 					</a>
 					<b class="arrow"></b>
 				</li>
+
 			</ul><!-- /.nav-list -->
 		</div>
 
@@ -334,10 +362,10 @@ $count_notification = $count_notification + $count_news;
 											<label for="">Priode</label>
 											<div class="row">
 												<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-xl-6">
-													<input type="text" id="si_date_from" name="si_date_from" placeholder="Dari Tanggal" class="form-control date-picker" autocomplete="off">
+													<input type="text" id="si_date_from" name="si_date_from" placeholder="Dari Tanggal" class="form-control date-picker" autocomplete="off" required>
 												</div>
 												<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-xl-6">
-													<input type="text" id="si_date_to" name="si_date_to" placeholder="Sampai Tanggal" class="form-control date-picker" autocomplete="off" />
+													<input type="text" id="si_date_to" name="si_date_to" placeholder="Sampai Tanggal" class="form-control date-picker" autocomplete="off" required />
 												</div>
 												<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
 													<select id="duallistbox_dokumen" multiple="multiple" size="5" name="duallistbox_dokumen[]" />
@@ -367,28 +395,51 @@ $count_notification = $count_notification + $count_news;
 													<label for="tipe">Tipe Laporan :</label><br/>
 													<select name="tipe" id="tipe">
 														<option value="">Pilih</option>
-														<option>Laporan Rekap Komentar</option>
-														<option>Laporan Rekap Dokumen Expired</option>
-														<option>Laporan Catatan Revisi</option>
+														<option value="komentar">Laporan Rekap Komentar</option>
+														<option value="expired">Laporan Rekap Dokumen Expired</option>
+														<option value="revisi">Laporan Catatan Revisi</option>
 														<?php if($SESSION_ROLES=="ADMIN DOKUMEN"): ?>
-														<option>Laporan Penggunaan Dokumen</option>
-														<option>Laporan Log Aktivitas penggunaan Dokumen</option>
+														<option value="pengguna">Laporan Penggunaan Dokumen</option>
+														<option value="log">Laporan Log Aktivitas penggunaan Dokumen</option>
 														<?php endif; ?>
 													</select>
 												</div>
 											</div>
 											<br/>
-											<input type="submit" class="btn btn-success" value="Cari">	
+											<button type="button" class="btn btn-warning" id="btn-cari">Cari</button>	
+											<button type="submit" class="btn btn-success" id="btn-cari">Export</button>	
 											</form>
+											<br>
+											<div id="content_rekap_komentar" class="class_content_report" style="display:none;">
+												<table id="table_rekap_komentar" class="table table-striped table_content">
+													
+											</table>
+										</div>
+										<div id="content_rekap_expired" class="class_content_report" style="display: none;">
+											<table id="table_rekap_expired" class="table table-striped table_content">
+								
+											</table>
+										</div>
+                    <div id="content_rekap_revisi" class="class_content_report" style="display: none;">
+											<table id="table_rekap_revisi" class="table table-striped table_content">
+												
+											</table>
+										</div>
+										<div id="content_rekap_pengguna" class="class_content_report" style="display: none;">
+											<table id="table_rekap_pengguna" class="table table-striped table_content">
+												
+											</table>
+										</div>
+										<div id="content_rekap_log" class="class_content_report" style="display: none;">
+											<table id="table_rekap_log" class="table table-striped table_content">
+												
+											</table>
 										</div>
 									</div>
 								</div>
 							</div>
 						</div>
 					</div>
-					<!------------------------------------------------------------------------------------------------->
-					<!-- PAGE CONTENT ENDS -->
-					<!------------------------------------------------------------------------------------------------->
 				</div><!-- /.page-content -->
 			</div>
 		</div><!-- /.main-content -->
@@ -442,8 +493,8 @@ $count_notification = $count_notification + $count_news;
 	<script src="<?php echo base_url('template/backend/assets/js/jquery.inputlimiter.min.js'); ?>"></script>
 	<script src="<?php echo base_url('template/backend/assets/js/bootstrap-tag.min.js'); ?>"></script>
 
-	<script src="<?php echo base_url('template/backend/assets/js/jquery.dataTables.min.js'); ?>"></script>
-	<script src="<?php echo base_url('template/backend/assets/js/jquery.dataTables.bootstrap.min.js'); ?>"></script>
+	<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+	<script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js"></script>
 	<script src="<?php echo base_url('template/backend/assets/js/dataTables.buttons.min.js'); ?>"></script>
 	<script src="<?php echo base_url('template/backend/assets/js/buttons.flash.min.js'); ?>"></script>
 	<script src="<?php echo base_url('template/backend/assets/js/buttons.html5.min.js'); ?>"></script>
@@ -463,9 +514,6 @@ $count_notification = $count_notification + $count_news;
 	
 	<script type="text/javascript">
 		jQuery(function($) {
-			//------------------------------------------------------------------------------------------------//
-			//------------------------------------------------------------------------------------------------//
-			//------------------------------------------------------------------------------------------------//
 			$('#avatar').on('click', function(){
 				var modal = 
 				'<div class="modal fade">\
@@ -543,16 +591,12 @@ $count_notification = $count_notification + $count_news;
 					return false;
 				});
 			});
-			//------------------------------------------------------------------------------------------------//
-			//------------------------------------------------------------------------------------------------//
-			//------------------------------------------------------------------------------------------------//
+
 			window.prettyPrint && prettyPrint();
 			$('#id-check-horizontal').removeAttr('checked').on('click', function(){
 				$('#dt-list-1').toggleClass('dl-horizontal').prev().html(this.checked ? '&lt;dl class="dl-horizontal"&gt;' : '&lt;dl&gt;');
 			});
-			//------------------------------------------------------------------------------------------------//
-			//------------------------------------------------------------------------------------------------//
-			//------------------------------------------------------------------------------------------------//
+
 			$('#id-disable-check').on('click', function() {
 				var inp = $('#form-input-readonly').get(0);
 				if(inp.hasAttribute('disabled')) {
@@ -685,13 +729,7 @@ $count_notification = $count_notification + $count_news;
 				droppable:false,
 				onchange:null,
 				thumbnail:false //| true | large
-				//whitelist:'gif|png|jpg|jpeg'
-				//blacklist:'exe|php'
-				//onchange:''
-				//
 			});
-			//pre-show a file name, for example a previously selected file
-			//$('#id-input-file-1').ace_file_input('show_file_list', ['myfile.txt'])
 			
 			$('#id-input-file-3').ace_file_input({
 				style: 'well',
@@ -699,36 +737,13 @@ $count_notification = $count_notification + $count_news;
 				btn_change: null,
 				no_icon: 'ace-icon fa fa-cloud-upload',
 				droppable: true,
-				thumbnail: 'small'//large | fit
-				//,icon_remove:null//set null, to hide remove/reset button
-				/**,before_change:function(files, dropped) {
-					//Check an example below
-					//or examples/file-upload.html
-					return true;
-				}*/
-				/**,before_remove : function() {
-					return true;
-				}*/
-				,
+				thumbnail: 'small',
 				preview_error : function(filename, error_code) {
-					//name of the file that failed
-					//error_code values
-					//1 = 'FILE_LOAD_FAILED',
-					//2 = 'IMAGE_LOAD_FAILED',
-					//3 = 'THUMBNAIL_FAILED'
-					//alert(error_code);
 				}
 			
 			}).on('change', function(){
-				//console.log($(this).data('ace_input_files'));
-				//console.log($(this).data('ace_input_method'));
 			});
-			
-			//$('#id-input-file-3')
-			//.ace_file_input('show_file_list', [
-				//{type: 'image', name: 'name of image', path: 'http://path/to/image/for/preview'},
-				//{type: 'file', name: 'hello.txt'}
-			//]);
+
 			
 			//dynamically change allowed formats by changing allowExt && allowMime function
 			$('#id-file-format').removeAttr('checked').on('change', function() {
@@ -763,42 +778,7 @@ $count_notification = $count_notification + $count_news;
 				file_input
 				.off('file.error.ace')
 				.on('file.error.ace', function(e, info) {
-					//console.log(info.file_count);//number of selected files
-					//console.log(info.invalid_count);//number of invalid files
-					//console.log(info.error_list);//a list of errors in the following format
-					
-					//info.error_count['ext']
-					//info.error_count['mime']
-					//info.error_count['size']
-					
-					//info.error_list['ext']  = [list of file names with invalid extension]
-					//info.error_list['mime'] = [list of file names with invalid mimetype]
-					//info.error_list['size'] = [list of file names with invalid size]
-					
-					/**
-					if( !info.dropped ) {
-						//perhapse reset file field if files have been selected, and there are invalid files among them
-						//when files are dropped, only valid files will be added to our file array
-						e.preventDefault();//it will rest input
-					}
-					*/
-					
-					//if files have been selected (not dropped), you can choose to reset input
-					//because browser keeps all selected files anyway and this cannot be changed
-					//we can only reset file field to become empty again
-					//on any case you still should check files with your server side script
-					//because any arbitrary file can be uploaded by user and it's not safe to rely on browser-side measures
 				});
-				
-				/**
-				file_input
-				.off('file.preview.ace')
-				.on('file.preview.ace', function(e, info) {
-					console.log(info.file.width);
-					console.log(info.file.height);
-					e.preventDefault();//to prevent preview
-				});
-				*/
 			
 			});
 			
@@ -811,15 +791,8 @@ $count_notification = $count_notification + $count_news;
 			$('#spinner3').ace_spinner({value:0,min:-100,max:100,step:10, on_sides: true, icon_up:'ace-icon fa fa-plus bigger-110', icon_down:'ace-icon fa fa-minus bigger-110', btn_up_class:'btn-success' , btn_down_class:'btn-danger'});
 			$('#spinner4').ace_spinner({value:0,min:-100,max:100,step:10, on_sides: true, icon_up:'ace-icon fa fa-plus', icon_down:'ace-icon fa fa-minus', btn_up_class:'btn-purple' , btn_down_class:'btn-purple'});
 			
-			//$('#spinner1').ace_spinner('disable').ace_spinner('value', 11);
-			//or
-			//$('#spinner1').closest('.ace-spinner').spinner('disable').spinner('enable').spinner('value', 11);//disable, enable or change value
-			//$('#spinner1').closest('.ace-spinner').spinner('value', 0);//reset to 0
-			
-			//datepicker plugin
-			//link
 			$('.date-picker').datepicker({
-				format: 'dd/mm/yyyy',
+				format: 'yyyy-mm-dd',
 				autoclose: true,
 				todayHighlight: true
 			})
@@ -860,7 +833,6 @@ $count_notification = $count_notification + $count_news;
 			});
 			
 			if(!ace.vars['old_ie']) $('#date-timepicker1').datetimepicker({
-			 //format: 'MM/DD/YYYY h:mm:ss A',//use this option to display seconds
 			 icons: {
 				time: 'fa fa-clock-o',
 				date: 'fa fa-calendar',
@@ -877,13 +849,8 @@ $count_notification = $count_notification + $count_news;
 			});
 			
 			$('#colorpicker1').colorpicker();
-			//$('.colorpicker').last().css('z-index', 2000);//if colorpicker is inside a modal, its z-index should be higher than modal'safe
 			
 			$('#simple-colorpicker-1').ace_colorpicker();
-			//$('#simple-colorpicker-1').ace_colorpicker('pick', 2);//select 2nd color
-			//$('#simple-colorpicker-1').ace_colorpicker('pick', '#fbe983');//select #fbe983 color
-			//var picker = $('#simple-colorpicker-1').data('ace_colorpicker')
-			//picker.pick('red', true);//insert the color if it doesn't exist
 			
 			$(".knob").knob();
 			
@@ -894,15 +861,6 @@ $count_notification = $count_notification + $count_news;
 					placeholder:tag_input.attr('placeholder'),
 					//enable typeahead by specifying the source array
 					source: ace.vars['US_STATES'],//defined in ace.js >> ace.enable_search_ahead
-					/**
-					//or fetch data from database, fetch those that match "query"
-					source: function(query, process) {
-					  $.ajax({url: 'remote_source.php?q='+encodeURIComponent(query)})
-					  .done(function(result_items){
-						process(result_items);
-					  });
-					}
-					*/
 				  }
 				)
 			
@@ -928,9 +886,6 @@ $count_notification = $count_notification + $count_news;
 				thumbnail:'large'
 			})
 			
-			//chosen plugin inside a modal will have a zero width because the select element is originally hidden
-			//and its width cannot be determined.
-			//so we set the width after modal is show
 			$('#modal-form').on('shown.bs.modal', function () {
 				if(!ace.vars['touch']) {
 					$(this).find('.chosen-container').each(function(){
@@ -939,14 +894,7 @@ $count_notification = $count_notification + $count_news;
 						$(this).find('.chosen-search input').css('width' , '200px');
 					});
 				}
-			})
-			/**
-			//or you can activate the chosen plugin after modal is shown
-			//this way select element becomes visible with dimensions and chosen works as expected
-			$('#modal-form').on('shown', function () {
-				$(this).find('.modal-chosen').chosen();
-			})
-			*/
+			});
 			
 			$(document).one('ajaxloadstart.page', function(e) {
 				autosize.destroy('textarea[class*=autosize]')
@@ -954,158 +902,7 @@ $count_notification = $count_notification + $count_news;
 				$('.limiterBox,.autosizejs').remove();
 				$('.daterangepicker.dropdown-menu,.colorpicker.dropdown-menu,.bootstrap-datetimepicker-widget.dropdown-menu').remove();
 			});
-			//------------------------------------------------------------------------------------------------//
-			//------------------------------------------------------------------------------------------------//
-			//------------------------------------------------------------------------------------------------//
-			////initiate dataTables plugin
-			//var myTable = 
-			//$('#dynamic-table')
-			////.wrap("<div class='dataTables_borderWrap' />")   //if you are applying horizontal scrolling (sScrollX)
-			//.DataTable( {
-			//	bAutoWidth: false,
-			//	//PLEASE CHECK columns TABLE!!!
-			//	"aoColumns": [
-			//	  { "bSortable": false },
-			//	  null, 
-			//	  null, 
-			//	  null, 
-			//	  null, 
-			//	  { "bSortable": false }
-			//	],
-			//	"aaSorting": [],
-			//	
-			//	//"bProcessing": true,
-			//    //"bServerSide": true,
-			//    //"sAjaxSource": "http://127.0.0.1/table.php"	,
-			//
-			//	//,
-			//	//"sScrollY": "200px",
-			//	//"bPaginate": false,
-			//
-			//	//"sScrollX": "100%",
-			//	//"sScrollXInner": "120%",
-			//	//"bScrollCollapse": true,
-			//	//Note: if you are applying horizontal scrolling (sScrollX) on a ".table-bordered"
-			//	//you may want to wrap the table inside a "div.dataTables_borderWrap" element
-			//
-			//	//"iDisplayLength": 50
-			//
-			//	select: {
-			//		style: 'multi'
-			//	}
-			//} );
-			//
-			//$.fn.dataTable.Buttons.defaults.dom.container.className = 'dt-buttons btn-overlap btn-group btn-overlap';
-			//
-			//new $.fn.dataTable.Buttons( myTable, {
-			//	buttons: [
-			//	  {
-			//		"extend": "colvis",
-			//		"text": "<i class='fa fa-search bigger-110 blue'></i> <span class='hidden'>Show/hide columns</span>",
-			//		"className": "btn btn-white btn-primary btn-bold",
-			//		columns: ':not(:first):not(:last)'
-			//	  },
-			//	  {
-			//		"extend": "copy",
-			//		"text": "<i class='fa fa-copy bigger-110 pink'></i> <span class='hidden'>Copy to clipboard</span>",
-			//		"className": "btn btn-white btn-primary btn-bold"
-			//	  },
-			//	  {
-			//		"extend": "csv",
-			//		"text": "<i class='fa fa-database bigger-110 orange'></i> <span class='hidden'>Export to CSV</span>",
-			//		"className": "btn btn-white btn-primary btn-bold"
-			//	  },
-			//	  {
-			//		"extend": "excel",
-			//		"text": "<i class='fa fa-file-excel-o bigger-110 green'></i> <span class='hidden'>Export to Excel</span>",
-			//		"className": "btn btn-white btn-primary btn-bold"
-			//	  },
-			//	  {
-			//		"extend": "pdf",
-			//		"text": "<i class='fa fa-file-pdf-o bigger-110 red'></i> <span class='hidden'>Export to PDF</span>",
-			//		"className": "btn btn-white btn-primary btn-bold"
-			//	  },
-			//	  {
-			//		"extend": "print",
-			//		"text": "<i class='fa fa-print bigger-110 grey'></i> <span class='hidden'>Print</span>",
-			//		"className": "btn btn-white btn-primary btn-bold",
-			//		autoPrint: false,
-			//		message: 'This print was produced using the Print button for DataTables'
-			//	  }		  
-			//	]
-			//} );
-			//myTable.buttons().container().appendTo( $('.tableTools-container') );
-			//
-			////style the message box
-			//var defaultCopyAction = myTable.button(1).action();
-			//myTable.button(1).action(function (e, dt, button, config) {
-			//	defaultCopyAction(e, dt, button, config);
-			//	$('.dt-button-info').addClass('gritter-item-wrapper gritter-info gritter-center white');
-			//});
-			//
-			//var defaultColvisAction = myTable.button(0).action();
-			//myTable.button(0).action(function (e, dt, button, config) {
-			//	
-			//	defaultColvisAction(e, dt, button, config);
-			//	
-			//	
-			//	if($('.dt-button-collection > .dropdown-menu').length == 0) {
-			//		$('.dt-button-collection')
-			//		.wrapInner('<ul class="dropdown-menu dropdown-light dropdown-caret dropdown-caret" />')
-			//		.find('a').attr('href', '#').wrap("<li />")
-			//	}
-			//	$('.dt-button-collection').appendTo('.tableTools-container .dt-buttons')
-			//});
-            //
-			//setTimeout(function() {
-			//	$($('.tableTools-container')).find('a.dt-button').each(function() {
-			//		var div = $(this).find(' > div').first();
-			//		if(div.length == 1) div.tooltip({container: 'body', title: div.parent().text()});
-			//		else $(this).tooltip({container: 'body', title: $(this).text()});
-			//	});
-			//}, 500);
-			//
-			//myTable.on( 'select', function ( e, dt, type, index ) {
-			//	if ( type === 'row' ) {
-			//		$( myTable.row( index ).node() ).find('input:checkbox').prop('checked', true);
-			//	}
-			//} );
-			//myTable.on( 'deselect', function ( e, dt, type, index ) {
-			//	if ( type === 'row' ) {
-			//		$( myTable.row( index ).node() ).find('input:checkbox').prop('checked', false);
-			//	}
-			//} );			
-			//
-			///////////////////////////////////
-			////table checkboxes
-			//$('th input[type=checkbox], td input[type=checkbox]').prop('checked', false);
-			//
-			////select/deselect all rows according to table header checkbox
-			//$('#dynamic-table > thead > tr > th input[type=checkbox], #dynamic-table_wrapper input[type=checkbox]').eq(0).on('click', function(){
-			//	var th_checked = this.checked;//checkbox inside "TH" table header
-			//	
-			//	$('#dynamic-table').find('tbody > tr').each(function(){
-			//		var row = this;
-			//		if(th_checked) myTable.row(row).select();
-			//		else  myTable.row(row).deselect();
-			//	});
-			//});
-			//
-			////select/deselect a row when the checkbox is checked/unchecked
-			//$('#dynamic-table').on('click', 'td input[type=checkbox]' , function(){
-			//	var row = $(this).closest('tr').get(0);
-			//	if(this.checked) myTable.row(row).deselect();
-			//	else myTable.row(row).select();
-			//});
-			//		
-			//$(document).on('click', '#dynamic-table .dropdown-toggle', function(e) {
-			//	e.stopImmediatePropagation();
-			//	e.stopPropagation();
-			//	e.preventDefault();
-			//});
-			//------------------------------------------------------------------------------------------------//
-			//------------------------------------------------------------------------------------------------//
-			//------------------------------------------------------------------------------------------------//
+		
 			var demo2 = $('select[name="duallistbox_dokumen[]"]').bootstrapDualListbox({
 				infoTextFiltered: '<span class="label label-purple label-lg">Filtered</span>',
 				moveOnSelect: false
@@ -1117,26 +914,11 @@ $count_notification = $count_notification + $count_news;
 			container2.find('.moveall').html('All');
 			container2.find('.removeall').html('All');
 			
-			/**var setRatingColors = function() {
-				$(this).find('.star-on-png,.star-half-png').addClass('orange2').removeClass('grey');
-				$(this).find('.star-off-png').removeClass('orange2').addClass('grey');
-			}*/
 			$('.rating').raty({
 				'cancel' : true,
 				'half': true,
 				'starType' : 'i'
-				/**,
-				
-				'click': function() {
-					setRatingColors.call(this);
-				},
-				'mouseover': function() {
-					setRatingColors.call(this);
-				},
-				'mouseout': function() {
-					setRatingColors.call(this);
-				}*/
-			})//.find('i:not(.star-raty)').addClass('grey');
+			})
 
 			//select2
 			$('.select2').css('width','200px').select2({allowClear:true})
@@ -1162,8 +944,6 @@ $count_notification = $count_notification + $count_news;
 			 }
 			});
 
-			//typeahead.js
-			//example taken from plugin's page at: https://twitter.github.io/typeahead.js/examples/
 			var substringMatcher = function(strs) {
 				return function findMatches(q, cb) {
 					var matches, substringRegex;
@@ -1206,9 +986,216 @@ $count_notification = $count_notification + $count_news;
 				$('.rating').raty('destroy');
 				$('.multiselect').multiselect('destroy');
 			});
-			//------------------------------------------------------------------------------------------------//
-			//------------------------------------------------------------------------------------------------//
-			//------------------------------------------------------------------------------------------------//
+
+      $("#btn-cari").click(function() {
+        var v = $("#tipe").val();
+				if (v === "komentar") {
+					hide_content();
+					show_table_komentar();
+				}
+
+				if (v === "revisi") {
+					hide_content();
+					show_table_revisi();
+				}
+
+				if (v === "expired") {
+					hide_content();
+					show_table_expired();
+				}
+
+				if (v === "pengguna") {
+					hide_content();
+					show_table_pengguna();
+				}
+
+				if (v === "logi") {
+					hide_content();
+					show_table_log();
+				}
+      });
+
+			function hide_content() {
+				$(".table_content").remove();
+				$(".class_content_report").hide();
+			}
+
+			function show_table_komentar() {
+				$('#table_rekap_komentar').remove();
+				$("#content_rekap_komentar").html('<table id="table_rekap_komentar" class="table table-striped">').show();
+				$('#table_rekap_komentar').DataTable({
+						processing: false, //Feature control the processing indicator.
+						serverSide: true, //Feature control DataTables' server-side processing mode.
+						bPaginate: false,
+						searching: false,
+						responsive: true,
+						columnDefs: [
+							{ title: "No", targets: 0, visible: false	 },
+							{ title: "Tanggal", targets: 1, visible: false },
+							{ title: "Nama Dokumen", targets: 2, visible: false },
+							{ title: "No Dokumen", targets: 3 },
+							{ title: "Versi", targets: 4 },
+							{ title: "Departemen", targets: 5 },
+							{ title: "Komentator", targets: 6 },
+							{ title: "Komentar", targets: 7 },
+							{ title: "Tanggal Komentar", targets: 8 }
+						],
+						columns: [
+								{ data: 'DOC_ID' },
+								{ data: 'DOC_DATE' },
+								{ data: 'DOC_NAMA' },
+								{ data: 'DOC_NOMOR' },
+								{ data: 'DOC_VERSI' },
+								{ data: 'DOC_PENGGUNA' },
+								{ data: 'COMENTATOR' },
+								{ data: 'DTCT_NOTE' },
+								{ data: 'COMENT_DATE'}
+						],
+						drawCallback: function (settings) {
+                var api = this.api();
+                var rows = api.rows({ page: 'current' }).nodes();
+                var last = null;
+
+                api.column(0, { page: 'current' }).data().each(function (group, i) {
+
+                    if (last !== group) {
+
+                        $(rows).eq(i).before(
+                            '<tr class="group"><td colspan="8" style="BACKGROUND-COLOR:rgb(237, 208, 0);font-weight:700;color:#006232;">' + 'Document: ' + group + '</td></tr>'
+                        );
+
+                        last = group;
+                    }
+                });
+            },
+						ajax: {
+								url: '<?php echo base_url('C_report/filter_report');?>',
+								type: 'POST',
+								data: {
+										type: $('#tipe').val(),
+										start: $('#si_date_from').val(),
+										end: $('#si_date_to').val(),
+										dokumen: $('#duallistbox_dokumen').val()
+								}
+						}
+				});
+			}
+
+			function show_table_expired() {
+				$('#table_rekap_expired').remove();
+				$("#content_rekap_expired").html('<table id="table_rekap_expired" class="table table-striped">').show();
+				$('#table_rekap_expired').DataTable({
+					processing: false, //Feature control the processing indicator.
+					serverSide: true, //Feature control DataTables' server-side processing mode.
+					bPaginate: false,
+					searching: false,
+					responsive: true,
+					columnDefs: [
+						{ title: "No Dokumen", targets: 0	 },
+						{ title: "Nama Dokumen", targets: 1 },
+						{ title: "Tanggal Expired", targets: 2 },
+						{ title: "Pencipta", targets: 3 },
+						{ title: "Keterangan", targets: 4}
+					],
+					columns: [
+							{ data: 'DOC_NOMOR' },
+							{ data: 'DOC_NAMA' },
+							{ data: 'DOC_TGL_EXPIRED' },
+							{ data: 'FULL_NAME' },
+							{ data: 'DOC_NOTE'}
+					],
+					ajax: {
+							url: '<?php echo base_url('C_report/filter_report');?>',
+							type: 'POST',
+							data: {
+									type: $('#tipe').val(),
+									start: $('#si_date_from').val(),
+									end: $('#si_date_to').val(),
+									dokumen: $('#duallistbox_dokumen').val()
+							}
+						}
+				});
+			}
+
+			function show_table_revisi() {
+				$('#table_rekap_revisi').remove();
+				$("#content_rekap_revisi").html('<table id="table_rekap_revisi" class="table table-striped">').show();
+				$('#table_rekap_revisi').DataTable({
+					processing: false, //Feature control the processing indicator.
+					serverSide: true, //Feature control DataTables' server-side processing mode.
+					bPaginate: false,
+					searching: false,
+					responsive: true,
+					columnDefs: [
+						{ title: "No Dokumen", targets: 0	 },
+						{ title: "Nama Dokumen", targets: 1 },
+						{ title: "Tanggal Efektif", targets: 2 },
+						{ title: "Versi", targets: 3 },
+						{ title: "Penjelasan", targets: 4},
+						{ title: "Diajukan Oleh", targets: 5},
+						{ title: "Disetujui Oleh", targets: 6}
+					],
+					columns: [
+							{ data: 'DOC_NOMOR' },
+							{ data: 'DOC_NAMA' },
+							{ data: 'DOC_TGL_EFEKTIF' },
+							{ data: 'DOC_VERSI' },
+							{ data: 'DTDLSS_NOTE'},
+							{ data: 'FULL_NAME'},
+							{ data: 'DTDLSS_MAKER'}
+					],
+					ajax: {
+							url: '<?php echo base_url('C_report/filter_report');?>',
+							type: 'POST',
+							data: {
+									type: $('#tipe').val(),
+									start: $('#si_date_from').val(),
+									end: $('#si_date_to').val(),
+									dokumen: $('#duallistbox_dokumen').val()
+							}
+						}
+				});
+			}
+			
+			function show_table_pengguna() {
+				$('#table_rekap_revisi').remove();
+				$("#content_rekap_revisi").html('<table id="table_rekap_revisi" class="table table-striped">').show();
+				$('#table_rekap_revisi').DataTable({
+					processing: false, //Feature control the processing indicator.
+					serverSide: true, //Feature control DataTables' server-side processing mode.
+					bPaginate: false,
+					searching: false,
+					responsive: true,
+					columnDefs: [
+						{ title: "No Dokumen", targets: 0	 },
+						{ title: "Nama Dokumen", targets: 1 },
+						{ title: "Tanggal Efektif", targets: 2 },
+						{ title: "Versi", targets: 3 },
+						{ title: "Penjelasan", targets: 4},
+						{ title: "Diajukan Oleh", targets: 5},
+						{ title: "Disetujui Oleh", targets: 6}
+					],
+					columns: [
+							{ data: 'DOC_NOMOR' },
+							{ data: 'DOC_NAMA' },
+							{ data: 'DOC_TGL_EFEKTIF' },
+							{ data: 'DOC_VERSI' },
+							{ data: 'DTDLSS_NOTE'},
+							{ data: 'FULL_NAME'},
+							{ data: 'DTDLSS_MAKER'}
+					],
+					ajax: {
+							url: '<?php echo base_url('C_report/filter_report');?>',
+							type: 'POST',
+							data: {
+									type: $('#tipe').val(),
+									start: $('#si_date_from').val(),
+									end: $('#si_date_to').val(),
+									dokumen: $('#duallistbox_dokumen').val()
+							}
+						}
+				});
+			}
 		});
 	</script>
 	<!------------------------------------------------------------------------------------------------->
