@@ -162,7 +162,6 @@ class C_notification extends CI_Controller {
 			echo '
 				<script>
 					alert("Mohon Isi Catatan Tolak Sirkulasi");
-					window.location.href = "'.base_url('C_notification').'";
 				</script>
 			';
 			exit();
