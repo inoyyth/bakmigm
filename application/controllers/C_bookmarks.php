@@ -178,7 +178,8 @@ class C_bookmarks extends CI_Controller {
 				$body = $value['isi'];
 			}
 		}
-		$get_tipe = $this->db->get_where('tb_document_structure_tipe', array('DTSETE_ID' => $DOC_TIPE));
+		// $get_tipe = $this->db->get_where('tb_document_structure_tipe', array('DTSETE_ID' => $DOC_TIPE));
+		$get_tipe = $this->db->select('*')->from('tb_document_structure_tipe')->where(array('DTSETE_ID' => $DOC_TIPE))->get()->result_array();
 		if (empty($get_tipe)) {
 			
 		}else{
@@ -305,13 +306,28 @@ class C_bookmarks extends CI_Controller {
 				$AdminName = $value['FULL_NAME'];
 			}
 		}
-		$get_user = 
-		$this->db->select('*')
-			->from('tb_document_notification')
-			->join('tb_employee', 'tb_document_notification.NIP = tb_employee.NIP', 'left')
-			->join('tb_document', 'tb_document_notification.DOC_ID = tb_document.DOC_ID', 'left')
-			->where(array('tb_document_notification.DOC_ID' => $DOC_ID))
-			->get()->result_array();
+		// $get_user = 
+		// $this->db->select('*')
+		// 	->from('tb_document_notification')
+		// 	->join('tb_employee', 'tb_document_notification.NIP = tb_employee.NIP', 'left')
+		// 	->join('tb_document', 'tb_document_notification.DOC_ID = tb_document.DOC_ID', 'left')
+		// 	->where(array('tb_document_notification.DOC_ID' => $DOC_ID))
+		// 	->get()->result_array();
+		$get_user = $this->db->select('*')->from('tb_document')
+							->join('tb_document_notification', 'tb_document_notification.DOC_ID = tb_document.DOC_ID')
+							->join('tb_document_detail', 'tb_document.DOC_ID = tb_document_detail.DOC_ID', 'left')
+							->join('tb_document_structure_kategori', 'tb_document.DOC_KATEGORI = tb_document_structure_kategori.DTSEKI_ID', 'left')
+							->join('tb_document_structure_jenis', 'tb_document.DOC_JENIS = tb_document_structure_jenis.DTSEJS_ID', 'left')
+							->join('tb_document_structure_tipe', 'tb_document.DOC_TIPE = tb_document_structure_tipe.DTSETE_ID', 'left')
+							->join('tb_document_form', 'tb_document.DOC_WUJUD = tb_document_form.DTFM_ID', 'left')
+							->join('tb_distribution_method', 'tb_document.DOC_DISTRIBUSI = tb_distribution_method.DNMD_ID', 'left')
+							->join('tb_confidential', 'tb_document.DOC_KERAHASIAAN = tb_confidential.CL_ID', 'left')
+							->join('tb_employee', 'tb_document.DOC_MAKER = tb_employee.NIP', 'left')
+							->join('tb_departemen', 'tb_employee.DEPCODE = tb_departemen.DN_ID', 'left outer')
+							->join('tb_divisi', 'tb_departemen.DI_ID = tb_divisi.DI_ID OR tb_employee.DEPCODE = tb_divisi.DI_ID', 'left outer')
+							->join('tb_direktorat', 'tb_divisi.DT_ID = tb_direktorat.DT_ID OR tb_employee.DEPCODE = tb_direktorat.DT_ID', 'left')
+							->where(array('tb_document.DOC_ID'=>$DOC_ID))
+							->get()->result_array();
 		if (empty($get_user)) {
 			
 		}else{
