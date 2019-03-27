@@ -42,13 +42,13 @@ class C_menu extends CI_Controller
 
 	public function cari()
 	{
-		if ($this->session->userdata('session_bgm_edocument_status') != "LOGIN") 
-		{
-			redirect(base_url());
-		}
 		include (APPPATH.'libraries/session_user.php');
 		$q = $this->input->post('keyword');
-		$keyword = explode (", ",$q);
+		if ($q === "") {
+			$keyword = array("");
+		} else {
+			$keyword = explode (", ",$q);
+		}
 		$jml_key = count($keyword);
 		// LIKE ($keyword,$STATUS1,$STATUS2,$STATUS3,$JBLL_ID,$DN_ID,$DI_CODE,$DT_ID)
 		$data['detail'] = array();
