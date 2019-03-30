@@ -85,6 +85,9 @@ $route['division-structure']		= 'C_setting_structure_organization/view_divisi';
 $route['dapartemen-structure']		= 'C_setting_structure_organization/view_departemen';
 $route['welcome'] 					= 'C_general_setting/welcome_speech';
 
+$route['role-menus'] 				= 'Role_menus/index';
+$route['role-menus/update/(:any)'] 	= 'Role_menus/edit/$1';
+$route['role-menus/save'] 				= 'Role_menus/store';
 
 $route['404_override'] 				= '';
 $route['translate_uri_dashes'] 		= FALSE;
