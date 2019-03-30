@@ -46,31 +46,38 @@ class C_setting_data_master extends CI_Controller {
 	//-----------------------------------------------------------------------------------------------//
 	public function index()
 	{
-		$this->load->view('V_setting_data_master');
+		$data['view'] = 'V_setting_data_master';
+		$this->load->view('template', $data);
 	}
 	public function group_proses()
 	{
-		$this->load->view('data_master/V_group_proses');
+		$data['view'] = 'data_master/V_group_proses';
+		$this->load->view('template', $data);
 	}
 	public function proses()
 	{
-		$this->load->view('data_master/V_proses');
+		$data['view'] = 'data_master/V_proses';
+		$this->load->view('template', $data);
 	}
 	public function wujud_dokumen()
 	{
-		$this->load->view('data_master/V_wujud_dokumen');
+		$data['view'] = 'data_master/V_wujud_dokumen';
+		$this->load->view('template', $data);
 	}
 	public function metode_distribusi()
 	{
-		$this->load->view('data_master/V_metode_distribusi');
+		$data['view'] = 'data_master/V_metode_distribusi';
+		$this->load->view('template', $data);
 	}
 	public function kerahasiaan()
 	{
-		$this->load->view('data_master/V_standar_kerahasiaan');
+		$data['view'] = 'data_master/V_standar_kerahasiaan';
+		$this->load->view('template', $data);
 	}
 	public function priode_review()
 	{
-		$this->load->view('data_master/V_priode_review');
+		$data['view'] = 'data_master/V_priode_review';
+		$this->load->view('template', $data);
 	}
 	//-----------------------------------------------------------------------------------------------//
 	//-----------------------------------------------------------------------------------------------//

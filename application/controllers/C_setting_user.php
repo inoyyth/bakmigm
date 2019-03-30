@@ -34,7 +34,8 @@ class C_setting_user extends CI_Controller {
     }
 	public function index()
 	{
-		$this->load->view('V_setting_user');
+		$data['view'] = 'V_setting_user';
+		$this->load->view('template', $data);
 	}
 	public function insert()
 	{
@@ -135,12 +136,14 @@ class C_setting_user extends CI_Controller {
 
 	function table_hris()
 	{
-		$this->load->view('V_table_hris');
+		$data['view'] = 'V_table_hris';
+		$this->load->view('template', $data);
 	}
 
 	function table_edoc()
 	{
-		$this->load->view('V_table_edoc');
+		$data['view'] = 'V_table_edoc';
+		$this->load->view('template', $data);
 	}
 
 	public function get_data_employee()

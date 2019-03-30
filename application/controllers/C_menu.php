@@ -5,12 +5,12 @@ class C_menu extends CI_Controller
 	public function __construct()
 	{
 		parent::__construct();
-	}
-	public function index()
-	{
 		if ($this->session->userdata('session_bgm_edocument_status') != "LOGIN") {
 			redirect(base_url());
 		}
+	}
+	public function index()
+	{
 		include (APPPATH.'libraries/session_user.php');
 		// Like (STATUS1,2,3,JBL,DN,DV,DT)
 		if (empty($SESSION_DEPARTEMENT_ID) && !empty($SESSION_DIVISI_ID)) {
@@ -37,7 +37,8 @@ class C_menu extends CI_Controller
 
 			}
 		}
-		$this->load->view('V_menu', $data);
+		$data['view'] = 'V_menu';
+		$this->load->view('template', $data);
 	}
 
 	public function cari()
@@ -92,15 +93,12 @@ class C_menu extends CI_Controller
 			return !empty($value) || $value === 0;
 		}
 		$data['detail'] = array_values(remove_empty($test['detail']));
-		$this->load->view('V_search', $data);
+		$data['view'] = 'V_search';
+		$this->load->view('template', $data);
 	}
 
 	function cari_advance()
 	{
-		if ($this->session->userdata('session_bgm_edocument_status') != "LOGIN") 
-		{
-			redirect(base_url());
-		}
 		include (APPPATH.'libraries/session_user.php');
 		$si_doc_type = $this->input->post('si_doc_type');
 		$ssa_dept_owner = $this->input->post('ssa_dept_owner');
@@ -128,7 +126,8 @@ class C_menu extends CI_Controller
 
 			}
 		}
-		$this->load->view('V_menu', $data);
+		$data['view'] = 'V_menu';
+		$this->load->view('template', $data);
 	}
 
 	function detail($id)
@@ -149,7 +148,8 @@ class C_menu extends CI_Controller
 			exit();
 		}
 		$data['detaillist'] = $this->Model_detail->getDetailList($id);
-		$this->load->view('V_detail_list', $data);
+		$data['view'] = 'V_detail_list';
+		$this->load->view('template', $data);
 	}
 
 	public function randomNumber($length)

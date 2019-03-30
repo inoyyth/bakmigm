@@ -17,7 +17,7 @@ class M_login extends CI_Model {
 	}
 	public function DB_GET_LOGIN_DEPARTEMEN($username)
 	{
-		$this->db->select('*');
+		$this->db->select('*, tb_employee.NIP as NIP_USER');
 		$this->db->from('tb_employee');
 		$this->db->join('tb_employee_detail', 'tb_employee.NIP = tb_employee_detail.NIP', 'left');
 		$this->db->join('tb_job_level', 'tb_employee.JOBLVL = tb_job_level.JBLL_ID', 'left');
@@ -29,7 +29,7 @@ class M_login extends CI_Model {
 	}
 	public function DB_GET_LOGIN_DIVISI($username)
 	{
-		$this->db->select('*');
+		$this->db->select('*, tb_employee.NIP as NIP_USER');
 		$this->db->from('tb_employee');
 		$this->db->join('tb_employee_detail', 'tb_employee.NIP = tb_employee_detail.NIP', 'left');
 		$this->db->join('tb_job_level', 'tb_employee.JOBLVL = tb_job_level.JBLL_ID', 'left');
@@ -40,7 +40,7 @@ class M_login extends CI_Model {
 	}
 	public function DB_GET_LOGIN_DIREKTORAT($username)
 	{
-		$this->db->select('*');
+		$this->db->select('*, tb_employee.NIP as NIP_USER');
 		$this->db->from('tb_employee');
 		$this->db->join('tb_employee_detail', 'tb_employee.NIP = tb_employee_detail.NIP', 'left');
 		$this->db->join('tb_job_level', 'tb_employee.JOBLVL = tb_job_level.JBLL_ID', 'left');

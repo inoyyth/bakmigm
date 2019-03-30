@@ -499,7 +499,7 @@ $count_notification = $count_notification + $count_news;
 									<div class="col-sm-12">
 										<input type="hidden" id="si_key" name="si_key" class="form-control" value="<?=$DOC_ID;?>">
 										<input type="hidden" id="si_approver" name="si_approver" class="form-control" value="<?=$SESSION_ROLES;?>">
-										<textarea type="text" required id="si_note" name="si_note" rows="3" maxlength="400" class="form-control"></textarea>
+										<textarea required type="text" id="si_note" name="si_note" rows="3" maxlength="400" class="form-control"></textarea>
 									</div>
 								</div>
 							</div>

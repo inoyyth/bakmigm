@@ -11,7 +11,8 @@ class C_report extends CI_Controller {
 		$this->load->library('pdf');
     }
 	public function index(){
-		$this->load->view('V_report');
+		$data['view'] = 'V_report';
+		$this->load->view('template', $data);
 	}
 	public function style_excel()
 	{

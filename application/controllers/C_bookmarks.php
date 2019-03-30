@@ -37,7 +37,8 @@ class C_bookmarks extends CI_Controller {
 		include (APPPATH.'libraries/session_user.php');
 		$data['bookmark'] = $this->Model_detail->DB_GET_SEARCH_DATA_DOCUMENT_ARRAY_BOOKMARK($SESSION_ID);
 		// print_r($data);die();
-		$this->load->view('V_bookmarks',$data);
+		$data['view'] = 'V_bookmarks';
+		$this->load->view('template',$data);
 	}
 	public function cari_bookmark()
 	{
@@ -83,7 +84,8 @@ class C_bookmarks extends CI_Controller {
 			return !empty($value) || $value === 0;
 		}
 		$data['detail'] = array_values(remove_empty($test['detail']));
-		$this->load->view('V_bookmarks_search', $data);
+		$data['view'] = 'V_bookmarks_search';
+		$this->load->view('template', $data);
 	}
 	public function bookmark()
 	{

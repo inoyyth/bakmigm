@@ -36,7 +36,8 @@ class C_setting_structure_document extends CI_Controller {
 
     public function index()
     {
-		$this->load->view('V_setting_structure_document');
+		$data['view'] = 'V_setting_structure_document';
+		$this->load->view('template', $data);
 	}
 
 	public function na()

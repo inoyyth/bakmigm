@@ -8,7 +8,8 @@ class C_index extends CI_Controller {
 		if($this->session->userdata('session_bgm_edocument_status') == "LOGIN"){
 			redirect(base_url('welcome'));
 		}
-    }
+		$this->load->model(['M_menu' => 'menu']);
+	}
 	public function index()
 	{
 		$this->load->view('V_index');
@@ -30,10 +31,13 @@ class C_index extends CI_Controller {
 		$si_userid = $this->input->post('si_userid');
 		$si_password = $this->input->post('si_password');
 		$data_login = $this->M_login->DB_GET_LOGIN_TB_USER($si_userid,$si_password);
+
 		if (!empty($data_login)) {
+			$session_data['menu'] = $this->menu->getSideMenu();
+			// $session_data['user_menu'] = $this->__getUserMenu($data_login[0]->NIP_USER);
 			//$data_login[0] BECAUSE ONLY RETURN 1 ARRAY
 			$session_data['session_bgm_edocument_status'] = "LOGIN";
-			$session_data['session_bgm_edocument_id'] = $data_login[0]->NIP;
+			$session_data['session_bgm_edocument_id'] = $data_login[0]->NIP_USER;
 			$session_data['session_bgm_edocument_name'] = $data_login[0]->UR_ID;
 			$session_data['session_bgm_edocument_email'] = $data_login[0]->UR_EMAIL;
 
@@ -61,6 +65,7 @@ class C_index extends CI_Controller {
 			$session_data['session_bgm_edocument_roles5'] = "";
 		}else{
 			$data_login = $this->M_login->DB_GET_LOGIN_DEPARTEMEN($si_userid);
+
 			if(empty($data_login)){
 				echo '
 					<script>
@@ -72,9 +77,11 @@ class C_index extends CI_Controller {
 			}
 			//$data_login[0] BECAUSE ONLY RETURN 1 ARRAY
 			$session_data['session_bgm_edocument_status'] = "LOGIN";
-			$session_data['session_bgm_edocument_id'] = $data_login[0]->NIP;
+			$session_data['session_bgm_edocument_id'] = $data_login[0]->NIP_USER;
 			$session_data['session_bgm_edocument_name'] = $data_login[0]->FULL_NAME;
 			$session_data['session_bgm_edocument_email'] = $data_login[0]->EMAIL;
+			$session_data['menu'] = $this->menu->getSideMenu();
+			$session_data['user_menu'] = $this->__getUserMenu($data_login[0]->NIP_USER);
 			
 			$session_data['session_bgm_edocument_departement_id'] = $data_login[0]->DN_ID;
 			$session_data['session_bgm_edocument_departement_code'] = $data_login[0]->DN_CODE;
@@ -145,7 +152,7 @@ class C_index extends CI_Controller {
 		}
 		//$data_login[0] BECAUSE ONLY RETURN 1 ARRAY
 		$session_data['session_bgm_edocument_status'] = "LOGIN";
-		$session_data['session_bgm_edocument_id'] = $data_login[0]->NIP;
+		$session_data['session_bgm_edocument_id'] = $data_login[0]->NIP_USER;
 		$session_data['session_bgm_edocument_name'] = $data_login[0]->FULL_NAME;
 		$session_data['session_bgm_edocument_email'] = $data_login[0]->EMAIL;
 		
@@ -202,5 +209,44 @@ class C_index extends CI_Controller {
 		}else{
 			redirect(base_url('welcome'));
 		}
+	}
+
+	private function __getUserMenu($user_id) {
+		//get current user role's
+		$get_user_role = $this->db->select('ROLES,ROLES_2,ROLES_3,ROLES_4,ROLES_5')
+										 ->from('tb_employee_detail')
+										 ->where(['NIP' => $user_id])
+										 ->get()->row_array();
+		if ($get_user_role) {
+			$role = array_filter(array_values($get_user_role));
+		} else {
+			$role = array('PENGGUNA');
+		}
+
+		// get role menu by user role's
+		$get_menu_by_role = $this->db->select('ROLE_MENUS')
+												->from('tb_roles')
+												->where_in('RS_ID', $role)
+												->get()->result_array();
+		$data_menus=[];
+		foreach($get_menu_by_role as $k => $v) {
+			$data_menus[] = unserialize($v['ROLE_MENUS']);
+		}
+
+		//merge menu
+		// var_dump($data_menus);die;
+		$data_merge_menu = [];
+		foreach($data_menus as $k => $v) {
+				$data_merge_menu = array_merge($data_merge_menu, $v);	
+		}
+
+		//remove menu with value 0
+		$enable_menu = [];
+		foreach($data_merge_menu as $k => $v) {
+			if ($v['menu']['value'] == "1") {
+				$enable_menu[] = $v['menu']['key'];
+			}
+		}
+		return $enable_menu;							
 	}
 }

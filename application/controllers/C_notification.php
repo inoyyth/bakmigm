@@ -39,7 +39,8 @@ class C_notification extends CI_Controller {
 		$nip  = $_SESSION['session_bgm_edocument_id'];
 		$data['notification'] = $this->getNotification($nip);
 		$data['news'] = $this->__getNews($nip, false);
-		$this->load->view('V_notification', $data);
+		$data['view'] = 'V_notification';
+		$this->load->view('template', $data);
 	}
 
 	public function getNotification($nip, $is_ajax = false){
@@ -126,12 +127,12 @@ class C_notification extends CI_Controller {
 
 			$DOC_STATUS = $data_row_doc->DOC_STATUS;
 		}
-		// var_dump($DOC_STATUS);die;
+
 		if ($DOC_STATUS == "DIPUBLIKASI" || $DOC_STATUS == "KADALUARSA" || $DOC_STATUS == "DIARSIPKAN") {
 			$data = array(
 				'LogDoc' => $docid,
 				'LogAct' => 'Lihat',
-				'LogUserName' => $SESSION_ID,
+				'LogUserName' => $this->session->userdata("session_bgm_edocument_id"),
 			);
 			$this->db->insert('m_log', $data);
 		}
@@ -1399,7 +1400,8 @@ class C_notification extends CI_Controller {
 			exit();
 		}
 		//-----------------------------------------------------------------------------------------------//
-		$this->load->view('V_notification_revisi');
+		$data['view'] = 'V_notification_revisi';
+		$this->load->view('template', $data);
 	}
 	// Versioning
 	public function versioning()
@@ -1413,7 +1415,8 @@ class C_notification extends CI_Controller {
 			';
 			exit();
 		}
-		$this->load->view('V_versioning');
+		$data['view'] = 'V_versioning';
+		$this->load->view('template', $data);
 	}
 	public function versioning_meta()
 	{
@@ -1553,7 +1556,8 @@ class C_notification extends CI_Controller {
 			}
 			$PENDISTRIBUSI_FINAL_CODE 	= $dv_code;
 			$PENDISTRIBUSI_FINAL_NAME 	= $dv_name;
-			$STATUS_FINAL				= "MENUNGGU ATASAN PENCIPTA";
+			// $STATUS_FINAL				= "MENUNGGU ATASAN PENCIPTA";
+			$STATUS_FINAL = $si_owner_dept_pendistribusi;
 		}elseif ($si_owner_dept_pendistribusi==$SESSION_DIVISI_ID) {
 			$getPendistribusi = $this->M_library_database->getDIVISI($si_owner_dept_pendistribusi);
 			foreach ($getPendistribusi as $data) {
@@ -1563,7 +1567,8 @@ class C_notification extends CI_Controller {
 			}
 			$PENDISTRIBUSI_FINAL_CODE 	= $dv_code;
 			$PENDISTRIBUSI_FINAL_NAME 	= $dv_name;
-			$STATUS_FINAL				= "MENUNGGU ATASAN PENCIPTA";
+			// $STATUS_FINAL				= "MENUNGGU ATASAN PENCIPTA";
+			$STATUS_FINAL = $si_owner_dept_pendistribusi;
 		}else{
 			$getPendistribusi = $this->M_library_database->getDEPARTEMEN($si_owner_dept_pendistribusi);
 			foreach ($getPendistribusi as $data) {
@@ -1573,7 +1578,8 @@ class C_notification extends CI_Controller {
 			}
 			$PENDISTRIBUSI_FINAL_CODE 	= $dpt_code;
 			$PENDISTRIBUSI_FINAL_NAME 	= $dpt_name;
-			$STATUS_FINAL				= "MENUNGGU PENDISTRIBUSI";
+			// $STATUS_FINAL				= "MENUNGGU PENDISTRIBUSI";
+			$STATUS_FINAL = $si_owner_dept_pendistribusi;
 		}
 		//Upload Doc
 		$config1['upload_path'] 				= './assets/original';
@@ -2016,7 +2022,8 @@ class C_notification extends CI_Controller {
 			}
 			$PENDISTRIBUSI_FINAL_CODE 	= $dv_code;
 			$PENDISTRIBUSI_FINAL_NAME 	= $dv_name;
-			$STATUS_FINAL				= "MENUNGGU ATASAN PENCIPTA";
+			// $STATUS_FINAL				= "MENUNGGU ATASAN PENCIPTA";
+			$STATUS_FINAL = $si_owner_dept_pendistribusi;
 		}elseif ($si_owner_dept_pendistribusi==$SESSION_DIVISI_ID) {
 			$getPendistribusi = $this->M_library_database->getDIVISI($si_owner_dept_pendistribusi);
 			foreach ($getPendistribusi as $data) {
@@ -2026,7 +2033,8 @@ class C_notification extends CI_Controller {
 			}
 			$PENDISTRIBUSI_FINAL_CODE 	= $dv_code;
 			$PENDISTRIBUSI_FINAL_NAME 	= $dv_name;
-			$STATUS_FINAL				= "MENUNGGU ATASAN PENCIPTA";
+			// $STATUS_FINAL				= "MENUNGGU ATASAN PENCIPTA";
+			$STATUS_FINAL = $si_owner_dept_pendistribusi;
 		}else{
 			$getPendistribusi = $this->M_library_database->getDEPARTEMEN($si_owner_dept_pendistribusi);
 			foreach ($getPendistribusi as $data) {
@@ -2036,7 +2044,8 @@ class C_notification extends CI_Controller {
 			}
 			$PENDISTRIBUSI_FINAL_CODE 	= $dpt_code;
 			$PENDISTRIBUSI_FINAL_NAME 	= $dpt_name;
-			$STATUS_FINAL				= "MENUNGGU PENDISTRIBUSI";
+			// $STATUS_FINAL				= "MENUNGGU PENDISTRIBUSI";
+			$STATUS_FINAL = $si_owner_dept_pendistribusi;
 		}
 		$data_update = array(
 			'DOC_PENGGUNA' => $duallistbox_pengguna_dokumen_list,
@@ -2533,8 +2542,16 @@ class C_notification extends CI_Controller {
 			'DOC_APPROVE' => "-"
 		);
 		$is_ok = $this->M_library_database->DB_UPDATE_DATA_DOCUMENT_REFISI_EVO($si_code,$data_update);
+		
 		if($is_ok){
-			$this->session->set_flashdata('pesan','Berhasil!');
+			$this->db->update('tb_document_notification', 
+			array(
+				'PENGGUNA' => $duallistbox_pengguna_dokumen_list,
+				'PENDISTRIBUSI' => $si_owner_dept_pendistribusi,
+				'PEMILIK' => $si_owner_pemilik_proses
+			),
+			array('DOC_ID' => $si_code) 
+			);
 			redirect(base_url('notification'),'refresh');
 		}else{
 			$this->session->set_flashdata('pesan_gagal','Gagal!');
