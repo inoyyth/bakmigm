@@ -35,7 +35,8 @@ class C_setting_document_level_access extends CI_Controller {
 
 	public function index()
 	{
-		$this->load->view('V_setting_document_level_access');
+		$data['view'] = 'V_setting_document_level_access';
+		$this->load->view('template', $data);
 	}
 
 	public function get_data_tipe()

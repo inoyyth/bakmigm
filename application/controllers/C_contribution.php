@@ -36,7 +36,8 @@ class C_contribution extends CI_Controller {
     }
 	public function index()
 	{
-		$this->load->view('V_contribution');
+		$data['view'] = 'V_contribution';
+		$this->load->view('template', $data);
 	}
 	public function Email_notification($si_key)
 	{

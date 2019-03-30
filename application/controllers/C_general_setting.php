@@ -9,35 +9,36 @@ class C_general_setting extends CI_Controller {
 		if($this->session->userdata('session_bgm_edocument_status') != "LOGIN"){
 			redirect(base_url());
 		}
-        $SESSION_ID = $this->session->userdata("session_bgm_edocument_id");
-        $SESSION_NAME = $this->session->userdata("session_bgm_edocument_name");
-        $SESSION_EMAIL = $this->session->userdata("session_bgm_edocument_email");
+        // $SESSION_ID = $this->session->userdata("session_bgm_edocument_id");
+        // $SESSION_NAME = $this->session->userdata("session_bgm_edocument_name");
+        // $SESSION_EMAIL = $this->session->userdata("session_bgm_edocument_email");
 
-        $SESSION_DIREKTORAT_ID = $this->session->userdata("session_bgm_edocument_direktorat_id");
-        $SESSION_DIREKTORAT_NAME = $this->session->userdata("session_bgm_edocument_direktorat_name");
+        // $SESSION_DIREKTORAT_ID = $this->session->userdata("session_bgm_edocument_direktorat_id");
+        // $SESSION_DIREKTORAT_NAME = $this->session->userdata("session_bgm_edocument_direktorat_name");
 
-        $SESSION_DIVISI_ID = $this->session->userdata("session_bgm_edocument_divisi_id");
-        $SESSION_DIVISI_CODE = $this->session->userdata("session_bgm_edocument_divisi_code");
-        $SESSION_DIVISI_NAME = $this->session->userdata("session_bgm_edocument_divisi_name");
+        // $SESSION_DIVISI_ID = $this->session->userdata("session_bgm_edocument_divisi_id");
+        // $SESSION_DIVISI_CODE = $this->session->userdata("session_bgm_edocument_divisi_code");
+        // $SESSION_DIVISI_NAME = $this->session->userdata("session_bgm_edocument_divisi_name");
 
-        $SESSION_DEPARTEMENT_ID = $this->session->userdata("session_bgm_edocument_departement_id");
-        $SESSION_DEPARTEMENT_CODE = $this->session->userdata("session_bgm_edocument_departement_code");
-        $SESSION_DEPARTEMENT_NAME = $this->session->userdata("session_bgm_edocument_departement_name");
+        // $SESSION_DEPARTEMENT_ID = $this->session->userdata("session_bgm_edocument_departement_id");
+        // $SESSION_DEPARTEMENT_CODE = $this->session->userdata("session_bgm_edocument_departement_code");
+        // $SESSION_DEPARTEMENT_NAME = $this->session->userdata("session_bgm_edocument_departement_name");
 
-        $SESSION_ROLES = $this->session->userdata("session_bgm_edocument_roles");
-        $SESSION_ROLES_2 = $this->session->userdata("session_bgm_edocument_roles_2");
-        $SESSION_ROLES_3 = $this->session->userdata("session_bgm_edocument_roles_3");
-        $SESSION_ROLES_4 = $this->session->userdata("session_bgm_edocument_roles_4");
-        $SESSION_ROLES_5 = $this->session->userdata("session_bgm_edocument_roles_5");
+        // $SESSION_ROLES = $this->session->userdata("session_bgm_edocument_roles");
+        // $SESSION_ROLES_2 = $this->session->userdata("session_bgm_edocument_roles_2");
+        // $SESSION_ROLES_3 = $this->session->userdata("session_bgm_edocument_roles_3");
+        // $SESSION_ROLES_4 = $this->session->userdata("session_bgm_edocument_roles_4");
+        // $SESSION_ROLES_5 = $this->session->userdata("session_bgm_edocument_roles_5");
 
-        $SESSION_JOB_LEVEL_ID = $this->session->userdata("session_bgm_edocument_job_level_id");
-        $SESSION_JOB_LEVEL_NAME = $this->session->userdata("session_bgm_edocument_job_level_name");
-        $SESSION_JOB_LEVEL_INDEX = $this->session->userdata("session_bgm_edocument_job_level_index");
+        // $SESSION_JOB_LEVEL_ID = $this->session->userdata("session_bgm_edocument_job_level_id");
+        // $SESSION_JOB_LEVEL_NAME = $this->session->userdata("session_bgm_edocument_job_level_name");
+        // $SESSION_JOB_LEVEL_INDEX = $this->session->userdata("session_bgm_edocument_job_level_index");
     }
 
     public function welcome_speech()
     {
-    	$this->load->view('V_welcome');
+        $data['view'] = 'V_welcome';
+    	$this->load->view('template', $data);
     }
     public function update_speech()
     {
@@ -75,7 +76,8 @@ class C_general_setting extends CI_Controller {
 
     public function nomor()
     {
-    	$this->load->view('V_setting_nomor');
+        $data['view'] = 'V_setting_nomor';
+    	$this->load->view('template', $data);
     }
     public function get_nomor()
     {
@@ -135,12 +137,14 @@ class C_general_setting extends CI_Controller {
 
     public function format_dokumen()
     {
-        $this->load->view('V_setting_format_dokumen');
+        $data['view'] = 'V_setting_format_dokumen';
+        $this->load->view('template', $data);
     }
 
     public function watermark()
     {
-    	$this->load->view('V_setting_watermark');
+        $data['view'] = 'V_setting_watermark';
+    	$this->load->view('template', $data);
     }
     public function update_watermark()
     {
@@ -212,7 +216,8 @@ class C_general_setting extends CI_Controller {
 
     public function sharelink()
     {
-    	$this->load->view('V_setting_sharelink');
+        $data['view'] = 'V_setting_sharelink';
+    	$this->load->view('template', $data);
     }
     public function update_sharelink()
     {

@@ -35,14 +35,16 @@ class C_setting_structure_organization extends CI_Controller {
     }
 	public function index()
 	{
-		$this->load->view('V_setting_structure_organization');
+		$data['view'] = 'V_setting_structure_organization';
+		$this->load->view('template', $data);
 	}
 
 	// Direktorat
 
 	public function view_direktorat()
 	{
-		$this->load->view('V_direktorat');
+		$data['view'] = 'V_direktorat';
+		$this->load->view('template', $data);
 	}
 
 	public function insert_direktorat()
@@ -129,7 +131,8 @@ class C_setting_structure_organization extends CI_Controller {
 
 	public function view_divisi()
 	{
-		$this->load->view('V_divisi');
+		$data['view'] = 'V_divisi';
+		$this->load->view('template', $data);
 	}
 
 	public function insert_divisi()
@@ -220,7 +223,8 @@ class C_setting_structure_organization extends CI_Controller {
 
 	public function view_departemen()
 	{
-		$this->load->view('V_departemen');
+		$data['view'] = 'V_departemen';
+		$this->load->view('template', $data);
 	}
 
 	public function insert_departemen()

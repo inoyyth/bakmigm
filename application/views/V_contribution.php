@@ -1,345 +1,3 @@
-<?php
-defined('BASEPATH') OR exit('No direct script access allowed');
-include (APPPATH.'libraries/session_user.php');
-// Tools
-$is_continue = true;
-$count_notification = 0;
-$count_news = 0;
-// Notification
-$get_data_ext = $this->M_notification->GET_NOTIFICATION_NEW($SESSION_ID);
-if (empty($get_data_ext)) {
-	$is_continue = false;
-}else{
-	$count_notification = count($get_data_ext);
-}
-// News
-$get_data_count = $this->M_notification->GET_NEWS_NEW($SESSION_ID);
-if(empty($get_data_count)||$get_data_count==""){
-
-}else{
-	$count_news = count($get_data_count);	
-}
-// Jumlah Notification
-$count_notification = $count_notification; //+ $count_news;
-?>
-<!DOCTYPE html>
-<html lang="en">
-<!------------------------------------------------------------------------------------------------->
-<head>
-	<meta charset="utf-8" />
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-	<meta name="viewport" content="X-Content-Type-Options: nosniff, width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-	<title><?php echo $this->M_library_module->WEB_TITLE; ?></title>
-	<meta name="description" content="RL" />
-	<meta name="author" content="RL" />
-	<link rel="icon" href="<?php echo base_url('template/rion/'.$this->M_library_module->WEB_ICON); ?>" />
-
-	<!-- CSS / JAVA SCRIPT / BOOTSTRAP / ETC -->
-	<link rel="stylesheet" href="<?php echo base_url('template/backend/assets/css/bootstrap.min.css'); ?>" />
-	<link rel="stylesheet" href="<?php echo base_url('template/backend/assets/font-awesome/4.5.0/css/font-awesome.min.css'); ?>" />
-
-	<link rel="stylesheet" href="<?php echo base_url('template/backend/assets/css/jquery-ui.custom.min.css'); ?>" />
-	<link rel="stylesheet" href="<?php echo base_url('template/backend/assets/css/jquery.gritter.min.css'); ?>" />
-	<link rel="stylesheet" href="<?php echo base_url('template/backend/assets/css/select2.min.css'); ?>" />
-	<link rel="stylesheet" href="<?php echo base_url('template/backend/assets/css/bootstrap-editable.min.css'); ?>" />
-
-	<link rel="stylesheet" href="<?php echo base_url('template/backend/assets/css/prettify.min.css'); ?>" />
-
-	<link rel="stylesheet" href="<?php echo base_url('template/backend/assets/css/chosen.min.css'); ?>" />
-	<link rel="stylesheet" href="<?php echo base_url('template/backend/assets/css/bootstrap-datepicker3.min.css'); ?>" />
-	<link rel="stylesheet" href="<?php echo base_url('template/backend/assets/css/bootstrap-timepicker.min.css'); ?>" />
-	<link rel="stylesheet" href="<?php echo base_url('template/backend/assets/css/daterangepicker.min.css'); ?>" />
-	<link rel="stylesheet" href="<?php echo base_url('template/backend/assets/css/bootstrap-datetimepicker.min.css'); ?>" />
-	<link rel="stylesheet" href="<?php echo base_url('template/backend/assets/css/bootstrap-colorpicker.min.css'); ?>" />
-
-	<link rel="stylesheet" href="<?php echo base_url('template/backend/assets/css/bootstrap-duallistbox.min.css'); ?>" />
-	<link rel="stylesheet" href="<?php echo base_url('template/backend/assets/css/bootstrap-multiselect.min.css'); ?>" />
-	<link rel="stylesheet" href="<?php echo base_url('template/backend/assets/css/fonts.googleapis.com.css'); ?>" />
-	<link rel="stylesheet" href="<?php echo base_url('template/backend/assets/css/ace.min.css" class="ace-main-stylesheet" id="main-ace-style'); ?>" />
-	<link rel="stylesheet" href="<?php echo base_url('template/backend/assets/css/ace-skins.min.css'); ?>" />
-	<link rel="stylesheet" href="<?php echo base_url('template/backend/assets/css/ace-rtl.min.css'); ?>" />
-	<script src="<?php echo base_url('template/backend/assets/js/ace-extra.min.js'); ?>"></script>
-	<style type="text/css">
-		input[type=number]::-webkit-inner-spin-button, 
-		input[type=number]::-webkit-outer-spin-button { 
-		-webkit-appearance: none;
-		-moz-appearance: none;
-		appearance: none;
-		margin: 0; 
-		}
-	</style>
-</head>
-<!------------------------------------------------------------------------------------------------->
-<body class="no-skin">
-	<!------------------------------------------------------------------------------------------------->
-	<!-- CONTENT -->
-	<div id="navbar" class="navbar navbar-default ace-save-state">
-		<div class="navbar-container ace-save-state" id="navbar-container">
-			<button type="button" class="navbar-toggle menu-toggler pull-left" id="menu-toggler" data-target="#sidebar">
-				<span class="sr-only">Toggle sidebar</span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-			</button>
-
-			<div class="navbar-header pull-left">
-				<a href="<?php echo base_url('C_index'); ?>" class="navbar-brand">
-					<small>
-						<img class="nav-user-photo" src="<?php echo base_url('template/backend/assets/images/avatars/logo.png'); ?>" />
-					</small>
-				</a>
-			</div>
-
-			<div class="navbar-buttons navbar-header pull-right" role="navigation">
-				<!-- no content -->
-			</div>
-		</div><!-- /.navbar-container -->
-	</div>
-
-	<div class="main-container ace-save-state" id="main-container">
-		<script type="text/javascript">
-			try{ace.settings.loadState('main-container')}catch(e){}
-		</script>
-
-		<div id="sidebar" class="sidebar responsive ace-save-state">
-			<script type="text/javascript">
-				try{ace.settings.loadState('sidebar')}catch(e){}
-			</script>
-
-			<div id="user-profile-1" class="user-profile row">
-				<div class="col-12 center">
-					<span class="profile-picture">
-						<img id="avatar" class="editable img-responsive" src="<?php echo base_url('template/backend/assets/images/avatars/profile-pic.jpg'); ?>" />
-					</span>
-					<br />
-					<i class="menu-icon fa fa-user"></i>
-					<span class="menu-text">
-						<?php echo $SESSION_NAME; ?>
-					</span>
-					<br />
-				</div>
-			</div>
-
-			<ul class="nav nav-list">
-
-				<li class="">
-					<a href="<?php echo base_url('menu'); ?>">
-						<i class="menu-icon fa fa-history"></i>
-						<span class="menu-text"> Pencarian </span>
-					</a>
-					<b class="arrow"></b>
-				</li>
-				
-				<li class="">
-					<a href="<?php echo base_url('bookmarks'); ?>">
-						<i class="menu-icon fa fa-bookmark"></i>
-						<span class="menu-text"> Favorit </span>
-					</a>
-					<b class="arrow"></b>
-				</li>
-				
-				<?php if(
-				$SESSION_ROLES=="PENGGUNA"||
-				$SESSION_ROLES=="PENCIPTA"||
-				$SESSION_ROLES=="PENDISTRIBUSI"||
-				$SESSION_ROLES=="ATASAN PENCIPTA" ||
-
-				$SESSION_ROLES_2=="PENGGUNA"||
-				$SESSION_ROLES_2=="PENCIPTA"||
-				$SESSION_ROLES_2=="PENDISTRIBUSI"||
-				$SESSION_ROLES_2=="ATASAN PENCIPTA" ||
-
-				$SESSION_ROLES_3=="PENGGUNA"||
-				$SESSION_ROLES_3=="PENCIPTA"||
-				$SESSION_ROLES_3=="PENDISTRIBUSI"||
-				$SESSION_ROLES_3=="ATASAN PENCIPTA" ||
-
-				$SESSION_ROLES_4=="PENGGUNA"||
-				$SESSION_ROLES_4=="PENCIPTA"||
-				$SESSION_ROLES_4=="PENDISTRIBUSI"||
-				$SESSION_ROLES_4=="ATASAN PENCIPTA" ||
-
-				$SESSION_ROLES_5=="PENGGUNA"||
-				$SESSION_ROLES_5=="PENCIPTA"||
-				$SESSION_ROLES_5=="PENDISTRIBUSI"||
-				$SESSION_ROLES_5=="ATASAN PENCIPTA"
-				){ ?>
-				<li class="">
-					<a href="<?php echo base_url('notification'); ?>">
-						<i class="menu-icon fa fa-exclamation"></i>
-						<span class="menu-text">
-							Aktifitas
-							<span class="badge badge-primary"><?php echo $count_notification; ?></span>
-						</span>
-					</a>
-					<b class="arrow"></b>
-				</li>
-				<?php } ?>
-				
-				<?php if(
-				$SESSION_ROLES=="PENCIPTA" ||
-				$SESSION_ROLES_2=="PENCIPTA" ||
-				$SESSION_ROLES_3=="PENCIPTA" ||
-				$SESSION_ROLES_4=="PENCIPTA" ||
-				$SESSION_ROLES_5=="PENCIPTA"
-				){ ?>
-				<li class="active">
-					<a href="<?php echo base_url('contribution'); ?>">
-						<i class="menu-icon fa fa-database"></i>
-						<span class="menu-text"> Kontribusi </span>
-					</a>
-					<b class="arrow"></b>
-				</li>
-				<?php } ?>
-				
-				<?php if(
-				$SESSION_ROLES=="PENCIPTA"||
-				$SESSION_ROLES=="ADMIN DOKUMEN"||
-
-				$SESSION_ROLES_2=="PENCIPTA"||
-				$SESSION_ROLES_2=="ADMIN DOKUMEN"||
-
-				$SESSION_ROLES_3=="PENCIPTA"||
-				$SESSION_ROLES_3=="ADMIN DOKUMEN"||
-
-				$SESSION_ROLES_4=="PENCIPTA"||
-				$SESSION_ROLES_4=="ADMIN DOKUMEN"||
-
-				$SESSION_ROLES_5=="PENCIPTA"||
-				$SESSION_ROLES_5=="ADMIN DOKUMEN"
-				){ ?>
-				<li class="">
-					<a href="<?php echo base_url('report'); ?>">
-						<i class="menu-icon fa fa-database"></i>
-						<span class="menu-text"> Laporan </span>
-					</a>
-					<b class="arrow"></b>
-				</li>
-				<?php } ?>
-
-				<?php if(
-				$SESSION_ROLES=="ADMIN KONFIGURASI"||
-				$SESSION_ROLES_2=="ADMIN KONFIGURASI"||
-				$SESSION_ROLES_3=="ADMIN KONFIGURASI"||
-				$SESSION_ROLES_4=="ADMIN KONFIGURASI"||
-				$SESSION_ROLES_5=="ADMIN KONFIGURASI"
-				){ ?>
-				<li class="">
-					<a href="#" class="dropdown-toggle">
-						<i class="menu-icon fa fa-cog"></i>
-						<span class="menu-text"> Setting </span>
-						<b class="arrow fa fa-angle-down"></b>
-					</a>
-					<b class="arrow"></b>
-					<ul class="submenu">
-						<li class="">
-							<a href="<?php echo base_url('C_setting_data_master'); ?>">
-								<i class="menu-icon fa fa-caret-right"></i>
-								Data Master
-							</a>
-							<b class="arrow"></b>
-						</li>
-						<li class="">
-							<a href="<?php echo base_url('C_setting_structure_organization'); ?>">
-								<i class="menu-icon fa fa-caret-right"></i>
-								Struktur Organisasi
-							</a>
-							<b class="arrow"></b>
-						</li>
-						<li class="">
-							<a href="<?php echo base_url('C_setting_user'); ?>">
-								<i class="menu-icon fa fa-caret-right"></i>
-								User
-							</a>
-							<b class="arrow"></b>
-						</li>
-						<li class="">
-							<a href="<?php echo base_url('C_setting_structure_document'); ?>">
-								<i class="menu-icon fa fa-caret-right"></i>
-								Struktur Dokumen
-							</a>
-							<b class="arrow"></b>
-						</li>
-						<li class="">
-							<a href="<?php echo base_url('C_setting_business_rule'); ?>">
-								<i class="menu-icon fa fa-caret-right"></i>
-								Aturan Bisnis
-							</a>
-							<b class="arrow"></b>
-						</li>
-						<li class="">
-							<a href="<?php echo base_url('C_setting_document_level_access'); ?>">
-								<i class="menu-icon fa fa-caret-right"></i>
-								Tingkat Akses Dokumen
-							</a>
-							<b class="arrow"></b>
-						</li>
-					</ul>
-				</li>
-				<li class="">
-					<a href="#" class="dropdown-toggle">
-						<i class="menu-icon fa fa-cog"></i>
-						<span class="menu-text">General Setting </span>
-						<b class="arrow fa fa-angle-down"></b>
-					</a>
-					<b class="arrow"></b>
-					<ul class="submenu">
-						<li class="">
-							<a href="<?php echo base_url('C_general_setting/welcome_speech'); ?>">
-								<i class="menu-icon fa fa-caret-right"></i>
-								Welcome Speech
-							</a>
-							<b class="arrow"></b>
-						</li>
-						<li class="">
-							<a href="<?php echo base_url('C_general_setting/nomor'); ?>">
-								<i class="menu-icon fa fa-caret-right"></i>
-								Nomor Dokumen
-							</a>
-							<b class="arrow"></b>
-						</li>
-						<li class="">
-							<a href="<?php echo base_url('C_general_setting/format_dokumen'); ?>">
-								<i class="menu-icon fa fa-caret-right"></i>
-								Format Dokumen
-							</a>
-							<b class="arrow"></b>
-						</li>
-						<li class="">
-							<a href="<?php echo base_url('C_general_setting/sharelink'); ?>">
-								<i class="menu-icon fa fa-caret-right"></i>
-								Sharelink
-							</a>
-							<b class="arrow"></b>
-						</li>
-						<li class="">
-							<a href="<?php echo base_url('C_general_setting/watermark'); ?>">
-								<i class="menu-icon fa fa-caret-right"></i>
-								Watermark
-							</a>
-							<b class="arrow"></b>
-						</li>
-					</ul>
-				</li>
-				<?php } ?>
-
-				<li class="">
-					<a href="<?php echo base_url('C_menu/logout'); ?>">
-						<i class="menu-icon fa fa-power-off"></i>
-						<span class="menu-text"> Keluar </span>
-					</a>
-					<b class="arrow"></b>
-				</li>
-
-			</ul><!-- /.nav-list -->
-		</div>
-
-		<div class="main-content">
-			<div class="main-content-inner">
-				<div class="page-content">
-					<!------------------------------------------------------------------------------------------------->
-					<!-- PAGE CONTENT BEGINS -->
-					<!------------------------------------------------------------------------------------------------->
 <div class="row">
 	<div class="widget-box">
 		<div class="widget-header widget-header-blue widget-header-flat">
@@ -360,7 +18,7 @@ $count_notification = $count_notification; //+ $count_news;
 										<option value="">Pilih</option>
 										<?php
 											$is_continue = true;
-											$get_data_ext = $this->M_library_database->DB_GET_DATA_DOCUMENT_TEMPLATE_EVO($SESSION_ID);
+											$get_data_ext = $this->M_library_database->DB_GET_DATA_DOCUMENT_TEMPLATE_EVO($this->session->userdata("session_bgm_edocument_id"));
 											if(empty($get_data_ext)||$get_data_ext==""){
 												$is_continue = false;
 											}
@@ -636,13 +294,13 @@ $count_notification = $count_notification; //+ $count_news;
 									<select id="duallistbox_pengguna_dokumen" multiple="multiple" size="5" name="duallistbox_pengguna_dokumen[]" />
 									<!-- <?php
 									$is_continue = true;
-									$get_data_ext = $this->M_library_database->DB_GET_DATA_DEPARTEMENT_ARRAY($SESSION_DEPARTEMENT_ID);
+									$get_data_ext = $this->M_library_database->DB_GET_DATA_DEPARTEMENT_ARRAY($this->session->userdata("session_bgm_edocument_departement_id"));
 									if(empty($get_data_ext)||$get_data_ext==""){
 									$is_continue = false;
 									}
 									if($is_continue){
 									?>
-									<option selected value="<?= $SESSION_DEPARTEMENT_ID; ?>"><?= $SESSION_DEPARTEMENT_CODE; ?> (<?= $SESSION_DEPARTEMENT_NAME; ?>)</option>
+									<option selected value="<?= $this->session->userdata("session_bgm_edocument_departement_id"); ?>"><?= $this->session->userdata("session_bgm_edocument_departement_code"); ?> (<?= $this->session->userdata("session_bgm_edocument_departement_name"); ?>)</option>
 									<?php
 									foreach($get_data_ext as $data_row_ext){
 									?>
@@ -661,8 +319,8 @@ $count_notification = $count_notification; //+ $count_news;
 									<div class="col-sm-5">
 										<select id="si_owner_pemilik_proses" name="si_owner_pemilik_proses" class="form-control" />
 											<option value="">Pilih</option>
-											<option value="<?php echo $SESSION_DIVISI_ID; ?>"><?php echo $SESSION_DIVISI_NAME; ?></option>
-											<option value="<?php echo $SESSION_DEPARTEMENT_ID; ?>" selected><?php echo $SESSION_DEPARTEMENT_NAME; ?></option>
+											<option value="<?php echo $this->session->userdata("session_bgm_edocument_divisi_id"); ?>"><?php echo $this->session->userdata("session_bgm_edocument_departement_name"); ?></option>
+											<option value="<?php echo $this->session->userdata("session_bgm_edocument_departement_id"); ?>" selected><?php echo $this->session->userdata("session_bgm_edocument_departement_name"); ?></option>
 										</select>
 									</div>
 									<span id="req_proses" class="text-danger hide">Harap Isi Departemen Pemilik Proses Dokumen!</span>
@@ -676,8 +334,8 @@ $count_notification = $count_notification; //+ $count_news;
 										<select id="si_owner_dept_penyimpan" name="si_owner_dept_penyimpan" class="form-control" />
 											<option value="">Pilih</option>
 											<!-- <option value="7550">BPI</option> -->
-											<option value="<?php echo $SESSION_DIVISI_ID; ?>"><?php echo $SESSION_DIVISI_NAME; ?></option>
-											<option value="<?php echo $SESSION_DEPARTEMENT_ID; ?>"><?php echo $SESSION_DEPARTEMENT_NAME; ?></option>
+											<option value="<?php echo $this->session->userdata("session_bgm_edocument_divisi_id"); ?>"><?php echo $this->session->userdata("session_bgm_edocument_departement_name"); ?></option>
+											<option value="<?php echo $this->session->userdata("session_bgm_edocument_departement_id"); ?>"><?php echo $this->session->userdata("session_bgm_edocument_departement_name"); ?></option>
 										</select>
 									</div>
 									<span id="req_penyimpan" class="text-danger hide">Harap Isi Departemen Penyimpan Dokumen!</span>
@@ -795,7 +453,7 @@ $count_notification = $count_notification; //+ $count_news;
 										<?php
 										$is_continue = true;
 										//$DOC_ID,$DOC_NOMOR,$DOC_NAMA,$DOC_MAKER,$DOC_APPROVE,$DOC_STATUS
-										$get_data_ext = $this->M_contribution->GET_DOKUMEN_ARRAY($SESSION_DEPARTEMENT_ID,$SESSION_JOB_LEVEL_ID);
+										$get_data_ext = $this->M_contribution->GET_DOKUMEN_ARRAY($this->session->userdata("session_bgm_edocument_departement_id"),$this->session->userdata("session_bgm_edocument_job_level_id"));
 										if(empty($get_data_ext)||$get_data_ext==""){
 										$is_continue = false;
 										}
@@ -825,7 +483,7 @@ $count_notification = $count_notification; //+ $count_news;
 
 							<div class="row">
 								<div class="col-sm-10">
-									<input type="hidden" id="si_userid" name="si_userid" value="<?php echo $SESSION_ID; ?>" class="form-control">
+									<input type="hidden" id="si_userid" name="si_userid" value="<?php echo $this->session->userdata("session_bgm_edocument_id"); ?>" class="form-control">
 									<input type="hidden" id="si_code" name="si_code" value="<?php echo $this->M_library_module->GENERATOR_REFF(); ?>" class="form-control">
 								</div>
 							</div>
@@ -954,40 +612,11 @@ $count_notification = $count_notification; //+ $count_news;
 			<input type="text" name="wujud" id="wujud">
 			<input type="text" name="metode" id="metode">
 			<input type="text" name="rahasia" id="rahasia">
-			<input type="text" name="user" id="user" value="<?php echo $SESSION_ID ?>">
+			<input type="text" name="user" id="user" value="<?php echo $this->session->userdata("session_bgm_edocument_id") ?>">
 		</form>
 	</div>
 </div>
-					<!------------------------------------------------------------------------------------------------->
-					<!-- PAGE CONTENT ENDS -->
-					<!------------------------------------------------------------------------------------------------->
-				</div><!-- /.page-content -->
-			</div>
-		</div><!-- /.main-content -->
-
-		<div class="footer"></div>
-
-		<a href="#" id="btn-scroll-up" class="btn-scroll-up btn btn-sm btn-inverse">
-			<i class="ace-icon fa fa-angle-double-up icon-only bigger-110"></i>
-		</a>
-	</div><!-- /.main-container -->
-	<!------------------------------------------------------------------------------------------------->
-	<!-- JAVA SCRIPT / BOOTSTRAP / ETC -->
-	<!--[if !IE]> -->
-	<script src="<?php echo base_url('template/backend/assets/js/jquery-2.1.4.min.js'); ?>"></script>
-	<!-- <![endif]-->
-	<!--[if IE]>
-	<script src="<?php echo base_url('template/backend/assets/js/jquery-1.11.3.min.js'); ?>"></script>
-	<![endif]-->
-	<script type="text/javascript">
-		if('ontouchstart' in document.documentElement) document.write("<script src='<?php echo base_url('template/backend/assets/js/jquery.mobile.custom.min.js'); ?>'>"+"<"+"/script>");
-	</script>
-	<script src="<?php echo base_url('template/backend/assets/js/bootstrap.min.js'); ?>"></script>
-
-	<!--[if lte IE 8]>
-	  <script src="<?php echo base_url('template/backend/assets/js/excanvas.min.js'); ?>"></script>
-	<![endif]-->
-	<script src="<?php echo base_url('template/backend/assets/js/jquery-ui.custom.min.js'); ?>"></script>
+<script src="<?php echo base_url('template/backend/assets/js/jquery-ui.custom.min.js'); ?>"></script>
 	<script src="<?php echo base_url('template/backend/assets/js/jquery.ui.touch-punch.min.js'); ?>"></script>
 	<script src="<?php echo base_url('template/backend/assets/js/jquery.gritter.min.js'); ?>"></script>
 	<script src="<?php echo base_url('template/backend/assets/js/bootbox.js'); ?>"></script>
@@ -1037,7 +666,7 @@ $count_notification = $count_notification; //+ $count_news;
 
 	<script src="<?php echo base_url('template/rion/jquery_costum.js'); ?>"></script>
 	<script src="<?php echo base_url('template/backend/assets/js/sweetalert.min.js'); ?>"></script>
-	<script>
+<script>
 		$(document).ready(function(){
 			$('#save_template').click(function(){
 				if($('#si_template_new_name_temp').val() != ""){
@@ -1708,7 +1337,7 @@ $count_notification = $count_notification; //+ $count_news;
 													$('#duallistbox_pengguna_dokumen').find('option').remove();
 													$.each(response,function(index,data){
 														$('#duallistbox_pengguna_dokumen').append('<option value="'+data['DN_ID']+'">'+data['DN_CODE']+' ('+data['DN_NAME']+')</option>');
-														$('#duallistbox_pengguna_dokumen option[value="<?=$SESSION_DEPARTEMENT_ID;?>"]').attr('selected','selected');
+														$('#duallistbox_pengguna_dokumen option[value="<?=$this->session->userdata("session_bgm_edocument_departement_id");?>"]').attr('selected','selected');
 														$('#duallistbox_pengguna_dokumen option[value="7550"]').attr('selected','selected');
 														$('#duallistbox_pengguna_dokumen option[value="7924"]').attr('selected','selected');
 														$('#duallistbox_pengguna_dokumen option[value="7559"]').attr('selected','selected');
@@ -1727,7 +1356,7 @@ $count_notification = $count_notification; //+ $count_news;
 													$('#duallistbox_pengguna_dokumen').find('option').remove();
 													$.each(response,function(index,data){
 														$('#duallistbox_pengguna_dokumen').append('<option value="'+data['DN_ID']+'">'+data['DN_CODE']+' ('+data['DN_NAME']+')</option>');
-														$('#duallistbox_pengguna_dokumen option[value="<?=$SESSION_DEPARTEMENT_ID;?>"]').attr('selected','selected');
+														$('#duallistbox_pengguna_dokumen option[value="<?=$this->session->userdata("session_bgm_edocument_departement_id");?>"]').attr('selected','selected');
 														$('#duallistbox_pengguna_dokumen option[value="7550"]').attr('selected','selected');
 														$('#duallistbox_pengguna_dokumen option[value="7924"]').attr('selected','selected');
 														$('#duallistbox_pengguna_dokumen option[value="7559"]').attr('selected','selected');
@@ -1748,8 +1377,8 @@ $count_notification = $count_notification; //+ $count_news;
 													response = $.parseJSON(response);
 													$('#si_owner_dept_pendistribusi').find('option').not(':first').remove();
 													// $('#si_owner_dept_pendistribusi').append('<option value="7550" selected>BUSINESS PROCESS IMPROVEMENT</option>');
-													$('#si_owner_dept_pendistribusi').append('<option value="<?= $SESSION_DIVISI_ID; ?>"><?= $SESSION_DIVISI_NAME; ?></option>');
-													$('#si_owner_dept_pendistribusi').append('<option value="<?= $SESSION_DEPARTEMENT_ID; ?>"><?= $SESSION_DEPARTEMENT_NAME; ?></option>');
+													$('#si_owner_dept_pendistribusi').append('<option value="<?= $this->session->userdata("session_bgm_edocument_divisi_id"); ?>"><?= $this->session->userdata("session_bgm_edocument_departement_name"); ?></option>');
+													$('#si_owner_dept_pendistribusi').append('<option value="<?= $this->session->userdata("session_bgm_edocument_departement_id"); ?>"><?= $this->session->userdata("session_bgm_edocument_departement_name"); ?></option>');
 													if (add=='DTSEKI0004' || add=='DTSEKI0001') {
 														// $("#si_owner_dept_penyimpan option[value='7550']").remove();
 														$("#si_owner_dept_pendistribusi option[value='7550']").remove();
@@ -1766,8 +1395,8 @@ $count_notification = $count_notification; //+ $count_news;
 											console.log('x');
 											var add = $('#si_template_new_kategori').val();
 											$('#si_owner_dept_pendistribusi').find('option').not(':first').remove();
-											$('#si_owner_dept_pendistribusi').append('<option value="<?= $SESSION_DIVISI_ID; ?>"><?= $SESSION_DIVISI_NAME; ?></option>');
-											$('#si_owner_dept_pendistribusi').append('<option value="<?= $SESSION_DEPARTEMENT_ID; ?>"><?= $SESSION_DEPARTEMENT_NAME; ?></option>');
+											$('#si_owner_dept_pendistribusi').append('<option value="<?= $this->session->userdata("session_bgm_edocument_divisi_id"); ?>"><?= $this->session->userdata("session_bgm_edocument_departement_name"); ?></option>');
+											$('#si_owner_dept_pendistribusi').append('<option value="<?= $this->session->userdata("session_bgm_edocument_departement_id"); ?>"><?= $this->session->userdata("session_bgm_edocument_departement_name"); ?></option>');
 											if (add=='DTSEKI0004' || add=='DTSEKI0001') {
 														// $("#si_owner_dept_penyimpan option[value='7550']").remove();
 												$("#si_owner_dept_pendistribusi option[value='7550']").remove();
@@ -1966,7 +1595,7 @@ $count_notification = $count_notification; //+ $count_news;
 												$.each(response,function(index,data){
 													$('#duallistbox_pengguna_dokumen').append('<option value="'+data['DN_ID']+'">'+data['DN_CODE']+' ('+data['DN_NAME']+')</option>');
 												});
-												$('#duallistbox_pengguna_dokumen option[value="<?=$SESSION_DEPARTEMENT_ID;?>"]').attr('selected','selected');
+												$('#duallistbox_pengguna_dokumen option[value="<?=$this->session->userdata("session_bgm_edocument_departement_id");?>"]').attr('selected','selected');
 												$('#duallistbox_pengguna_dokumen option[value="7550"]').attr('selected','selected');
 												$('#duallistbox_pengguna_dokumen option[value="7924"]').attr('selected','selected');
 												$('#duallistbox_pengguna_dokumen option[value="7559"]').attr('selected','selected');
@@ -1985,7 +1614,7 @@ $count_notification = $count_notification; //+ $count_news;
 												$.each(response,function(index,data){
 													$('#duallistbox_pengguna_dokumen').append('<option value="'+data['DN_ID']+'">'+data['DN_CODE']+' ('+data['DN_NAME']+')</option>');
 												});
-												$('#duallistbox_pengguna_dokumen option[value="<?=$SESSION_DEPARTEMENT_ID;?>"]').attr('selected','selected');
+												$('#duallistbox_pengguna_dokumen option[value="<?=$this->session->userdata("session_bgm_edocument_departement_id");?>"]').attr('selected','selected');
 												$('#duallistbox_pengguna_dokumen option[value="7550"]').attr('selected','selected');
 												$('#duallistbox_pengguna_dokumen option[value="7924"]').attr('selected','selected');
 												$('#duallistbox_pengguna_dokumen').bootstrapDualListbox('refresh', true);
@@ -2003,8 +1632,8 @@ $count_notification = $count_notification; //+ $count_news;
 												response = $.parseJSON(response);
 												$('#si_owner_dept_pendistribusi').find('option').not(':first').remove();
 												// $('#si_owner_dept_pendistribusi').append('<option value="7550" selected>BUSINESS PROCESS IMPROVEMENT</option>');
-												$('#si_owner_dept_pendistribusi').append('<option value="<?= $SESSION_DIVISI_ID; ?>"><?= $SESSION_DIVISI_NAME; ?></option>');
-												$('#si_owner_dept_pendistribusi').append('<option value="<?= $SESSION_DEPARTEMENT_ID; ?>"><?= $SESSION_DEPARTEMENT_NAME; ?></option>');
+												$('#si_owner_dept_pendistribusi').append('<option value="<?= $this->session->userdata("session_bgm_edocument_divisi_id"); ?>"><?= $this->session->userdata("session_bgm_edocument_departement_name"); ?></option>');
+												$('#si_owner_dept_pendistribusi').append('<option value="<?= $this->session->userdata("session_bgm_edocument_departement_id"); ?>"><?= $this->session->userdata("session_bgm_edocument_departement_name"); ?></option>');
 												if (add=='DTSEKI0004' || add=='DTSEKI0001') {
 														// $("#si_owner_dept_penyimpan option[value='7550']").remove();
 														$("#si_owner_dept_pendistribusi option[value='7550']").remove();
@@ -2020,8 +1649,8 @@ $count_notification = $count_notification; //+ $count_news;
 									}else{
 										var add = $('#si_template_new_kategori').val();
 										$('#si_owner_dept_pendistribusi').find('option').not(':first').remove();
-										$('#si_owner_dept_pendistribusi').append('<option value="<?= $SESSION_DIVISI_ID; ?>"><?= $SESSION_DIVISI_NAME; ?></option>');
-										$('#si_owner_dept_pendistribusi').append('<option value="<?= $SESSION_DEPARTEMENT_ID; ?>"><?= $SESSION_DEPARTEMENT_NAME; ?></option>');
+										$('#si_owner_dept_pendistribusi').append('<option value="<?= $this->session->userdata("session_bgm_edocument_divisi_id"); ?>"><?= $this->session->userdata("session_bgm_edocument_departement_name"); ?></option>');
+										$('#si_owner_dept_pendistribusi').append('<option value="<?= $this->session->userdata("session_bgm_edocument_departement_id"); ?>"><?= $this->session->userdata("session_bgm_edocument_departement_name"); ?></option>');
 										if (add=='DTSEKI0004' || add=='DTSEKI0001') {
 											// $("#si_owner_dept_penyimpan option[value='7550']").remove();
 											$("#si_owner_dept_pendistribusi option[value='7550']").remove();
@@ -3002,5 +2631,3 @@ $count_notification = $count_notification; //+ $count_news;
 			});			
 		});
 	</script>
-</body>
-</html>
