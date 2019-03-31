@@ -83,7 +83,7 @@ $route['direct-login'] = 'C_login/direct_login';
 $route['directorate-structure']		= 'C_setting_structure_organization/view_direktorat';
 $route['division-structure']		= 'C_setting_structure_organization/view_divisi';
 $route['dapartemen-structure']		= 'C_setting_structure_organization/view_departemen';
-$route['welcome'] 					= 'C_general_setting/welcome_speech';
+$route['welcome'] 					= 'C_general_setting/welcome';
 
 $route['role-menus'] 				= 'Role_menus/index';
 $route['role-menus/update/(:any)'] 	= 'Role_menus/edit/$1';
