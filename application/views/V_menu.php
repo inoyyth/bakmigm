@@ -153,9 +153,9 @@
 					<td><?php echo $aging;?></td>
 					<td>
 						<a href="<?php echo base_url('document-details-'.$key->DOC_ID); ?>" class="fa fa-eye" style="font-size: 2rem;text-decoration: none;color: black;" target="_blank"></a>
-						<?php if (strrpos($key->JBLL_DOWNLOAD, $this->session->userdata("session_bgm_edocument_job_level_id")) !== FALSE): ?>
+						<?php //if (strrpos($key->JBLL_DOWNLOAD, $this->session->userdata("session_bgm_edocument_job_level_id")) !== FALSE): ?>
 						<a style="font-size: 2rem;text-decoration: none;color: black;" class="fa fa-download" href="<?=base_url('download-'.$key->DOC_ID.".zip");?>" id="btn-unduh" class="btn btn-sm btn-warning"></a>
-						<?php endif; ?>
+						<?php //endif; ?>
 					</td>
 				</tr>
 			</tbody>
