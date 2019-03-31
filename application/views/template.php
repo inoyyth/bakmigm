@@ -105,23 +105,52 @@ $count_notification = $count_notification + $count_news;
 					if ($this->session->userdata("session_bgm_edocument_name") == "ADMIN APLIKASI") {
 				?>
 					<li class="">
-						<a href="<?php echo base_url($v['slug']); ?>">
+						<a href="<?php echo base_url($v['slug']); ?>" <?php echo (!empty($v['children']) ? 'class="dropdown-toggle"' : '');?>>
 							<i class="menu-icon fa <?php echo $v['icon'];?>"></i>
 							<span class="menu-text"> <?php echo $v['name'];?> </span>
 						</a>
+						<?php 
+							if(!empty($v['children'])) { 
+							foreach($v['children'] as $kChild => $vChild) {
+						?>
 						<b class="arrow"></b>
+						<ul class="submenu">
+							<li class="">
+								<a href="<?php echo base_url($vChild['slug']); ?>">
+									<i class="menu-icon fa fa-caret-right"></i>
+									<?php echo $vChild['name'];?>
+								</a>
+								<b class="arrow"></b>
+							</li>
+						</ul>
+						<?php } } ?>
 					</li>
 				<?php } else {
 						if (in_array($v['id'],$this->session->userdata("user_menu"))) {
 				?>
 					<li class="">
-						<a href="<?php echo base_url($v['slug']); ?>">
+						<a href="<?php echo base_url($v['slug']); ?>" <?php echo (!empty($v['children']) ? 'class="dropdown-toggle"' : '');?>>
 							<i class="menu-icon fa <?php echo $v['icon'];?>"></i>
 							<span class="menu-text"> <?php echo $v['name'];?> </span>
 						</a>
+						<?php 
+							if(!empty($v['children'])) { 
+							foreach($v['children'] as $kChild => $vChild) {
+								if (in_array($vChild['id'],$this->session->userdata("user_menu"))) {
+						?>
 						<b class="arrow"></b>
+						<ul class="submenu">
+							<li class="">
+								<a href="<?php echo base_url($vChild['slug']); ?>">
+									<i class="menu-icon fa fa-caret-right"></i>
+									<?php echo $vChild['name'];?>
+								</a>
+								<b class="arrow"></b>
+							</li>
+						</ul>
+						<?php } } } ?>
 					</li>
-			<?php } } } ?>
+				<?php } } } ?>
 				<!-- <li class="">
 					<a href="<?php echo base_url('bookmarks'); ?>">
 						<i class="menu-icon fa fa-bookmark"></i>

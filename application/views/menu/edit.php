@@ -54,6 +54,10 @@
                 ?>
             </tbody>
         </table>
+        <input type="hidden" name="key[]" value="10">
+        <input type="hidden" name="value[]" value="1">
+        <input type="hidden" name="key[]" value="11">
+        <input type="hidden" name="value[]" value="1">
         <div class="alert alert-info" style="margin-bottom:0;">
             <button class="btn btn-warning" type="submit">Submit</button> 
 		    <a class="btn btn-danger" href="<?php echo base_url('role-menus');?>">Back</a>

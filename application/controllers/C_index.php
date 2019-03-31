@@ -33,7 +33,7 @@ class C_index extends CI_Controller {
 		$data_login = $this->M_login->DB_GET_LOGIN_TB_USER($si_userid,$si_password);
 
 		if (!empty($data_login)) {
-			$session_data['menu'] = $this->menu->getSideMenu();
+			$session_data['menu'] = $this->__getSideMenu();
 			// $session_data['user_menu'] = $this->__getUserMenu($data_login[0]->NIP_USER);
 			//$data_login[0] BECAUSE ONLY RETURN 1 ARRAY
 			$session_data['session_bgm_edocument_status'] = "LOGIN";
@@ -80,7 +80,7 @@ class C_index extends CI_Controller {
 			$session_data['session_bgm_edocument_id'] = $data_login[0]->NIP_USER;
 			$session_data['session_bgm_edocument_name'] = $data_login[0]->FULL_NAME;
 			$session_data['session_bgm_edocument_email'] = $data_login[0]->EMAIL;
-			$session_data['menu'] = $this->menu->getSideMenu();
+			$session_data['menu'] = $this->__getSideMenu();
 			$session_data['user_menu'] = $this->__getUserMenu($data_login[0]->NIP_USER);
 			
 			$session_data['session_bgm_edocument_departement_id'] = $data_login[0]->DN_ID;
@@ -249,4 +249,27 @@ class C_index extends CI_Controller {
 		}
 		return $enable_menu;							
 	}
+
+	private function __getSideMenu() {
+		$menus = $this->menu->getSideMenu();
+		$structured_menu = $this->__structuredMenu($menus);
+
+		return $structured_menu;
+	}
+
+	private function __structuredMenu(array $data, $parent = 0)
+    {
+    	$items = array();
+		// var_dump($data);die;
+		foreach ($data as $item) 
+		{
+			if ($item['parent'] == $parent) 
+			{
+				$items[$item['id']] = $item;
+				$items[$item['id']]['children'] = $this->__structuredMenu($data, $item['id']);
+			}	
+		}
+
+		return $items;
+    }
 }

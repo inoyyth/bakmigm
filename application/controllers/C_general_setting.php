@@ -40,6 +40,13 @@ class C_general_setting extends CI_Controller {
         $data['view'] = 'V_welcome';
     	$this->load->view('template', $data);
     }
+
+    public function welcome()
+    {
+        $data['view'] = 'welcome';
+    	$this->load->view('template', $data);
+    }
+
     public function update_speech()
     {
     	$id = $this->input->post('id');
