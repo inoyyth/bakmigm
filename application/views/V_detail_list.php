@@ -1,4 +1,6 @@
-<?php foreach ($detaillist as $key) : ?>
+<?php 
+$button_menu = static_menu_button();
+foreach ($detaillist as $key) : ?>
 <div class="row">
 	<div class="col-md-5">
 		<div class="row">
@@ -8,7 +10,10 @@
 					</object>
 				</div>
 			</div>
-			<?php if($key['DOC_MAKER']!=$this->session->userdata("session_bgm_edocument_id")): ?>
+			<?php 
+			if($key['DOC_MAKER']!=$this->session->userdata("session_bgm_edocument_id")){ 
+				 if (in_array($button_menu['comentar'], $this->session->userdata("user_menu"))) {
+			?>
 			<div class="col-md-12">
 				<div class="form-group">
 					<?php
@@ -72,7 +77,7 @@
 					</div>
 				</div>
 			</div>
-		<?php endif; ?>
+			<?php } } ?>
 		</div>
 	</div>
 	<div class="col-sm-4">
@@ -162,9 +167,11 @@
 		$session_dpt = $this->Model_detail->getDetail($this->session->userdata("session_bgm_edocument_departement_id"),$DOC_ID,$this->session->userdata("session_bgm_edocument_job_level_id")); 
 	?>
 	<?php if ($session_dpt): ?>
+	<?php if (in_array($button_menu['sharelink-document'], $this->session->userdata("user_menu"))) { ?>
 		<!-- sharelink -->
 		<a data-toggle="modal" data-target="#modal-sharelink<?= $key['DOC_ID'];?>" data-popup="tooltip" data-placement="top" title="Sharelink" href="" style="color: black;"><i class="glyphicon glyphicon-link" style="font-size: 2.5rem;float: right;cursor: pointer;margin-left: .7rem"></i></a>
 		<!-- sharelink -->
+	<?php } ?>
 	<?php endif ?>
 	<?php if ($key['DOC_MAKER'] == $this->session->userdata("session_bgm_edocument_id")): ?>
 		<!-- comment -->
@@ -196,12 +203,14 @@
 	<!-- end archive -->
 	<?php endif; ?>
 	
+	<?php if (in_array($button_menu['bookmark-document'], $this->session->userdata("user_menu"))) { ?>
 	<!-- bookmark -->
 	<form id="form_bookmark[]" style="float: right; " name="form_bookmark" action="<?php echo base_url('C_bookmarks/bookmark'); ?>" method="post" enctype="multipart/form-data">
 		<input type="hidden" id="si_key" name="si_key" value="<?php echo $key['DOC_ID']; ?>" class="form-control" required/>
 		<input type="hidden" id="ur_id" name="ur_id" value="<?php echo $this->session->userdata("session_bgm_edocument_id"); ?>" class="form-control" required/>
 		<button data-placement="top" title="Bookmark" type="submit" class="btn btn-link"><i class="glyphicon glyphicon-bookmark" style="color:black;font-size: 2.5rem;float: right;margin-left:.7rem;cursor: pointer;margin: -.4rem -1.5rem 0 -.7rem;"></i> </button>
 	</form>
+	<?php } ?>
 	<!-- bookmark end -->
 	</div>
 </div>
