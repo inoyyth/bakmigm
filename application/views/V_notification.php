@@ -34,7 +34,7 @@ if(empty($get_data_count)||$get_data_count==""){
 	?>
 	<!-- Menunggu Persetujuan Anda -->
 	<?php 
-	if ($this->session->userdata("session_bgm_edocument_departement_id")==$FILTER): 
+	if ($this->session->userdata("session_bgm_edocument_departement_id")==$FILTER && in_array(6,$this->session->userdata("user_menu"))): 
 	?>
 		<div class="alert alert-warning fade in">
 			<div class="row">
@@ -49,7 +49,7 @@ if(empty($get_data_count)||$get_data_count==""){
 			</div>
 		</div>
 	<?php 
-	elseif ($this->session->userdata("session_bgm_edocument_divisi_id")==$FILTER && $this->session->userdata("session_bgm_edocument_id") != $data_row_ext->DOC_MAKER):
+	elseif ($this->session->userdata("session_bgm_edocument_divisi_id")==$FILTER && $this->session->userdata("session_bgm_edocument_id") != $data_row_ext->DOC_MAKER && in_array(6,$this->session->userdata("user_menu"))):
 	?>
 		<div class="alert alert-warning fade in">
 			<div class="row">
@@ -64,7 +64,7 @@ if(empty($get_data_count)||$get_data_count==""){
 			</div>
 		</div>
 	<?php 
-	elseif ($this->session->userdata("session_bgm_edocument_direktorat_id")==$FILTER):
+	elseif ($this->session->userdata("session_bgm_edocument_direktorat_id")==$FILTER && in_array(6,$this->session->userdata("user_menu"))):
 	?>
 		<div class="alert alert-warning fade in">
 			<div class="row">
@@ -233,6 +233,7 @@ if(empty($get_data_count)||$get_data_count==""){
 	endif; // END if is_continue
 	?>
 </div><!-- END Row -->
+<?php if(in_array(5,$this->session->userdata("user_menu"))) { ?>
 <div class="row"><!-- Row -->
 	<div class="widget-box">
 		<div class="widget-header">
@@ -273,4 +274,6 @@ if(empty($get_data_count)||$get_data_count==""){
 			<?php } } ?>
 		</div>
 	</div><!-- Row News -->
+	<?php } ?>
+
 </div><!-- END Row -->
