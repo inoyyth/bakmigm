@@ -124,6 +124,7 @@ $count_notification = $count_notification + $count_news;
 							exit();
 						}
 						foreach($get_data as $data_row){
+							$DOC_NUMBER = $data_row->DOC_ID;
 							$DOC_ID					= $data_row->DOC_ID;
 							$DOC_DATE               = $data_row->DOC_DATE;
 							$DOC_KATEGORI           = $data_row->DOC_KATEGORI;
@@ -185,7 +186,6 @@ $count_notification = $count_notification + $count_news;
 						<div class="col-md-6">
 						
 							<?php
-
 							$DOC_AKSES_LEVEL = $DOC_AKSES_LEVEL;
 							$DOC_AKSES_LEVEL_FINAL = "";
 							if(strpos($DOC_AKSES_LEVEL,'|')!==false){
@@ -460,10 +460,10 @@ $count_notification = $count_notification + $count_news;
 								?>
 								<div class="col-sm-6" style="margin-top:20px;">
 									<form id="form_approve[]" name="form_approve[]" action="<?php echo base_url('C_notification/approve'); ?>" method="post" enctype="multipart/form-data">
-										<input type="hidden" id="si_key[]" name="si_key[]" value="<?php echo $DOC_ID; ?>" class="form-control" required/>
+										<input type="hidden" id="si_key[]" name="si_key[]" value="<?php echo $DOC_NUMBER; ?>" class="form-control" required/>
 										<input type="hidden" id="si_approver" name="si_approver" class="form-control" value="<?=$SESSION_ROLES;?>">
 										<button type="submit" class="ace-icon fa fa-check btn btn-sm btn-primary">Terima</button>
-										<a data-toggle="modal" data-target="#modal-reject<?=$DOC_ID;?>" class="ace-icon fa fa-ban btn btn-sm btn-danger" data-popup="tooltip" data-placement="top" title="Reject">Tolak Sirkulasi</a>
+										<a data-toggle="modal" data-target="#modal-reject<?=$DOC_NUMBER;?>" class="ace-icon fa fa-ban btn btn-sm btn-danger" data-popup="tooltip" data-placement="top" title="Reject">Tolak Sirkulasi</a>
 									</form>
 								</div>
 								<?php endif; ?>
@@ -479,7 +479,7 @@ $count_notification = $count_notification + $count_news;
 				</div><!-- /.page-content -->
 			</div>
 		</div><!-- /.main-content -->
-		<div id="modal-reject<?=$DOC_ID;?>" class="modal" tabindex="-1">
+		<div id="modal-reject<?=$DOC_NUMBER;?>" class="modal" tabindex="-1">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<form class="form-horizontal" action="<?php echo base_url('C_notification/reject'); ?>" method="post" enctype="multipart/form-data">
@@ -497,7 +497,7 @@ $count_notification = $count_notification + $count_news;
 								</div>
 								<div class="form-group">
 									<div class="col-sm-12">
-										<input type="hidden" id="si_key" name="si_key" class="form-control" value="<?=$DOC_ID;?>">
+										<input type="hidden" id="si_key" name="si_key" class="form-control" value="<?=$DOC_NUMBER;?>">
 										<input type="hidden" id="si_approver" name="si_approver" class="form-control" value="<?=$SESSION_ROLES;?>">
 										<textarea required type="text" id="si_note" name="si_note" rows="3" maxlength="400" class="form-control"></textarea>
 									</div>

@@ -51,28 +51,22 @@ class C_notification extends CI_Controller {
 				 ->select('*')
 				 ->from('tb_document_notification')
 				 ->where(array('PENDISTRIBUSI' => $user_dept))
-				 ->get()->result_array();
-		$query_is_pemilik = $this->db
-				 ->select('*')
-				 ->from('tb_document_notification')
-				 ->where(array('PEMILIK' => $user_dept))
-				 ->get()->result_array();
-		$query_is_pengguna = $this->db
-				 ->select('*')
-				 ->from('tb_document_notification')
-				 ->like(array('PENGGUNA' => $user_dept))
-				 ->get()->result_array();
-		$query_is_atasan = $this->db
-				 ->select('*')
-				 ->from('tb_departemen')
-				 ->where(array('DI_ID' => $user_dept))
+				 ->or_where(array('PEMILIK' => $user_dept))
+				 ->or_like(array('PENGGUNA' => $user_dept))
+				 ->order_by('NOTIF_ID','ASC')
 				 ->get()->result_array();
 		$data = [];
-		if (count($query_is_pendistribusi) > 0 || count($query_is_pemilik) > 0 || count($query_is_pengguna)) {
-			$data = array_merge($query_is_pendistribusi,$query_is_pemilik,$query_is_pengguna);
-			$data = array_unique($data,SORT_REGULAR);
+		if (count($query_is_pendistribusi) > 0) {
+			$data = array_merge($query_is_pendistribusi);
+			// $data = array_unique($data,SORT_REGULAR);
+			$unique_array = [];
+			foreach($data as $element) {
+				$hash = $element['DOC_ID'];
+				$unique_array[$hash] = $element;
+			}
+
 			$new_data = array();
-			foreach ($data as $k=>$v) {
+			foreach ($unique_array as $k=>$v) {
 				$cek_doc_history = $this->db->select('*')->from('tb_notification_history')->where(array('USER_ID' => $nip, 'DOC_ID' => $v['DOC_ID']))->get()->result_array();
 				if (count($cek_doc_history) == 0) {
 					$qr = $this->db->select('*')->from('tb_document')

@@ -174,7 +174,7 @@ class C_menu extends CI_Controller
 			'smtp_host' => 'ssl://smtp.gmail.com',
 			'smtp_user' => 'akuntest437@gmail.com',
 			'smtp_pass' => 'akuntest123',
-			'smtp_port' => 465,
+			'smtp_port' => 587,
 			'smtp_keepalive' => TRUE,
 			'smtp_crypto' => 'SSL',
 			'wordwrap'  => TRUE,
@@ -445,6 +445,7 @@ class C_menu extends CI_Controller
 	public function logout()
 	{
 		$this->session->sess_destroy();
-		redirect('http://webportal.bakmigm.co.id/sim/');
+		redirect(base_url());
+		// redirect('http://webportal.bakmigm.co.id/sim/');
 	}
 }
