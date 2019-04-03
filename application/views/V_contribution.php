@@ -319,7 +319,7 @@
 									<div class="col-sm-5">
 										<select id="si_owner_pemilik_proses" name="si_owner_pemilik_proses" class="form-control" />
 											<option value="">Pilih</option>
-											<option value="<?php echo $this->session->userdata("session_bgm_edocument_divisi_id"); ?>"><?php echo $this->session->userdata("session_bgm_edocument_departement_name"); ?></option>
+											<option value="<?php echo $this->session->userdata("session_bgm_edocument_divisi_id"); ?>"><?php echo $this->session->userdata("session_bgm_edocument_divisi_name"); ?></option>
 											<option value="<?php echo $this->session->userdata("session_bgm_edocument_departement_id"); ?>" selected><?php echo $this->session->userdata("session_bgm_edocument_departement_name"); ?></option>
 										</select>
 									</div>
@@ -334,7 +334,7 @@
 										<select id="si_owner_dept_penyimpan" name="si_owner_dept_penyimpan" class="form-control" />
 											<option value="">Pilih</option>
 											<!-- <option value="7550">BPI</option> -->
-											<option value="<?php echo $this->session->userdata("session_bgm_edocument_divisi_id"); ?>"><?php echo $this->session->userdata("session_bgm_edocument_departement_name"); ?></option>
+											<option value="<?php echo $this->session->userdata("session_bgm_edocument_divisi_id"); ?>"><?php echo $this->session->userdata("session_bgm_edocument_divisi_name"); ?></option>
 											<option value="<?php echo $this->session->userdata("session_bgm_edocument_departement_id"); ?>"><?php echo $this->session->userdata("session_bgm_edocument_departement_name"); ?></option>
 										</select>
 									</div>
@@ -343,7 +343,7 @@
 							</div>
 
 							<div class="form-group row">
-								<label for="si_owner_dept_pendistribusi" class="col-sm-3 control-label" style="text-align:left">Dept Penditribusi*</label>
+								<label for="si_owner_dept_pendistribusi" class="col-sm-3 control-label" style="text-align:left">Dept Pendistribusi*</label>
 								<div class="col-sm-5">
 									<select id="si_owner_dept_pendistribusi" name="si_owner_dept_pendistribusi" class="form-control" />
 										<option value="">Pilih</option>
@@ -778,7 +778,6 @@
 					$("#si_owner_dept_penyimpan option[value='7550']").remove();
 					$("#si_owner_dept_pendistribusi option[value='7550']").remove();
 				}else{
-				console.log('a');
 					$("#si_owner_dept_penyimpan").append('<option value="7550" selected>BPI</option>');
 					$("#si_owner_dept_pendistribusi").append('<option value="7550" selected>BPI</option>');
 				}
@@ -1377,7 +1376,7 @@
 													response = $.parseJSON(response);
 													$('#si_owner_dept_pendistribusi').find('option').not(':first').remove();
 													// $('#si_owner_dept_pendistribusi').append('<option value="7550" selected>BUSINESS PROCESS IMPROVEMENT</option>');
-													$('#si_owner_dept_pendistribusi').append('<option value="<?= $this->session->userdata("session_bgm_edocument_divisi_id"); ?>"><?= $this->session->userdata("session_bgm_edocument_departement_name"); ?></option>');
+													$('#si_owner_dept_pendistribusi').append('<option value="<?= $this->session->userdata("session_bgm_edocument_divisi_id"); ?>"><?= $this->session->userdata("session_bgm_edocument_divisi_name"); ?></option>');
 													$('#si_owner_dept_pendistribusi').append('<option value="<?= $this->session->userdata("session_bgm_edocument_departement_id"); ?>"><?= $this->session->userdata("session_bgm_edocument_departement_name"); ?></option>');
 													if (add=='DTSEKI0004' || add=='DTSEKI0001') {
 														// $("#si_owner_dept_penyimpan option[value='7550']").remove();
@@ -1395,7 +1394,7 @@
 											console.log('x');
 											var add = $('#si_template_new_kategori').val();
 											$('#si_owner_dept_pendistribusi').find('option').not(':first').remove();
-											$('#si_owner_dept_pendistribusi').append('<option value="<?= $this->session->userdata("session_bgm_edocument_divisi_id"); ?>"><?= $this->session->userdata("session_bgm_edocument_departement_name"); ?></option>');
+											$('#si_owner_dept_pendistribusi').append('<option value="<?= $this->session->userdata("session_bgm_edocument_divisi_id"); ?>"><?= $this->session->userdata("session_bgm_edocument_divisi_name"); ?></option>');
 											$('#si_owner_dept_pendistribusi').append('<option value="<?= $this->session->userdata("session_bgm_edocument_departement_id"); ?>"><?= $this->session->userdata("session_bgm_edocument_departement_name"); ?></option>');
 											if (add=='DTSEKI0004' || add=='DTSEKI0001') {
 														// $("#si_owner_dept_penyimpan option[value='7550']").remove();
@@ -1632,7 +1631,7 @@
 												response = $.parseJSON(response);
 												$('#si_owner_dept_pendistribusi').find('option').not(':first').remove();
 												// $('#si_owner_dept_pendistribusi').append('<option value="7550" selected>BUSINESS PROCESS IMPROVEMENT</option>');
-												$('#si_owner_dept_pendistribusi').append('<option value="<?= $this->session->userdata("session_bgm_edocument_divisi_id"); ?>"><?= $this->session->userdata("session_bgm_edocument_departement_name"); ?></option>');
+												$('#si_owner_dept_pendistribusi').append('<option value="<?= $this->session->userdata("session_bgm_edocument_divisi_id"); ?>"><?= $this->session->userdata("session_bgm_edocument_divisi_name"); ?></option>');
 												$('#si_owner_dept_pendistribusi').append('<option value="<?= $this->session->userdata("session_bgm_edocument_departement_id"); ?>"><?= $this->session->userdata("session_bgm_edocument_departement_name"); ?></option>');
 												if (add=='DTSEKI0004' || add=='DTSEKI0001') {
 														// $("#si_owner_dept_penyimpan option[value='7550']").remove();
@@ -1649,7 +1648,7 @@
 									}else{
 										var add = $('#si_template_new_kategori').val();
 										$('#si_owner_dept_pendistribusi').find('option').not(':first').remove();
-										$('#si_owner_dept_pendistribusi').append('<option value="<?= $this->session->userdata("session_bgm_edocument_divisi_id"); ?>"><?= $this->session->userdata("session_bgm_edocument_departement_name"); ?></option>');
+										$('#si_owner_dept_pendistribusi').append('<option value="<?= $this->session->userdata("session_bgm_edocument_divisi_id"); ?>"><?= $this->session->userdata("session_bgm_edocument_divisi_name"); ?></option>');
 										$('#si_owner_dept_pendistribusi').append('<option value="<?= $this->session->userdata("session_bgm_edocument_departement_id"); ?>"><?= $this->session->userdata("session_bgm_edocument_departement_name"); ?></option>');
 										if (add=='DTSEKI0004' || add=='DTSEKI0001') {
 											// $("#si_owner_dept_penyimpan option[value='7550']").remove();

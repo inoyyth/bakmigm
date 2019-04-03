@@ -63,7 +63,8 @@ class C_news extends CI_Controller {
 			';
 			exit();
 		}
-		$this->load->view('V_news_comment');
+		$data['view'] = 'V_news_comment';
+		$this->load->view('template', $data);
 	}
 	
 }

@@ -34,7 +34,7 @@ if(empty($get_data_count)||$get_data_count==""){
 	?>
 	<!-- Menunggu Persetujuan Anda -->
 	<?php 
-	if ($this->session->userdata("session_bgm_edocument_departement_id")==$FILTER && in_array(6,$this->session->userdata("user_menu"))): 
+	if ($this->session->userdata("session_bgm_edocument_departement_id")==$FILTER): 
 	?>
 		<div class="alert alert-warning fade in">
 			<div class="row">
@@ -49,7 +49,8 @@ if(empty($get_data_count)||$get_data_count==""){
 			</div>
 		</div>
 	<?php 
-	elseif ($this->session->userdata("session_bgm_edocument_divisi_id")==$FILTER && $this->session->userdata("session_bgm_edocument_id") != $data_row_ext->DOC_MAKER && in_array(6,$this->session->userdata("user_menu"))):
+	// as atasan
+	elseif ($this->session->userdata("session_dep_code_employee")==$FILTER):
 	?>
 		<div class="alert alert-warning fade in">
 			<div class="row">
@@ -64,7 +65,7 @@ if(empty($get_data_count)||$get_data_count==""){
 			</div>
 		</div>
 	<?php 
-	elseif ($this->session->userdata("session_bgm_edocument_direktorat_id")==$FILTER && in_array(6,$this->session->userdata("user_menu"))):
+	elseif ($this->session->userdata("session_bgm_edocument_direktorat_id")==$FILTER):
 	?>
 		<div class="alert alert-warning fade in">
 			<div class="row">
@@ -233,7 +234,6 @@ if(empty($get_data_count)||$get_data_count==""){
 	endif; // END if is_continue
 	?>
 </div><!-- END Row -->
-<?php if(in_array(5,$this->session->userdata("user_menu"))) { ?>
 <div class="row"><!-- Row -->
 	<div class="widget-box">
 		<div class="widget-header">
@@ -274,6 +274,183 @@ if(empty($get_data_count)||$get_data_count==""){
 			<?php } } ?>
 		</div>
 	</div><!-- Row News -->
-	<?php } ?>
-
 </div><!-- END Row -->
+<!-- Modal Preview-->
+<?php 
+	if(count($notification) > 0) {
+		foreach ($notification as $data_row_ext) {
+?>
+<div id="modal-preview<?=$data_row_ext->DOC_ID;?>" class="modal" tabindex="-1">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h5 class="blue bigger">Preview</h5>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<?php
+					$get_data_doc = $this->M_library_database->DB_GET_DATA_DOCUMENT_DETAIL_BY_ID_EVO($data_row_ext->DOC_ID);
+					// Dokumen Detail
+					foreach($get_data_doc as $data_row_doc){
+						$DOCD_UTAMA = $data_row_doc->DOCD_UTAMA;
+						$EXT_UTAMA	= $data_row_doc->DOCD_UTAMA_EXT;
+						$STATUS_UTAMA = $data_row_doc->DOCD_UTAMA_STATUS;
+
+						$DOCD_PELENGKAP_1 = $data_row_doc->DOCD_PELENGKAP_1;
+						$EXT_1 = $data_row_doc->DOCD_PELENGKAP_1_EXT;
+						$STATUS_1 = $data_row_doc->DOCD_PELENGKAP_1_STATUS;
+
+						$DOCD_PELENGKAP_2 = $data_row_doc->DOCD_PELENGKAP_2;
+						$EXT_2 = $data_row_doc->DOCD_PELENGKAP_2_EXT;
+						$STATUS_2 = $data_row_doc->DOCD_PELENGKAP_2_STATUS;
+
+						$DOCD_PERSETUJUAN = $data_row_doc->DOCD_PERSETUJUAN;
+					}
+					if ($EXT_UTAMA=="doc" || $EXT_UTAMA=="docx" || $EXT_UTAMA=="xls" || $EXT_UTAMA=="xlsx" || $EXT_UTAMA=="ppt" || $EXT_UTAMA=="pptx") {
+						$url_path_utama = base_url('assets/pdf/').$DOCD_UTAMA.'.pdf';
+					}else{
+						$url_path_utama = base_url('assets/original/').$DOCD_UTAMA.".".$EXT_UTAMA;
+					}
+					if ($EXT_1=="doc" || $EXT_1=="docx" || $EXT_1=="xls" || $EXT_1=="xlsx" || $EXT_1=="ppt" || $EXT_1=="pptx") {
+						$url_path_pelengkap_1 = base_url('assets/pdf/').$DOCD_PELENGKAP_1.".pdf";
+					}else{
+						$url_path_pelengkap_1 = base_url('assets/original/').$DOCD_PELENGKAP_1.".".$EXT_1;
+					}
+					if ($EXT_2=="doc" || $EXT_2=="docx" || $EXT_2=="xls" || $EXT_2=="xlsx" || $EXT_2=="ppt" || $EXT_2=="pptx") {
+						$url_path_pelengkap_2 = base_url('assets/pdf/').$DOCD_PELENGKAP_2.".pdf";
+					}else{
+						$url_path_pelengkap_2 = base_url('assets/original/').$DOCD_PELENGKAP_2.".".$EXT_2;
+					}
+					$url_path_persetujuan = base_url('assets/original/').$DOCD_PERSETUJUAN;
+					// Pemilik Proses
+					$DOC_PEMILIK_PROSES = $data_row_ext->DOC_PEMILIK_PROSES;
+					$DOC_PEMILIK_PROSES_FINAL = "";
+					if($DOC_PEMILIK_PROSES=="BPI"){
+						$DOC_PEMILIK_PROSES_FINAL = ""."BPI";
+					}else if($DOC_PEMILIK_PROSES==$this->session->userdata("session_bgm_edocument_divisi_id") ){
+						$DOC_PEMILIK_PROSES_FINAL = "".$this->session->userdata("session_bgm_edocument_divisi_name");
+					}else{
+						$get_data = $this->M_library_database->DB_GET_DATA_DEPARTEMEN_BY_ID_EVO($DOC_PEMILIK_PROSES);
+						if ($get_data) {
+							foreach($get_data as $data_row){
+								$DN_ID = $data_row->DN_ID;
+								$DN_CODE = $data_row->DN_CODE;
+								$DN_NAME = $data_row->DN_NAME;
+							}
+							$DOC_PEMILIK_PROSES_FINAL = "".$DN_CODE;
+						}
+					}
+					?>
+					<?php if ($data_row_ext->DOC_DISTRIBUSI=="EDOC"): ?>
+						<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-xl-6">
+							<div class="form-group">
+								<object data="<?=$url_path_persetujuan;?>" type="application/pdf" width="400px" height="500px">
+									<iframe src="<?=$url_path_persetujuan;?>"></iframe>
+								</object>
+								<label for="" class="col-sm-12 control-label" style="text-align:left">
+									<!-- <a target="_blank" href="<?=$url_path_persetujuan;?>">Dokumen Persetujuan</a> -->
+								</label>
+							</div>
+							
+							<div class="form-group">
+								<label for="" class="col-sm-12 control-label" style="text-align:left">
+									<a target="_blank" href="<?= base_url('C_notification/document/'.$data_row_ext->DOC_ID.'/'.$DOCD_UTAMA); ?>">Dokumen Utama</a>
+								</label>
+							</div>
+							<?php if($data_row_doc->DOCD_PELENGKAP_1!="File_Not_Found"): ?>
+								<div class="form-group">
+									<label for="" class="col-sm-12 control-label" style="text-align:left">
+										<a target="_blank" href="<?= base_url('C_notification/document/'.$data_row_ext->DOC_ID.'/'.$DOCD_PELENGKAP_1); ?>">Dokumen Pelengkap 1</a>
+									</label>
+								</div>
+							<?php endif; ?>
+							<?php if($data_row_doc->DOCD_PELENGKAP_2!="File_Not_Found"): ?>
+								<div class="form-group">
+									<label for="" class="col-sm-12 control-label" style="text-align:left">
+										<a target="_blank" href="<?= base_url('C_notification/document/'.$data_row_ext->DOC_ID.'/'.$DOCD_PELENGKAP_2); ?>">Dokumen Pelengkap 2</a>
+									</label>
+								</div>
+							<?php endif; ?>
+						</div>
+						
+					<?php endif; ?>
+					<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-xl-6">
+						<div class="row">
+							<div class="form-group">
+								<label for="" class="col-sm-12 control-label" style="text-align:left">Nama Dokumen</label>
+								<div class="col-sm-12">
+									<input type="text" class="form-control" value="<?=$data_row_ext->DOC_NAMA;?>" readonly>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="" class="col-sm-12 control-label" style="text-align:left">Nomor Dokumen</label>
+								<div class="col-sm-12">
+									<input type="text" class="form-control" value="<?=$data_row_ext->DOC_NOMOR;?>"readonly>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="" class="col-sm-12 control-label" style="text-align:left">Versi</label>
+								<div class="col-sm-12">
+									<input type="text" class="form-control" value="<?=$data_row_ext->DOC_VERSI;?>" readonly>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="" class="col-sm-12 control-label" style="text-align:left">Tipe Dokumen</label>
+								<div class="col-sm-12">
+									<input type="text" class="form-control" value="<?=$data_row_ext->DTSETE_TIPE;?>" readonly>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="" class="col-sm-12 control-label" style="text-align:left">Standar Kerahasian</label>
+								<div class="col-sm-12">
+									<input type="text" class="form-control" value="<?=$data_row_ext->CL_NAME;?>" readonly>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="" class="col-sm-12 control-label" style="text-align:left">Abstrak</label>
+								<div class="col-sm-12">
+									<textarea readonly type="text" rows="3" class="form-control" style="resize:none;background-color:white;"><?=$data_row_ext->DOC_ABSTRAK;?></textarea>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="" class="col-sm-12 control-label" style="text-align:left">Dept Pemilik Proses</label>
+								<div class="col-sm-12">
+									<textarea type="text" rows="1" class="form-control" style="resize:none;background-color:white;" readonly><?=$DOC_PEMILIK_PROSES_FINAL;?></textarea>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="" class="col-sm-12 control-label" style="text-align:left">Tanggal Berlaku</label>
+								<div class="col-sm-12">
+									<input type="text" class="form-control" value="<?= date('d/M/Y', strtotime($data_row_ext->DOC_TGL_EFEKTIF)); ?>" readonly>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="" class="col-sm-12 control-label" style="text-align:left">Tanggal Kadaluarsa</label>
+								<div class="col-sm-12">
+									<input type="text" class="form-control" value="<?= date('d/M/Y', strtotime($data_row_ext->DOC_TGL_EXPIRED));?>" readonly>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<div class="row">
+					<div class="col-sm-12">
+						<form id="form_detail" name="form_view[]" action="<?php echo base_url('pmd-details'); ?>" method="post" enctype="multipart/form-data" target="_blank">
+							<input type="hidden" id="si_key[]" name="si_key[]" value="<?php echo $data_row_ext->DOC_ID; ?>" class="form-control" required/>
+							<button type="button" class="btn btn-sm" data-dismiss="modal">
+								<i class="ace-icon fa fa-times"></i>
+								Close
+							</button>
+							<button type="submit" class="ace-icon fa fa-eye btn btn-sm btn-success"> Detail PMD </button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<?php } } ?>
+<!-- END Modal Preview-->

@@ -41,7 +41,7 @@
                     <td><?php echo $v['parent']; ?></td>
                     <td><?php echo $v['menu']['name']; ?></td>
                     <td><?php echo ($v['menu']['type'] == 1 ? 'Side Menu' : 'Button');?></td>
-                    <td id="td-<?php echo $k;?>" class="<?php echo $class;?>">
+                    <td id="td-<?php echo $k;?>" class="<?php echo $class;?>" style="width: 80px;">
                         <input type="hidden" name="key[]" value="<?php echo $v['menu']['id'];?>">
                         <select name="value[]" id="select-<?php echo $k;?>" onchange="changeColor(<?php echo $k;?>)">
                             <option value="0">Disable</option>

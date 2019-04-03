@@ -1597,6 +1597,12 @@ class M_library_database extends CI_Model {
 		}
 		return $result;
 	}
-	//-----------------------------------------------------------------------------------------------//
+
+	public function getAllDivision($field) {
+		$query = $this->db->select($field)
+				 ->from('tb_divisi')
+				 ->get()->result();
+		
+		return $query;
+	}
 }
-//-----------------------------------------------------------------------------------------------//
