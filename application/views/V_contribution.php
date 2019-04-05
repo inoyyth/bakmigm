@@ -1234,178 +1234,180 @@
 										field_3 = response[0].field_3;
 										field_4 = response[0].field_4;
 										field_5 = response[0].field_5;
-									}
-								});
-								let id_key = si_key;
-								//AJAX Request
-								$.ajax({
-									url: '<?=base_url('C_contribution/get_data_document_structure_tipe_confidental')?>',
-									type: 'POST', 
-									data: {id_key: id_key},
-									success: function(response){
-										//Parsing Json
-										response = $.parseJSON(response);
-										//Add Options
-										$.each(response,function(index,data){
-											let singkatan = data['DTSETE_SINGKATAN'];
-											var date_now = new Date();
-											// Field_1
-											if (field_1 == 'Table') {
-												field_1 = singkatan
-											}else if(field_1 == 'Year'){
-												field_1 = date_now.getFullYear();
-											}else if(field_1 == 'Month'){
-												field_1 = ("0" + (date_now.getMonth() + 1)).slice(-2)
-											}else if(field_1 == 'Delimeter'){
-												field_1 = "/";
-											}else if (field_1 == 'Free Text') {
-												field_1 = nom;
-											}else{
-												field_1 = "";
-											}
-											// Field_2
-											if (field_2 == 'Table') {
-												field_2 = singkatan
-											}else if(field_2 == 'Year'){
-												field_2 = date_now.getFullYear();
-											}else if(field_2 == 'Month'){
-												field_2 = ("0" + (date_now.getMonth() + 1)).slice(-2)
-											}else if(field_2 == 'Delimeter'){
-												field_2 = "/";
-											}else if (field_2 == 'Free Text') {
-												field_2 = nom;
-											}else{
-												field_2 = "";
-											}
-											// Field_3
-											if (field_3 == 'Table') {
-												field_3 = singkatan
-											}else if(field_3 == 'Year'){
-												field_3 = date_now.getFullYear();
-											}else if(field_3 == 'Month'){
-												field_3 = ("0" + (date_now.getMonth() + 1)).slice(-2);
-											}else if(field_3 == 'Delimeter'){
-												field_3 = "/";
-											}else if (field_3 == 'Free Text') {
-												field_3 = nom;
-											}else{
-												field_3 = "";
-											}
-											// Field_4
-											if (field_4 == 'Table') {
-												field_4 = singkatan
-											}else if(field_4 == 'Year'){
-												field_4 = date_now.getFullYear();
-											}else if(field_4 == 'Month'){
-												field_4 = ("0" + (date_now.getMonth() + 1)).slice(-2)
-											}else if(field_4 == 'Delimeter'){
-												field_4 = "/";
-											}else if (field_4 == 'Free Text') {
-												field_4 = nom;
-											}else{
-												field_4 = "";
-											}
-											// Field_5
-											if (field_5 == 'Table') {
-												field_5 = singkatan
-											}else if(field_5 == 'Year'){
-												field_5 = date_now.getFullYear();
-											}else if(field_5 == 'Month'){
-												field_5 = ("0" + (date_now.getMonth() + 1)).slice(-2)
-											}else if(field_5 == 'Delimeter'){
-												field_5 = "/";
-											}else if (field_5 == 'Free Text') {
-												field_5 = nom;
-											}else{
-												field_5 = "";
-											}
-											var hasil = field_1 + field_2 + field_3 + field_4 + field_5;
-											$('#si_header_no').val(hasil);
-											$('#watermark').val(data['WATERMARK']);
-											access = data['DTSETE_ACCESS'];
-											dist = data['DTSETE_DISTRIBUTION'];
-										});
-										if (access == 'All') {
-											$.ajax({
-												url: '<?=base_url('C_contribution/AllDepartmen')?>',
-												type: 'POST', 
-												data: {id_key: id_key},
-												success: function(response){
-													//Parsing Json
-													response = $.parseJSON(response);
-													$('#duallistbox_pengguna_dokumen').find('option').remove();
-													$.each(response,function(index,data){
-														$('#duallistbox_pengguna_dokumen').append('<option value="'+data['DN_ID']+'">'+data['DN_CODE']+' ('+data['DN_NAME']+')</option>');
-														$('#duallistbox_pengguna_dokumen option[value="<?=$this->session->userdata("session_bgm_edocument_departement_id");?>"]').attr('selected','selected');
-														$('#duallistbox_pengguna_dokumen option[value="7550"]').attr('selected','selected');
-														$('#duallistbox_pengguna_dokumen option[value="7924"]').attr('selected','selected');
-														$('#duallistbox_pengguna_dokumen option[value="7559"]').attr('selected','selected');
+										let id_key = si_key;
+										//AJAX Request
+										$.ajax({
+											url: '<?=base_url('C_contribution/get_data_document_structure_tipe_confidental')?>',
+											type: 'POST', 
+											data: {id_key: id_key},
+											success: function(response){
+												console.log('xx', response);
+												//Parsing Json
+												response = $.parseJSON(response);
+												//Add Options
+												$.each(response,function(index,data){
+													let singkatan = data['DTSETE_SINGKATAN'];
+													var date_now = new Date();
+													// Field_1
+													if (field_1 == 'Table') {
+														field_1 = singkatan
+													}else if(field_1 == 'Year'){
+														field_1 = date_now.getFullYear();
+													}else if(field_1 == 'Month'){
+														field_1 = ("0" + (date_now.getMonth() + 1)).slice(-2)
+													}else if(field_1 == 'Delimeter'){
+														field_1 = "/";
+													}else if (field_1 == 'Free Text') {
+														field_1 = nom;
+													}else{
+														field_1 = "";
+													}
+													// Field_2
+													if (field_2 == 'Table') {
+														field_2 = singkatan
+													}else if(field_2 == 'Year'){
+														field_2 = date_now.getFullYear();
+													}else if(field_2 == 'Month'){
+														field_2 = ("0" + (date_now.getMonth() + 1)).slice(-2)
+													}else if(field_2 == 'Delimeter'){
+														field_2 = "/";
+													}else if (field_2 == 'Free Text') {
+														field_2 = nom;
+													}else{
+														field_2 = "";
+													}
+													// Field_3
+													if (field_3 == 'Table') {
+														field_3 = singkatan
+													}else if(field_3 == 'Year'){
+														field_3 = date_now.getFullYear();
+													}else if(field_3 == 'Month'){
+														field_3 = ("0" + (date_now.getMonth() + 1)).slice(-2);
+													}else if(field_3 == 'Delimeter'){
+														field_3 = "/";
+													}else if (field_3 == 'Free Text') {
+														field_3 = nom;
+													}else{
+														field_3 = "";
+													}
+													// Field_4
+													if (field_4 == 'Table') {
+														field_4 = singkatan
+													}else if(field_4 == 'Year'){
+														field_4 = date_now.getFullYear();
+													}else if(field_4 == 'Month'){
+														field_4 = ("0" + (date_now.getMonth() + 1)).slice(-2)
+													}else if(field_4 == 'Delimeter'){
+														field_4 = "/";
+													}else if (field_4 == 'Free Text') {
+														field_4 = nom;
+													}else{
+														field_4 = "";
+													}
+													// Field_5
+													if (field_5 == 'Table') {
+														field_5 = singkatan
+													}else if(field_5 == 'Year'){
+														field_5 = date_now.getFullYear();
+													}else if(field_5 == 'Month'){
+														field_5 = ("0" + (date_now.getMonth() + 1)).slice(-2)
+													}else if(field_5 == 'Delimeter'){
+														field_5 = "/";
+													}else if (field_5 == 'Free Text') {
+														field_5 = nom;
+													}else{
+														field_5 = "";
+													}
+													var hasil = field_1 + field_2 + field_3 + field_4 + field_5;
+													console.log('hasil', hasil);
+													$('#si_header_no').val(hasil);
+													$('#watermark').val(data['WATERMARK']);
+													access = data['DTSETE_ACCESS'];
+													dist = data['DTSETE_DISTRIBUTION'];
+												});
+												if (access == 'All') {
+													$.ajax({
+														url: '<?=base_url('C_contribution/AllDepartmen')?>',
+														type: 'POST', 
+														data: {id_key: id_key},
+														success: function(response){
+															//Parsing Json
+															response = $.parseJSON(response);
+															$('#duallistbox_pengguna_dokumen').find('option').remove();
+															$.each(response,function(index,data){
+																$('#duallistbox_pengguna_dokumen').append('<option value="'+data['DN_ID']+'">'+data['DN_CODE']+' ('+data['DN_NAME']+')</option>');
+																$('#duallistbox_pengguna_dokumen option[value="<?=$this->session->userdata("session_bgm_edocument_departement_id");?>"]').attr('selected','selected');
+																$('#duallistbox_pengguna_dokumen option[value="7550"]').attr('selected','selected');
+																$('#duallistbox_pengguna_dokumen option[value="7924"]').attr('selected','selected');
+																$('#duallistbox_pengguna_dokumen option[value="7559"]').attr('selected','selected');
+															});
+															$('#duallistbox_pengguna_dokumen').bootstrapDualListbox('refresh', true);
+														}
 													});
-													$('#duallistbox_pengguna_dokumen').bootstrapDualListbox('refresh', true);
-												}
-											});
-										}else{
-											$.ajax({
-												url: '<?=base_url('C_contribution/GetDepatemenAccess')?>',
-												type: 'POST', 
-												data: {id_key: id_key},
-												success: function(response){
-													//Parsing Json
-													response = $.parseJSON(response);
-													$('#duallistbox_pengguna_dokumen').find('option').remove();
-													$.each(response,function(index,data){
-														$('#duallistbox_pengguna_dokumen').append('<option value="'+data['DN_ID']+'">'+data['DN_CODE']+' ('+data['DN_NAME']+')</option>');
-														$('#duallistbox_pengguna_dokumen option[value="<?=$this->session->userdata("session_bgm_edocument_departement_id");?>"]').attr('selected','selected');
-														$('#duallistbox_pengguna_dokumen option[value="7550"]').attr('selected','selected');
-														$('#duallistbox_pengguna_dokumen option[value="7924"]').attr('selected','selected');
-														$('#duallistbox_pengguna_dokumen option[value="7559"]').attr('selected','selected');
+												}else{
+													$.ajax({
+														url: '<?=base_url('C_contribution/GetDepatemenAccess')?>',
+														type: 'POST', 
+														data: {id_key: id_key},
+														success: function(response){
+															//Parsing Json
+															response = $.parseJSON(response);
+															$('#duallistbox_pengguna_dokumen').find('option').remove();
+															$.each(response,function(index,data){
+																$('#duallistbox_pengguna_dokumen').append('<option value="'+data['DN_ID']+'">'+data['DN_CODE']+' ('+data['DN_NAME']+')</option>');
+																$('#duallistbox_pengguna_dokumen option[value="<?=$this->session->userdata("session_bgm_edocument_departement_id");?>"]').attr('selected','selected');
+																$('#duallistbox_pengguna_dokumen option[value="7550"]').attr('selected','selected');
+																$('#duallistbox_pengguna_dokumen option[value="7924"]').attr('selected','selected');
+																$('#duallistbox_pengguna_dokumen option[value="7559"]').attr('selected','selected');
+															});
+															$('#duallistbox_pengguna_dokumen').bootstrapDualListbox('refresh', true);
+														}
 													});
-													$('#duallistbox_pengguna_dokumen').bootstrapDualListbox('refresh', true);
 												}
-											});
-										}
-										if (dist == 'Available') {
-											$.ajax({
-												url: '<?=base_url('C_contribution/GetDepatemenDistribution')?>',
-												type: 'POST', 
-												data: {id_key: id_key},
-												success: function(response){
-												console.log('y');
-												var add = $('#si_template_new_kategori').val();
-													//Parsing Json
-													response = $.parseJSON(response);
+												if (dist == 'Available') {
+													$.ajax({
+														url: '<?=base_url('C_contribution/GetDepatemenDistribution')?>',
+														type: 'POST', 
+														data: {id_key: id_key},
+														success: function(response){
+														console.log('y');
+														var add = $('#si_template_new_kategori').val();
+															//Parsing Json
+															response = $.parseJSON(response);
+															$('#si_owner_dept_pendistribusi').find('option').not(':first').remove();
+															// $('#si_owner_dept_pendistribusi').append('<option value="7550" selected>BUSINESS PROCESS IMPROVEMENT</option>');
+															$('#si_owner_dept_pendistribusi').append('<option value="<?= $this->session->userdata("session_bgm_edocument_divisi_id"); ?>"><?= $this->session->userdata("session_bgm_edocument_divisi_name"); ?></option>');
+															$('#si_owner_dept_pendistribusi').append('<option value="<?= $this->session->userdata("session_bgm_edocument_departement_id"); ?>"><?= $this->session->userdata("session_bgm_edocument_departement_name"); ?></option>');
+															if (add=='DTSEKI0004' || add=='DTSEKI0001') {
+																// $("#si_owner_dept_penyimpan option[value='7550']").remove();
+																$("#si_owner_dept_pendistribusi option[value='7550']").remove();
+															}else{
+																// $("#si_owner_dept_penyimpan").append('<option value="7550" selected>BPI</option>');
+																$("#si_owner_dept_pendistribusi").append('<option value="7550" selected>BPI</option>');
+															}
+															$.each(response,function(index,data){
+																$('#si_owner_dept_pendistribusi').append('<option value="'+data['DN_ID']+'">'+data['DN_NAME']+'</option>');
+															});
+														}
+													});
+												}else{
+													console.log('x');
+													var add = $('#si_template_new_kategori').val();
 													$('#si_owner_dept_pendistribusi').find('option').not(':first').remove();
-													// $('#si_owner_dept_pendistribusi').append('<option value="7550" selected>BUSINESS PROCESS IMPROVEMENT</option>');
 													$('#si_owner_dept_pendistribusi').append('<option value="<?= $this->session->userdata("session_bgm_edocument_divisi_id"); ?>"><?= $this->session->userdata("session_bgm_edocument_divisi_name"); ?></option>');
 													$('#si_owner_dept_pendistribusi').append('<option value="<?= $this->session->userdata("session_bgm_edocument_departement_id"); ?>"><?= $this->session->userdata("session_bgm_edocument_departement_name"); ?></option>');
 													if (add=='DTSEKI0004' || add=='DTSEKI0001') {
-														// $("#si_owner_dept_penyimpan option[value='7550']").remove();
+																// $("#si_owner_dept_penyimpan option[value='7550']").remove();
 														$("#si_owner_dept_pendistribusi option[value='7550']").remove();
 													}else{
 														// $("#si_owner_dept_penyimpan").append('<option value="7550" selected>BPI</option>');
 														$("#si_owner_dept_pendistribusi").append('<option value="7550" selected>BPI</option>');
 													}
-													$.each(response,function(index,data){
-														$('#si_owner_dept_pendistribusi').append('<option value="'+data['DN_ID']+'">'+data['DN_NAME']+'</option>');
-													});
 												}
-											});
-										}else{
-											console.log('x');
-											var add = $('#si_template_new_kategori').val();
-											$('#si_owner_dept_pendistribusi').find('option').not(':first').remove();
-											$('#si_owner_dept_pendistribusi').append('<option value="<?= $this->session->userdata("session_bgm_edocument_divisi_id"); ?>"><?= $this->session->userdata("session_bgm_edocument_divisi_name"); ?></option>');
-											$('#si_owner_dept_pendistribusi').append('<option value="<?= $this->session->userdata("session_bgm_edocument_departement_id"); ?>"><?= $this->session->userdata("session_bgm_edocument_departement_name"); ?></option>');
-											if (add=='DTSEKI0004' || add=='DTSEKI0001') {
-														// $("#si_owner_dept_penyimpan option[value='7550']").remove();
-												$("#si_owner_dept_pendistribusi option[value='7550']").remove();
-											}else{
-												// $("#si_owner_dept_penyimpan").append('<option value="7550" selected>BPI</option>');
-												$("#si_owner_dept_pendistribusi").append('<option value="7550" selected>BPI</option>');
 											}
-										}
+										}); // End get tipe
 									}
-								}); // End get tipe
+								});
 							}
 						});
 					}
@@ -1477,6 +1479,7 @@
 				url: '<?= base_url('C_contribution/nomor_doc'); ?>',
 				type: 'GET',
 				success: function(response){
+					console.log('b');
 					//Parsing Json
 					response = $.parseJSON(response);
 					nom = response[0].kode;
