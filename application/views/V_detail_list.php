@@ -78,7 +78,7 @@
 	<div class="col-sm-4">
 		<div class="form-group">
 			<label>Abstrak</label>
-			<textarea readonly name="" id="" style="resize: none;" cols="105" rows="6"><?php echo $key['DOC_ABSTRAK'] ?></textarea>
+			<textarea readonly name="" id="" style="resize: none;" cols="68" rows="6"><?php echo $key['DOC_ABSTRAK'] ?></textarea>
 		</div>
 		<div class="form-group">
 			<h5><b><?php echo $key['DOC_NOMOR'] ?></b></h5>

@@ -2112,52 +2112,52 @@ $count_notification = $count_notification + $count_news;
 				$("#duallistbox_akses_level").bootstrapDualListbox('refresh', true);
 			}
 		});
-		$("#duallistbox_akses_level").change(function(){
-			var JBLL_ID = $("#duallistbox_akses_level").val();
-			if(JBLL_ID!=null){
-				var JBLL_ID,JBLL_NAME,JBLL_INDEX;
-				//AJAX Request 1
-				$.ajax({
-					url: '<?=base_url('C_contribution/get_data_job_level_evo_ext')?>',
-					type: 'POST',
-					data: {id_key: JBLL_ID},
-					async: false,
-					success: function(response){
-						//Parsing Json
-						response = $.parseJSON(response);
-						//Add Options
-						$.each(response,function(index,data){
-							JBLL_ID = data['JBLL_ID'];
-							JBLL_NAME = data['JBLL_NAME'];
-							JBLL_INDEX = data['JBLL_INDEX'];
-						});
-					}
-				});
+		// $("#duallistbox_akses_level").change(function(){
+		// 	var JBLL_ID = $("#duallistbox_akses_level").val();
+		// 	if(JBLL_ID!=null){
+		// 		var JBLL_ID,JBLL_NAME,JBLL_INDEX;
+		// 		//AJAX Request 1
+		// 		$.ajax({
+		// 			url: '<?=base_url('C_contribution/get_data_job_level_evo_ext')?>',
+		// 			type: 'POST',
+		// 			data: {id_key: JBLL_ID},
+		// 			async: false,
+		// 			success: function(response){
+		// 				//Parsing Json
+		// 				response = $.parseJSON(response);
+		// 				//Add Options
+		// 				$.each(response,function(index,data){
+		// 					JBLL_ID = data['JBLL_ID'];
+		// 					JBLL_NAME = data['JBLL_NAME'];
+		// 					JBLL_INDEX = data['JBLL_INDEX'];
+		// 				});
+		// 			}
+		// 		});
 				
-				$("#duallistbox_akses_level").children().remove();
-				//AJAX Request 2
-				$.ajax({
-					url: '<?=base_url('C_contribution/get_data_job_level_evo')?>',
-					type: 'POST',
-					async: false,
-					success: function(response){
-						//Parsing Json
-						response = $.parseJSON(response);
-						//Add Options
-						$.each(response,function(index,data){
-							//LOOP
-							if(JBLL_INDEX>=(data['JBLL_INDEX'])){
-								$('#duallistbox_akses_level').append('<option value="'+data['JBLL_ID']+'" selected>'+data['JBLL_NAME']+'</option>');
-							}else{
-								$('#duallistbox_akses_level').append('<option value="'+data['JBLL_ID']+'">'+data['JBLL_NAME']+'</option>');
-							}
-							//LOOP
-						});
-					}
-				});
-				$("#duallistbox_akses_level").bootstrapDualListbox('refresh', true);
-			}
-		});
+		// 		$("#duallistbox_akses_level").children().remove();
+		// 		//AJAX Request 2
+		// 		$.ajax({
+		// 			url: '<?=base_url('C_contribution/get_data_job_level_evo')?>',
+		// 			type: 'POST',
+		// 			async: false,
+		// 			success: function(response){
+		// 				//Parsing Json
+		// 				response = $.parseJSON(response);
+		// 				//Add Options
+		// 				$.each(response,function(index,data){
+		// 					//LOOP
+		// 					if(JBLL_INDEX>=(data['JBLL_INDEX'])){
+		// 						$('#duallistbox_akses_level').append('<option value="'+data['JBLL_ID']+'" selected>'+data['JBLL_NAME']+'</option>');
+		// 					}else{
+		// 						$('#duallistbox_akses_level').append('<option value="'+data['JBLL_ID']+'">'+data['JBLL_NAME']+'</option>');
+		// 					}
+		// 					//LOOP
+		// 				});
+		// 			}
+		// 		});
+		// 		$("#duallistbox_akses_level").bootstrapDualListbox('refresh', true);
+		// 	}
+		// });
 		
 		$('#si_history_date').on('changeDate', function() {
 			var tgl_awal = $('#si_history_date').val();
@@ -2808,17 +2808,25 @@ $count_notification = $count_notification + $count_news;
 			// var container4 = demo4.bootstrapDualListbox('getContainer');
 			// container4.find('.btn').addClass('btn-white btn-info btn-bold').attr('disabled', true);
 			var demo1 = $('select[name="duallistbox_akses_level[]"]').bootstrapDualListbox({
-				// infoTextFiltered: '<span class="label label-purple label-lg">Filtered</span>'
-				showFilterInputs: false
+				nonSelectedListLabel: 'Dipilih',
+  			selectedListLabel: 'Diberikan',
+				infoText: false,
+				infoTextFiltered: false,
+				infoTextFiltered: '<span class="label label-purple label-lg">Filtered</span>',
+				moveOnSelect: false
 			});
 			var container1 = demo1.bootstrapDualListbox('getContainer');
-			// container1.find('.btn').addClass('btn-white btn-info btn-bold').html('All');
+			container1.find('.btn').addClass('btn-white btn-info btn-bold');
 			container1.find('.move').html('Move');
 			container1.find('.remove').html('Remove');
 			container1.find('.moveall').html('All');
 			container1.find('.removeall').html('All');
 
 			var demo2 = $('select[name="duallistbox_pengguna_dokumen[]"]').bootstrapDualListbox({
+				nonSelectedListLabel: 'Dipilih',
+  			selectedListLabel: 'Diberikan',
+				infoText: false,
+				infoTextFiltered: false,
 				infoTextFiltered: '<span class="label label-purple label-lg">Filtered</span>',
 				moveOnSelect: false
 			});
