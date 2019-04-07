@@ -488,7 +488,7 @@ class C_bookmarks extends CI_Controller {
 			echo '
 				<script>
 					alert("Pemutakhiran Data Berhasil");
-					window.location.href = "'.base_url('notification').'";
+					window.location.href = "'.base_url('C_menu').'";
 				</script>
 			';
 			exit();
@@ -496,7 +496,7 @@ class C_bookmarks extends CI_Controller {
 			echo '
 				<script>
 					alert("Pemutakhiran Data Gagal, Mohon Cek Kembali");
-					window.location.href = "'.base_url('notification').'";
+					window.location.href = "'.base_url('C_menu').'";
 				</script>
 			';
 			exit();

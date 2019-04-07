@@ -11,7 +11,7 @@ class M_contribution extends CI_Model {
 		$this->db->where('tb_departemen.DN_ID', $DN);
 		return $this->db->get()->result();
 	}
-	public function GET_PENDISTRIBUSI_DIVISI_FROM_DIVISI($DV)
+	public function GET_PENDISTRIBUSI_DIVISI_FROM_DIVISI($DN)
 	{
 		$this->db->select('*');
 		$this->db->from('tb_divisi');
