@@ -162,23 +162,32 @@
 		$session_dpt = $this->Model_detail->getDetail($this->session->userdata("session_bgm_edocument_departement_id"),$DOC_ID,$this->session->userdata("session_bgm_edocument_job_level_id")); 
 	?>
 	<?php if ($session_dpt): ?>
+		<?php 
+			if (in_array('24', $this->session->userdata("user_menu"))) {
+		?>
 		<!-- sharelink -->
 		<a data-toggle="modal" data-target="#modal-sharelink<?= $key['DOC_ID'];?>" data-popup="tooltip" data-placement="top" title="Sharelink" href="" style="color: black;"><i class="glyphicon glyphicon-link" style="font-size: 2.5rem;float: right;cursor: pointer;margin-left: .7rem"></i></a>
 		<!-- sharelink -->
-	<?php endif ?>
+			<?php } endif ?>
 	<?php if ($key['DOC_MAKER'] == $this->session->userdata("session_bgm_edocument_id")): ?>
-		<!-- comment -->
+	<?php 
+		if (in_array('9', $this->session->userdata("user_menu"))) {
+	?>
+	<!-- comment -->
 	<form id="form_comment[]" style="float: right; " name="form_comment[]" action="<?php echo base_url('C_news/comment'); ?>" method="post" enctype="multipart/form-data">
 		<input type="hidden" id="si_key[]" name="si_key[]" value="<?php echo $key['DOC_ID']; ?>" class="form-control" required/>
 		<button type="submit" class="btn btn-link" data-placement="top" title="comment-list"><i class="fa fa-comment" style="color:black;font-size: 2.5rem;float: right;margin-left:.7rem;cursor: pointer;margin: -.4rem -1.7rem 0 -.7rem;"></i> </button>
 	</form>
 	<!-- end comment -->
-	<?php endif; ?>
+	<?php  } endif; ?>
 	<?php if ($key['DOC_MAKER'] == $this->session->userdata("session_bgm_edocument_id") && ($key['DOC_STATUS'] == 'DIPUBLIKASI' || $key['DOC_STATUS'] == 'KADALUARSA' || $key['DOC_STATUS'] == 'DIARSIPKAN')): ?>
+	<?php 
+		if (in_array('23', $this->session->userdata("user_menu"))) {
+	?>
 	<!-- versioning -->
 	<a data-toggle="modal" data-target="#modal-versioning<?= $key['DOC_ID'];?>" data-popup="tooltip" data-placement="top" title="Pengkinian" href="" style="color: black;"><i class="glyphicon glyphicon-edit" style="font-size: 2.5rem;float: right;cursor: pointer;margin-left: .7rem"></i></a>
 	<!-- end versioning -->
-	<?php endif ?>
+		<?php } endif ?>
 	<?php if (
 		$this->session->userdata("session_bgm_edocument_id") == $key['DOC_MAKER'] &&
 
@@ -191,10 +200,13 @@
 		) 
 		&&
 		$key['DOC_STATUS'] == 'DIPUBLIKASI'): ?>
+	<?php 
+		if (in_array('25', $this->session->userdata("user_menu"))) {
+	?>
 	<!-- archive -->
 	<a href="" data-placement="top" title="Arsipkan" data-toggle="modal" data-target="#myModal" style="color: black;"><i class="fa fa-archive" style="font-size: 2.5rem;float: right;cursor: pointer;margin-left: .7rem"></i></a>
 	<!-- end archive -->
-	<?php endif; ?>
+	<?php } endif; ?>
 	
 	<!-- bookmark -->
 	<form id="form_bookmark[]" style="float: right; " name="form_bookmark" action="<?php echo base_url('C_bookmarks/bookmark'); ?>" method="post" enctype="multipart/form-data">
