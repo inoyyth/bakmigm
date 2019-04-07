@@ -562,7 +562,7 @@ $count_notification = $count_notification + $count_news;
 										</div>
 									
 										<!-- STEP 3 -->
-											<!-- <div class="form-group">
+											<div class="form-group">
 												<label for="duallistbox_akses_level" class="col-sm-3 control-label" style="text-align:left">Akses Level*</label>
 												<div class="col-sm-9">
 													<select disabled id="duallistbox_akses_level" multiple="multiple" size="5" name="duallistbox_akses_level[]" required />
@@ -616,7 +616,7 @@ $count_notification = $count_notification + $count_news;
 														?>
 													</select>
 												</div>
-											</div> -->
+											</div>
 										<div class="form-group">
 											<label for="duallistbox_pengguna_dokumen" class="col-sm-3 control-label" style="text-align:left">Pengguna Dokumen*</label>
 											<div class="col-sm-9">
