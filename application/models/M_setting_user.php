@@ -150,4 +150,36 @@ class M_setting_user extends CI_Model
 		return $query->result();
 	}
 
+	function getDataLevel() {
+		$query = $this->db->select('JBLL_ID,JBLL_NAME')
+				 ->from('tb_job_level')
+				 ->get()
+				 ->result_array();
+
+		return $query;
+	}
+
+	function getDataDepartemen() {
+		$query = $this->db->select('DN_ID,DN_CODE,DN_NAME')
+				 ->from('tb_departemen')
+				 ->get()
+				 ->result_array();
+
+		return $query;
+	}
+
+	function getEmployeeByLevelDep($param) {
+		$query = $this->db->select('NIP,FULL_NAME')
+				 ->from('tb_employee');
+		if (!empty($param['level'])) {
+			$query = $query->where('JOBLVL', $param['level']);
+		}
+		if (!empty($param['departemen'])) {
+			$query = $query->where('DEPCODE', $param['departemen']);
+		}
+		$query = $query->get()->result_array();
+
+		return $query;
+	}
+
 }

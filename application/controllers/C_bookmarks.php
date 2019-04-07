@@ -482,7 +482,8 @@ class C_bookmarks extends CI_Controller {
 					'UR_ID' => $DOC_MAKER
 				);
 			}
-			$insert = $this->db->insert_batch('tb_document_notification', $data_user_notif);
+			// $insert = $this->db->insert_batch('tb_document_notification', $data_user_notif);
+			$this->db->delete('tb_notification_history', array('DOC_ID' => $DOC_ID));
 
 			$this->Email_archived($DOC_ID);
 			echo '
