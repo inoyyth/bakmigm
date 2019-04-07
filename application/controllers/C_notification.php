@@ -2243,6 +2243,7 @@ class C_notification extends CI_Controller {
 		$si_userid								= $this->input->post('si_userid');
 		$date_now								= date('Y-m-d H:i:s');
 		$si_approve 							= $this->input->post('si_approve');
+		
 		//Check on
 		$dokumen_utama_on 						= $this->input->post('dokumen_utama_on');
 		if (isset($dokumen_utama_on)) {
@@ -2269,6 +2270,38 @@ class C_notification extends CI_Controller {
 		);
 		$is_ok = $this->M_library_database->DB_UPDATE_DATA_DOCUMENT_DETAIL_REFISI_EVO($si_code,$data_update_detail);
 		// Ambil Pendistribusi
+
+		// if ($si_owner_dept_pendistribusi=='7550') {
+		// 	$getPendistribusi = $this->db->get_where('tb_departemen', array('DN_ID'=>$si_owner_dept_pendistribusi));
+		// 	foreach ($getPendistribusi->result() as $data) {
+		// 		$dpt 		= $data->DN_ID;
+		// 		$dpt_code 	= $data->DN_CODE;
+		// 		$dpt_name 	= $data->DN_NAME;
+		// 	}
+		// 	$PENDISTRIBUSI_FINAL_CODE 	= $dpt_code;
+		// 	$PENDISTRIBUSI_FINAL_NAME 	= $dpt_name;
+		// 	$STATUS_FINAL				= $dpt;
+		// }else{
+		// 	$getPendistribusi = $this->M_contribution->GET_PENDISTRIBUSI_DIVISI_FROM_DEPARTEMEN($si_owner_dept_pendistribusi);
+		// 	$getPendistribusi_2 = $this->M_contribution->GET_PENDISTRIBUSI_DIVISI_FROM_DIVISI($si_owner_dept_pendistribusi);
+		// 	if (empty($getPendistribusi)) {
+		// 		foreach ($getPendistribusi as $data) {
+		// 			$dt 		= $data->DT_ID;
+		// 			$dt_name	= $data->DT_NAME;
+		// 		}
+		// 	}else{
+		// 		foreach ($getPendistribusi_2 as $data) {
+		// 			$dt 		= $data->DT_ID;
+		// 			$dt_name	= $data->DT_NAME;
+		// 		}
+		// 	}
+		// 	$PENDISTRIBUSI_FINAL_CODE 	= $dt;
+		// 	$PENDISTRIBUSI_FINAL_NAME 	= $dt_name;
+		// 	$STATUS_FINAL				= $dt;
+		// }
+		// $STATUS_FINAL = "Menunggu Persetujuan dari ".$PENDISTRIBUSI_FINAL_CODE." (".$PENDISTRIBUSI_FINAL_NAME.")";
+		// $Activity = $si_owner_dept_pendistribusi;
+
 		if ($si_approve == "DITOLAK 7550") {
 			$getPendistribusi = $this->db->get_where('tb_departemen', array('DN_ID' => '7550'))->result();
 			foreach ($getPendistribusi as $data) {
@@ -2281,11 +2314,33 @@ class C_notification extends CI_Controller {
 			$STATUS_FINAL				= "Menunggu Persetujuan dari ".$PENDISTRIBUSI_FINAL_CODE." (".$PENDISTRIBUSI_FINAL_NAME.")";
 			$Activity = $dpt;
 		}else{
-			$SESSION_DIVISI_CODE = $this->session->userdata("session_bgm_edocument_divisi_code");
-			$SESSION_DIVISI_NAME = $this->session->userdata("session_bgm_edocument_divisi_name");
-			$STATUS_FINAL		= "Menunggu Persetujuan dari ".$SESSION_DIVISI_CODE." (".$SESSION_DIVISI_NAME.")";
-			$Activity = $SESSION_DIVISI_ID;
+			if ($si_owner_dept_pendistribusi=='7550') {
+				$getPendistribusi = $this->db->get_where('tb_departemen', array('DN_ID'=>$si_owner_dept_pendistribusi));
+				foreach ($getPendistribusi->result() as $data) {
+					$dpt 		= $data->DN_ID;
+					$dpt_code 	= $data->DN_CODE;
+					$dpt_name 	= $data->DN_NAME;
+				}
+			} else {
+				$getPendistribusi = $this->M_contribution->GET_PENDISTRIBUSI_DIVISI_FROM_DEPARTEMEN($si_owner_dept_pendistribusi);
+				$getPendistribusi_2 = $this->M_contribution->GET_PENDISTRIBUSI_DIVISI_FROM_DIVISI($si_owner_dept_pendistribusi);
+
+				if (!empty($getPendistribusi)) {
+					$dt = $getPendistribusi[0]->DI_ID;
+					$dt_name = $getPendistribusi[0]->DI_NAME;
+					$dt_code = $getPendistribusi[0]->DI_CODE;
+				}else{
+					$dt = $getPendistribusi_2[0]->DI_ID;
+					$dt_name = $getPendistribusi_2[0]->DI_NAME;
+					$dt_code = $getPendistribusi_2[0]->DI_CODE;
+				}
+			}
+			$PENDISTRIBUSI_FINAL_CODE 	= $dt_code;
+			$PENDISTRIBUSI_FINAL_NAME 	= $dt_name;
+			$STATUS_FINAL = "Menunggu Persetujuan dari ".$PENDISTRIBUSI_FINAL_CODE." (".$PENDISTRIBUSI_FINAL_NAME.")";
+			$Activity = $dt;
 		}
+		
 		//Upload Doc
 		$config1['upload_path'] 				= './assets/original';
 		$config1['upload_url'] 					= './assets/original';
