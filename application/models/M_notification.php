@@ -152,6 +152,17 @@ class M_notification extends CI_Model {
 		$this->db->where('tb_employee.NIP', $NIP);
 		return $this->db->get()->result();
 	}
+
+	function getVersioning($doc_id) {
+		$query = $this->db->select('*')
+				 ->from('tb_document_versioning')
+				 ->where('DOC_ID', $doc_id)
+				 ->order_by('DOCV_DATE', 'DESC')
+				 ->get()
+				 ->result_array();
+
+		return $query;
+	}
 }
 
 /* End of file M_notification.php */
