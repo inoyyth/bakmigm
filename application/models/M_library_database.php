@@ -1605,4 +1605,25 @@ class M_library_database extends CI_Model {
 		
 		return $query;
 	}
+
+	function getUserMakerDepartemen($maker) {
+		$query = $this->db->select('DEPCODE')
+				 ->from('tb_employee')
+				 ->where('NIP', $maker)
+				 ->get()
+				 ->row_array();
+		
+		return $query;			  
+	}
+
+	function getUserMakerDivisi($maker) {
+		$query = $this->db->select('tb_divisi.DI_ID')
+				 ->from('tb_divisi')
+				 ->join('tb_employee', 'tb_employee.ORG_PARENT=tb_divisi.DI_CODE')
+				 ->where('tb_employee.NIP', $maker)
+				 ->get()
+				 ->row_array();
+		
+		return $query;			  
+	}
 }

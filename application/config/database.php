@@ -119,4 +119,4 @@ $db['sql_server'] = array(
 );
 
 //DEV ONLY
-$db['default']['db_debug'] = FALSE;
+// $db['default']['db_debug'] = FALSE;

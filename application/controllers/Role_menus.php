@@ -39,6 +39,7 @@ class Role_menus extends CI_Controller {
     }
 
     function store() {
+        $parent = $this->__getParent();
         $rs_id = $this->input->post('RS_ID');
         $key = $this->input->post('key');
         $value = $this->input->post('value');
@@ -49,9 +50,33 @@ class Role_menus extends CI_Controller {
             );
         }
 
-        $update_role = $this->menus->updateRoles($rs_id,$data);
+        $update_role = $this->menus->updateRoles($rs_id,array_merge($data,$parent));
         if ($update_role) {
             redirect("role-menus");
         }
+    }
+
+    private function __getParent() {
+        $key = $this->input->post('key');
+        $value = $this->input->post('value');
+
+        $active_menu = [];
+        foreach ($key as $k=>$v) {
+            if ($value[$k] == 1) {
+                $active_menu[] = $v;
+            }
+        }
+        
+        $parents = $this->menus->getSelectedParent($active_menu);
+        $parent = [];
+        if (count($parents) > 0) {
+            foreach($parents as $k=>$v) {
+                $parent[] = array(
+                    'menu' => ['key' => $v['parent'], 'value' => 1]
+                );
+            }
+        }
+
+        return $parent;
     }
 }

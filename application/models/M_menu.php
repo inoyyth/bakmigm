@@ -58,6 +58,18 @@ class M_menu extends CI_Model {
         
         return $query;
     }
+
+    function getSelectedParent($menus) {
+        $query = $this->db->distinct()
+                 ->select('parent')
+                 ->from('tb_menus')
+                 ->where_in('id', $menus)
+                 ->where('parent !=', 0)
+                 ->get()
+                 ->result_array();
+
+        return $query;
+    }
 }
 
 /* End of file M_menu.php */

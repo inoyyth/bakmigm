@@ -83,7 +83,8 @@ class C_obselete extends CI_Controller {
 							'UR_ID' => $DOC_MAKER
 						);
 					}
-					$insert = $this->db->insert_batch('tb_document_notification', $data_user_notif);
+					// $insert = $this->db->insert_batch('tb_document_notification', $data_user_notif);
+					$insert = $this->db->delete('tb_notification_history', array('DOC_ID' => $doc->DOC_ID));
 				}
 
 				// Archived
@@ -159,7 +160,8 @@ class C_obselete extends CI_Controller {
 							'UR_ID' => $DOC_MAKER
 						);
 					}
-					$insert = $this->db->insert_batch('tb_document_notification', $data_user_notif);
+					// $insert = $this->db->insert_batch('tb_document_notification', $data_user_notif);
+					$insert = $this->db->delete('tb_notification_history', array('DOC_ID' => $doc->DOC_ID));
 				}
 
 			}

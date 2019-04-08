@@ -72,15 +72,39 @@
 
 						<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
 							<div class="form-group">
+								<label for="full_name">Level</label>
+								<select name="combo-level" id="combo-level" class="form-control" required>
+									<option value="">Pilih</option>
+									<?php
+									$level = $this->M_setting_user->getDataLevel();
+									foreach ($level as $k=>$v):
+									?>
+									<option value="<?= $v['JBLL_ID']; ?>"><?= $v['JBLL_NAME']; ?></option>
+									<?php endforeach; ?>
+								</select>
+							</div>
+							<div class="form-group">
+								<label for="full_name">Departemen</label>
+								<select name="combo-departemen" id="combo-departemen" class="form-control" required>
+									<option value="">Pilih</option>
+									<?php
+									$departemen = $this->M_setting_user->getDataDepartemen();
+									foreach ($departemen as $k=>$v):
+									?>
+									<option value="<?= $v['DN_ID']; ?>"><?= $v['DN_NAME']; ?></option>
+									<?php endforeach; ?>
+								</select>
+							</div>
+							<div class="form-group">
 								<label for="full_name">Nama</label>
 								<select name="full_name" id="full_name" class="form-control" required>
-									<option value="">Pilih</option>
+									<!-- <option value="">Pilih</option>
 									<?php
 									$GET_DATA_EMPLOYEE = $this->M_setting_user->GET_DATA_EMPLOYEE();
 									foreach ($GET_DATA_EMPLOYEE as $employee):
 									?>
 									<option value="<?= $employee->NIP; ?>"><?= $employee->FULL_NAME; ?></option>
-									<?php endforeach; ?>
+									<?php endforeach; ?> -->
 								</select>
 							</div>
 							<div class="form-group">
@@ -266,15 +290,6 @@
 	
 	<script type="text/javascript">
 
-		$.ajax({
-			type: "GET",
-			url: "<?php echo base_url();?>C_notification/getNotification/<?php echo $this->session->userdata("session_bgm_edocument_id");?>/true/",             
-			dataType: "html",   //expect html to be returned                
-			success: function(response){
-				$(".nofication-count").text(JSON.parse(response).length);
-			}
-		});
-
 		function openModalEdit(id) {
 			$.ajax({
 					url: '<?=base_url('C_setting_user/get_detail_employee')?>',
@@ -396,7 +411,26 @@
 					}
 			});
 		}
+
+		function getEmployee(dept,level) {
+			$.ajax({
+				url: '<?=base_url('C_setting_user/get_data_employee_by_dept_level')?>',
+				type: 'POST', 
+				data: {level: level, dept: dept},
+				async: false,
+				success: function(res){
+					$('#full_name').find('option').remove().append('<option value="" selected>--SELECT--</option>');
+					$('#full_name').append('<option value="" selected>--SELECT--</option>');
+					response = $.parseJSON(res);
+					$.each(response, function( index, value ) {
+						$('#full_name').append('<option value="'+value.NIP+'">'+value.FULL_NAME+'</option>');
+					});
+				}
+			});
+		}
+
 		jQuery(function($) {
+
 			$('#full_name').change(function(){
 				var id_key = document.getElementById("full_name");
 				id_key = id_key.options[id_key.selectedIndex].value;
@@ -417,6 +451,12 @@
 						}
 					});
 				}
+			});
+
+			$("#combo-level,#combo-departemen").change(function(){
+				var departemen = $("#combo-departemen").val();
+				var level = $("#combo-level").val();
+				getEmployee(departemen,level);
 			});
 
 			$('#avatar').on('click', function(){

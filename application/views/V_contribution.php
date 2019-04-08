@@ -738,6 +738,7 @@
 				var optionsText = this.options[this.selectedIndex].value;
 				var kat = $('#si_template_new_kategori').val();
 				if (optionsText == 'EDOC' && kat != 'DTSEKI0004' && kat != 'DTSEKI0001') {
+					console.log('a');
 					$('#btn_terkait_doc').removeClass('hide');
 					$('#btn_terkait_doc_finish').addClass('hide');
 					$('#1').text('1 Of 6');
@@ -745,9 +746,18 @@
 					$('#3').text('3 Of 6');
 					$('#4').text('4 Of 6');
 					$('#5').text('5 Of 6');
-					$("#si_owner_dept_penyimpan").append('<option value="7550" selected>BPI</option>');
+					var optionExists = ($('#si_owner_dept_penyimpan option[value=7550]').length > 0);
+					if(!optionExists)
+					{
+						var optionExists = ($('#si_owner_dept_penyimpan option[value=7550]').length > 0);
+						if(!optionExists)
+						{
+							$('#si_owner_dept_penyimpan').append('<option value="7550" selected>BPI</option>');
+						}
+					}
 					return false;
 				}else if(optionsText == 'EDOC' && kat == 'DTSEKI0004' || kat == 'DTSEKI0001'){
+					console.log('b');
 					$('#1').text('1 Of 6');
 					$('#2').text('2 Of 6');
 					$('#3').text('3 Of 6');
@@ -758,6 +768,7 @@
 					$("#si_owner_dept_penyimpan option[value='7550']").remove();
 					return false;
 				}else{
+					console.log('c');
 					$('#1').text('1 Of 5');
 					$('#2').text('2 Of 5');
 					$('#3').text('3 Of 5');
@@ -778,8 +789,17 @@
 					$("#si_owner_dept_penyimpan option[value='7550']").remove();
 					$("#si_owner_dept_pendistribusi option[value='7550']").remove();
 				}else{
-					$("#si_owner_dept_penyimpan").append('<option value="7550" selected>BPI</option>');
-					$("#si_owner_dept_pendistribusi").append('<option value="7550" selected>BPI</option>');
+					var optionExists = ($('#si_owner_dept_penyimpan option[value=7550]').length > 0);
+					if(!optionExists)
+					{
+							$('#si_owner_dept_penyimpan').append('<option value="7550" selected>BPI</option>');
+					}
+
+					var optionExistsDeptDistribusi = ($('#si_owner_dept_pendistribusi option[value=7550]').length > 0);
+					if(!optionExistsDeptDistribusi)
+					{
+							$('#si_owner_dept_pendistribusi').append('<option value="7550" selected>BPI</option>');
+					}
 				}
 			});
 			$('#si_template_new_jenis').on('change', function() {
@@ -1186,7 +1206,7 @@
 							$('#si_header_distribution').val(data['DOC_DISTRIBUSI']);
 							$('#si_header_confidential').val(data['DOC_KERAHASIAAN']);
 							si_key = data['DTSETE_ID'];
-
+							console.log('e');
 							if($('#si_header_distribution').val() == 'EDOC') {
 								$('#btn_terkait_doc').removeClass('hide');
 								$('#btn_terkait_doc_finish').addClass('hide');
@@ -1196,7 +1216,11 @@
 								$('#4').text('4 Of 6');
 								$('#5').text('5 Of 6');
 								if ($('#si_template_new_kategori').val() != 'DTSEKI0001' || $('#si_template_new_kategori').val() != 'DTSEKI0004') {
-									$("#si_owner_dept_penyimpan").append('<option value="7550" selected>BPI</option>');
+									var optionExists = ($('#si_owner_dept_penyimpan option[value=7550]').length > 0);
+									if(!optionExists)
+									{
+											$('#si_owner_dept_penyimpan').append('<option value="7550" selected>BPI</option>');
+									}
 								}
 								return false;
 							}else{
@@ -1383,7 +1407,12 @@
 														$("#si_owner_dept_pendistribusi option[value='7550']").remove();
 													}else{
 														// $("#si_owner_dept_penyimpan").append('<option value="7550" selected>BPI</option>');
-														$("#si_owner_dept_pendistribusi").append('<option value="7550" selected>BPI</option>');
+														console.log('f');
+														var optionExists = ($('#si_owner_dept_pendistribusi option[value=7550]').length > 0);
+														if(!optionExists)
+														{
+																$('#si_owner_dept_pendistribusi').append('<option value="7550" selected>BPI</option>');
+														}
 													}
 													$.each(response,function(index,data){
 														$('#si_owner_dept_pendistribusi').append('<option value="'+data['DN_ID']+'">'+data['DN_NAME']+'</option>');
@@ -1400,8 +1429,12 @@
 														// $("#si_owner_dept_penyimpan option[value='7550']").remove();
 												$("#si_owner_dept_pendistribusi option[value='7550']").remove();
 											}else{
-												// $("#si_owner_dept_penyimpan").append('<option value="7550" selected>BPI</option>');
-												$("#si_owner_dept_pendistribusi").append('<option value="7550" selected>BPI</option>');
+												var optionExists = ($('#si_owner_dept_pendistribusi option[value=7550]').length > 0);
+												if(!optionExists)
+												{
+														$('#si_owner_dept_pendistribusi').append('<option value="7550" selected>BPI</option>');
+												}
+											
 											}
 										}
 									}
@@ -1637,8 +1670,11 @@
 														// $("#si_owner_dept_penyimpan option[value='7550']").remove();
 														$("#si_owner_dept_pendistribusi option[value='7550']").remove();
 													}else{
-														// $("#si_owner_dept_penyimpan").append('<option value="7550" selected>BPI</option>');
-														$("#si_owner_dept_pendistribusi").append('<option value="7550" selected>BPI</option>');
+														var optionExists = ($('#si_owner_dept_pendistribusi option[value=7550]').length > 0);
+														if(!optionExists)
+														{
+																$('#si_owner_dept_pendistribusi').append('<option value="7550" selected>BPI</option>');
+														}
 													}
 												$.each(response,function(index,data){
 													$('#si_owner_dept_pendistribusi').append('<option value="'+data['DN_ID']+'">'+data['DN_NAME']+'</option>');
@@ -1654,8 +1690,11 @@
 											// $("#si_owner_dept_penyimpan option[value='7550']").remove();
 											$("#si_owner_dept_pendistribusi option[value='7550']").remove();
 										}else{
-											// $("#si_owner_dept_penyimpan").append('<option value="7550" selected>BPI</option>');
-											$("#si_owner_dept_pendistribusi").append('<option value="7550" selected>BPI</option>');
+											var optionExists = ($('#si_owner_dept_pendistribusi option[value=7550]').length > 0);
+											if(!optionExists)
+											{
+													$('#si_owner_dept_pendistribusi').append('<option value="7550" selected>BPI</option>');
+											}
 										}
 									}
 								}

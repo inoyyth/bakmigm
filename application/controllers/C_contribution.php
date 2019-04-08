@@ -788,6 +788,7 @@ class C_contribution extends CI_Controller {
 				'PENDISTRIBUSI' => $si_owner_dept_pendistribusi
 			);
 			$insert = $this->db->insert('tb_document_notification', $dt_notification);
+			$insert = $this->db->delete('tb_notification_history', array('DOC_ID' => $si_code));
 			$this->Email_notification($si_code);
 
 			$this->session->set_flashdata('pesan','Berhasil!');

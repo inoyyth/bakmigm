@@ -1636,17 +1636,25 @@
 			});
 
 			var demo1 = $('select[name="duallistbox_akses_level[]"]').bootstrapDualListbox({
+				nonSelectedListLabel: 'Dipilih',
+  			selectedListLabel: 'Diberikan',
+				infoText: false,
+				infoTextFiltered: false,
 				infoTextFiltered: '<span class="label label-purple label-lg">Filtered</span>',
 				moveOnSelect: false
 			});
 			var container1 = demo1.bootstrapDualListbox('getContainer');
-			container1.find('.btn').addClass('btn-white btn-info btn-bold');
-			container1.find('.move').html('Move');
-			container1.find('.remove').html('Remove');
-			container1.find('.moveall').html('All');
-			container1.find('.removeall').html('All');
+				container1.find('.btn').addClass('btn-white btn-info btn-bold');
+				container1.find('.move').html('Move');
+				container1.find('.remove').html('Remove');
+				container1.find('.moveall').html('All');
+				container1.find('.removeall').html('All');
 
 			var demo2 = $('select[name="duallistbox_pengguna_dokumen[]"]').bootstrapDualListbox({
+				nonSelectedListLabel: 'Dipilih',
+  			selectedListLabel: 'Diberikan',
+				infoText: false,
+				infoTextFiltered: false,
 				infoTextFiltered: '<span class="label label-purple label-lg">Filtered</span>',
 				moveOnSelect: false
 			});

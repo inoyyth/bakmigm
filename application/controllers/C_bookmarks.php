@@ -482,13 +482,14 @@ class C_bookmarks extends CI_Controller {
 					'UR_ID' => $DOC_MAKER
 				);
 			}
-			$insert = $this->db->insert_batch('tb_document_notification', $data_user_notif);
+			// $insert = $this->db->insert_batch('tb_document_notification', $data_user_notif);
+			$this->db->delete('tb_notification_history', array('DOC_ID' => $DOC_ID));
 
 			$this->Email_archived($DOC_ID);
 			echo '
 				<script>
 					alert("Pemutakhiran Data Berhasil");
-					window.location.href = "'.base_url('notification').'";
+					window.location.href = "'.base_url('C_menu').'";
 				</script>
 			';
 			exit();
@@ -496,7 +497,7 @@ class C_bookmarks extends CI_Controller {
 			echo '
 				<script>
 					alert("Pemutakhiran Data Gagal, Mohon Cek Kembali");
-					window.location.href = "'.base_url('notification').'";
+					window.location.href = "'.base_url('C_menu').'";
 				</script>
 			';
 			exit();

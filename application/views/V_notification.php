@@ -212,7 +212,11 @@ if(empty($get_data_count)||$get_data_count==""){
 				</div>
 			</div>
 		</div>
-	<?php else: ?>
+	<?php else:
+		$user_maker_department = $this->M_library_database->getUserMakerDepartemen($data_row_ext->DOC_MAKER);
+		$user_maker_division = $this->M_library_database->getUserMakerDivisi($data_row_ext->DOC_MAKER);
+		if (($user_maker_department['DEPCODE'] == $this->session->userdata("session_bgm_edocument_departement_id") || $user_maker_division['DI_ID'] == $this->session->userdata("session_bgm_edocument_divisi_id")) || ($data_row_ext->DOC_STATUS == 'DITOLAK 7550' && $user_maker_department['DEPCODE'] == $this->session->userdata("session_bgm_edocument_departement_id") || $user_maker_division['DI_ID'] == $this->session->userdata("session_bgm_edocument_divisi_id"))) {
+	?>
 		<div class="alert alert-info fade in">
 			<form action="<?= base_url('C_notification/delete_notification'); ?>" method="POST">
 				<input type="hidden" name="doc_id" value="<?= $data_row_ext->DOC_ID; ?>">
@@ -228,7 +232,7 @@ if(empty($get_data_count)||$get_data_count==""){
 				</div>
 			</div>
 		</div>
-	<?php endif; // END if SESSION ?>
+		<?php  } endif; // END if SESSION ?>
 	<?php
 		endforeach; // END data_row_ext
 	endif; // END if is_continue
