@@ -31,6 +31,11 @@ if(empty($get_data_count)||$get_data_count==""){
 
 			$sebulan2 = new DateTime($sebulan);
 			$arcived = $sebulan2->diff($tgl_efektif)->format("%a");
+			$versioning_document = $this->M_notification->getVersioning($data_row_ext->DOC_ID);
+			$versioning_date = NULL;
+			if (count($versioning_document) > 0) {
+				$versioning_date = $versioning_document[0]['DOCV_DATE'];
+			}
 	?>
 	<!-- Menunggu Persetujuan Anda -->
 	<?php 
@@ -41,7 +46,13 @@ if(empty($get_data_count)||$get_data_count==""){
 				<div class="col-xs-10">
 					Dokumen <?php echo $data_row_ext->DOC_NAMA; ?>, perlu persetujuan Anda!
 					<br/>
-					<?php echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));?> WIB
+					<?php 
+					if ($versioning_date) {
+						echo date('d/M/Y G:i', strtotime($versioning_date));
+					} else {
+						echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));
+					}
+					?> WIB
 				</div>
 				<div class="col-xs-2" style="text-align:right;">
 					<a data-toggle="modal" data-target="#modal-preview<?=$data_row_ext->DOC_ID;?>" class="ace-icon fa fa-eye btn btn-sm btn-warning" data-popup="tooltip" data-placement="top" title="Preview"></a>
@@ -57,7 +68,13 @@ if(empty($get_data_count)||$get_data_count==""){
 				<div class="col-xs-10">
 					Dokumen <?php echo $data_row_ext->DOC_NAMA; ?>, perlu persetujuan Anda!
 					<br/>
-					<?php echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));?> WIB
+					<?php 
+					if ($versioning_date) {
+						echo date('d/M/Y G:i', strtotime($versioning_date));
+					} else {
+						echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));
+					}
+					?> WIB
 				</div>
 				<div class="col-xs-2" style="text-align:right;">
 					<a data-toggle="modal" data-target="#modal-preview<?=$data_row_ext->DOC_ID;?>" class="ace-icon fa fa-eye btn btn-sm btn-warning" data-popup="tooltip" data-placement="top" title="Preview"></a>
@@ -72,7 +89,13 @@ if(empty($get_data_count)||$get_data_count==""){
 				<div class="col-xs-10">
 					Dokumen <?php echo $data_row_ext->DOC_NAMA; ?>, perlu persetujuan Anda!
 					<br/>
-					<?php echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));?> WIB
+					<?php 
+						if ($versioning_date) {
+							echo date('d/M/Y G:i', strtotime($versioning_date));
+						} else {
+							echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));
+						}
+					?> WIB
 				</div>
 				<div class="col-xs-2" style="text-align:right;">
 					<a data-toggle="modal" data-target="#modal-preview<?=$data_row_ext->DOC_ID;?>" class="ace-icon fa fa-eye btn btn-sm btn-warning" data-popup="tooltip" data-placement="top" title="Preview"></a>
@@ -87,7 +110,13 @@ if(empty($get_data_count)||$get_data_count==""){
 				<div class="col-xs-10">
 					Dokumen <?php echo $data_row_ext->DOC_NAMA; ?>, <?php echo $data_row_ext->DOC_STATUS_ACTIVITY; ?>
 					<br/>
-					<?php echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));?> WIB
+					<?php 
+						if ($versioning_date) {
+							echo date('d/M/Y G:i', strtotime($versioning_date));
+						} else {
+							echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));
+						}
+					?> WIB
 				</div>
 				<div class="col-xs-2" style="text-align:right;">
 					<a data-toggle="modal" data-target="#modal-preview<?=$data_row_ext->DOC_ID;?>" class="ace-icon fa fa-eye btn btn-sm btn-warning" data-popup="tooltip" data-placement="top" title="Preview"></a>
@@ -138,7 +167,13 @@ if(empty($get_data_count)||$get_data_count==""){
 				<div class="col-xs-10">
 					Dokumen <?php echo $data_row_ext->DOC_NAMA; ?>, <?php echo $data_row_ext->DOC_STATUS_ACTIVITY; ?>
 					<br/>
-					<?php echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));?> WIB
+					<?php 
+						if ($versioning_date) {
+							echo date('d/M/Y G:i', strtotime($versioning_date));
+						} else {
+							echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));
+						}
+					?> WIB
 				</div>
 			</div>
 		</div>
@@ -208,7 +243,13 @@ if(empty($get_data_count)||$get_data_count==""){
 				<div class="col-xs-10">
 					Dokumen <?php echo $data_row_ext->DOC_NAMA; ?>, <?php echo $data_row_ext->DOC_STATUS_ACTIVITY; ?>
 					<br/>
-					<?php echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));?> WIB
+					<?php 
+						if ($versioning_date) {
+							echo date('d/M/Y G:i', strtotime($versioning_date));
+						} else {
+							echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));
+						}
+					?> WIB
 				</div>
 			</div>
 		</div>
@@ -228,7 +269,13 @@ if(empty($get_data_count)||$get_data_count==""){
 				<div class="col-xs-10">
 					Dokumen <?php echo $data_row_ext->DOC_NAMA; ?>, <?php echo $data_row_ext->DOC_STATUS_ACTIVITY; ?>
 					<br/>
-					<?php echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));?> WIB
+					<?php 
+						if ($versioning_date) {
+							echo date('d/M/Y G:i', strtotime($versioning_date));
+						} else {
+							echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));
+						}
+					?> WIB
 				</div>
 			</div>
 		</div>

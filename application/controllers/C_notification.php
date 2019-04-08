@@ -1866,103 +1866,16 @@ class C_notification extends CI_Controller {
 		);
 		$is_ok = $this->M_library_database->DB_INPUT_DATA_VERSIONING($data_versi);
 		if($is_ok){
-			$this->db->delete('tb_document_notification', array('DOC_ID' => $si_code));
-			// $data_user_notif = array();
-			// if ($DOC_LEVEL == "DEPARTEMEN") {
-			// 	if ($si_owner_dept_pendistribusi == '7550') {
-			// 		$get_user_bpi = $this->M_contribution->GET_USER_NOTIF_PENDISTRIBUSI($si_owner_dept_pendistribusi);
-			// 		foreach ($get_user_bpi as $data => $v) {
-			// 			$data_user_notif[] = array(
-			// 				'DOC_ID' => $si_code,
-			// 				'UR_ID' => $v->NIP,
-			// 			);
-			// 		}
-			// 		$get_user_notif_atasan = $this->M_contribution->GET_USER_NOTIF_ATASAN($SESSION_DIVISI_ID);
-			// 		foreach ($get_user_notif_atasan as $a => $b) {
-			// 			$data_user_notif[] = array(
-			// 				'DOC_ID' => $si_code,
-			// 				'UR_ID' => $b->NIP,
-			// 			);
-			// 		}
-			// 		$get_user_notif_pencipta = $this->M_contribution->GET_USER_NOTIF_PENCIPTA($SESSION_ID);
-			// 		foreach ($get_user_notif_pencipta as $p => $e) {
-			// 			$data_user_notif[] = array(
-			// 				'DOC_ID' => $si_code,
-			// 				'UR_ID' => $e->NIP,
-			// 			);
-			// 		}
-			// 	}else{
-			// 		$get_user_notif_atasan = $this->M_contribution->GET_USER_NOTIF_ATASAN($SESSION_DIVISI_ID);
-			// 		foreach ($get_user_notif_atasan as $a => $b) {
-			// 			$data_user_notif[] = array(
-			// 				'DOC_ID' => $si_code,
-			// 				'UR_ID' => $b->NIP,
-			// 			);
-			// 		}
-			// 		$get_user_notif_pencipta = $this->M_contribution->GET_USER_NOTIF_PENCIPTA($SESSION_ID);
-			// 		foreach ($get_user_notif_pencipta as $p => $e) {
-			// 			$data_user_notif[] = array(
-			// 				'DOC_ID' => $si_code,
-			// 				'UR_ID' => $e->NIP,
-			// 			);
-			// 		}
-			// 	}
-			// }elseif ($DOC_LEVEL == "DIVISI") {
-			// 	if ($si_owner_dept_pendistribusi == '7550') {
-			// 		$get_user_bpi = $this->M_contribution->GET_USER_NOTIF_PENDISTRIBUSI($si_owner_dept_pendistribusi);
-			// 		foreach ($get_user_bpi as $data => $v) {
-			// 			$data_user_notif[] = array(
-			// 				'DOC_ID' => $si_code,
-			// 				'UR_ID' => $v->NIP,
-			// 			);
-			// 		}
-			// 		$get_user_notif_atasan = $this->M_contribution->GET_USER_NOTIF_ATASAN($SESSION_DIVISI_ID);
-			// 		foreach ($get_user_notif_atasan as $a => $b) {
-			// 			$data_user_notif[] = array(
-			// 				'DOC_ID' => $si_code,
-			// 				'UR_ID' => $b->NIP,
-			// 			);
-			// 		}
-			// 		$get_user_notif_atasan_nya_atasan = $this->M_contribution->GET_USER_NOTIF_ATASANNYA_ATASAN($SESSION_DIREKTORAT_ID);
-			// 		foreach ($get_user_notif_atasan_nya_atasan as $a => $b) {
-			// 			$data_user_notif[] = array(
-			// 				'DOC_ID' => $si_code,
-			// 				'UR_ID' => $b->NIP,
-			// 			);
-			// 		}
-			// 	}else{
-			// 		$get_user_notif_atasan = $this->M_contribution->GET_USER_NOTIF_ATASAN($SESSION_DIVISI_ID);
-			// 		foreach ($get_user_notif_atasan as $a => $b) {
-			// 			$data_user_notif[] = array(
-			// 				'DOC_ID' => $si_code,
-			// 				'UR_ID' => $b->NIP,
-			// 			);
-			// 		}
-			// 		$get_user_notif_atasan_nya_atasan = $this->M_contribution->GET_USER_NOTIF_ATASANNYA_ATASAN($SESSION_DIREKTORAT_ID);
-			// 		foreach ($get_user_notif_atasan_nya_atasan as $a => $b) {
-			// 			$data_user_notif[] = array(
-			// 				'DOC_ID' => $si_code,
-			// 				'UR_ID' => $b->NIP,
-			// 			);
-			// 		}
-			// 	}
-			// }else{
-			// 	$get_user_notif_atasan_nya_atasan = $this->M_contribution->GET_USER_NOTIF_ATASANNYA_ATASAN($SESSION_DIREKTORAT_ID);
-			// 	foreach ($get_user_notif_atasan_nya_atasan as $a => $b) {
-			// 		$data_user_notif[] = array(
-			// 			'DOC_ID' => $si_code,
-			// 			'UR_ID' => $b->NIP,
-			// 		);
-			// 	}
-			// }
-			// $dt_notification = array(
-			// 	'DOC_ID' => $si_code,
-			// 	'PENGGUNA' => $duallistbox_pengguna_dokumen_list,
-			// 	'PEMILIK' => $si_owner_pemilik_proses,
-			// 	'PENDISTRIBUSI' => $si_owner_dept_pendistribusi
-			// );
+			$dt_notification = array(
+				'DOC_ID' => $si_code,
+				'PENGGUNA' => $duallistbox_pengguna_dokumen_list,
+				'PEMILIK' => $si_owner_pemilik_proses,
+				'PENDISTRIBUSI' => $si_owner_dept_pendistribusi
+			);
+			$insert = $this->db->delete('tb_document_notification', array('DOC_ID' => $si_code));
+			$insert = $this->db->insert('tb_document_notification', $dt_notification);
 			$insert = $this->db->delete('tb_notification_history', array('DOC_ID' => $si_code));
-			// $insert = $this->db->insert_batch('tb_document_notification', $data_user_notif);
+
 			$this->session->set_flashdata('pesan','Berhasil!');
 			redirect(base_url('notification'),'refresh');
 		}else{
@@ -2001,6 +1914,7 @@ class C_notification extends CI_Controller {
 		$si_history_keyword						= $this->input->post('si_history_keyword');
 		$si_history_abstract					= $this->input->post('si_history_abstract');
 		$duallistbox_dokumen_terkait 			= $this->input->post('duallistbox_dokumen_terkait');
+		$si_owner_pemilik_proses				= $this->input->post('si_owner_pemilik_proses');
 		
 		if (!empty($duallistbox_dokumen_terkait)) {
 			$duallistbox_dokumen_terkait_length = count($duallistbox_dokumen_terkait);
@@ -2019,52 +1933,6 @@ class C_notification extends CI_Controller {
 		$versi 									= $this->input->post('si_history_version');
 		$catatan_versi 							= $this->input->post('catatan_versi');
 		$si_owner_dept_pendistribusi 			= $this->input->post('si_owner_dept_pendistribusi');
-
-		// Ambil Pendistribusi
-		// Ambil Pendistribusi
-		// if ($si_owner_dept_pendistribusi==$SESSION_DEPARTEMENT_ID) {
-		// 	// $getPendistribusi = $this->M_library_database->getDEPARTEMEN($si_owner_dept_pendistribusi);
-		// 	// foreach ($getPendistribusi as $data) {
-		// 	// 	$dpt 		= $data->DN_ID;
-		// 	// 	$dpt_code 	= $data->DN_CODE;
-		// 	// 	$dpt_name 	= $data->DN_NAME;
-		// 	// }
-		// 	// $PENDISTRIBUSI_FINAL_CODE 	= $dpt_code;
-		// 	// $PENDISTRIBUSI_FINAL_NAME 	= $dpt_name;
-		// 	// $STATUS_FINAL				= "MENUNGGU PENDISTRIBUSI";
-		// 	$getPendistribusi = $this->M_library_database->GET_DEPT_DIVISI($si_owner_dept_pendistribusi);
-		// 	foreach ($getPendistribusi as $data) {
-		// 		$dv 		= $data->DI_ID;
-		// 		$dv_code	= $data->DI_CODE;
-		// 		$dv_name	= $data->DI_NAME;
-		// 	}
-		// 	$PENDISTRIBUSI_FINAL_CODE 	= $dv_code;
-		// 	$PENDISTRIBUSI_FINAL_NAME 	= $dv_name;
-		// 	// $STATUS_FINAL				= "MENUNGGU ATASAN PENCIPTA";
-		// 	$STATUS_FINAL = $si_owner_dept_pendistribusi;
-		// }elseif ($si_owner_dept_pendistribusi==$SESSION_DIVISI_ID) {
-		// 	$getPendistribusi = $this->M_library_database->getDIVISI($si_owner_dept_pendistribusi);
-		// 	foreach ($getPendistribusi as $data) {
-		// 		$dv 		= $data->DI_ID;
-		// 		$dv_code	= $data->DI_CODE;
-		// 		$dv_name	= $data->DI_NAME;
-		// 	}
-		// 	$PENDISTRIBUSI_FINAL_CODE 	= $dv_code;
-		// 	$PENDISTRIBUSI_FINAL_NAME 	= $dv_name;
-		// 	// $STATUS_FINAL				= "MENUNGGU ATASAN PENCIPTA";
-		// 	$STATUS_FINAL = $si_owner_dept_pendistribusi;
-		// }else{
-		// 	$getPendistribusi = $this->M_library_database->getDEPARTEMEN($si_owner_dept_pendistribusi);
-		// 	foreach ($getPendistribusi as $data) {
-		// 		$dpt 		= $data->DN_ID;
-		// 		$dpt_code 	= $data->DN_CODE;
-		// 		$dpt_name 	= $data->DN_NAME;
-		// 	}
-		// 	$PENDISTRIBUSI_FINAL_CODE 	= $dpt_code;
-		// 	$PENDISTRIBUSI_FINAL_NAME 	= $dpt_name;
-		// 	// $STATUS_FINAL				= "MENUNGGU PENDISTRIBUSI";
-		// 	$STATUS_FINAL = $si_owner_dept_pendistribusi;
-		// }
 
 		if ($si_owner_dept_pendistribusi=='7550') {
 			$getPendistribusi = $this->db->get_where('tb_departemen', array('DN_ID'=>$si_owner_dept_pendistribusi));
@@ -2116,97 +1984,16 @@ class C_notification extends CI_Controller {
 		);
 		$is_ok = $this->M_library_database->DB_INPUT_DATA_VERSIONING($data_versi);
 		if($is_ok){
-			// $this->db->delete('tb_document_notification', array('DOC_ID' => $si_code));
-			// $data_user_notif = array();
-			// if ($DOC_LEVEL == "DEPARTEMEN") {
-			// 	if ($si_owner_dept_pendistribusi == '7550') {
-			// 		$get_user_bpi = $this->M_contribution->GET_USER_NOTIF_PENDISTRIBUSI($si_owner_dept_pendistribusi);
-			// 		foreach ($get_user_bpi as $data => $v) {
-			// 			$data_user_notif[] = array(
-			// 				'DOC_ID' => $si_code,
-			// 				'UR_ID' => $v->NIP,
-			// 			);
-			// 		}
-			// 		$get_user_notif_atasan = $this->M_contribution->GET_USER_NOTIF_ATASAN($SESSION_DIVISI_ID);
-			// 		foreach ($get_user_notif_atasan as $a => $b) {
-			// 			$data_user_notif[] = array(
-			// 				'DOC_ID' => $si_code,
-			// 				'UR_ID' => $b->NIP,
-			// 			);
-			// 		}
-			// 		$get_user_notif_pencipta = $this->M_contribution->GET_USER_NOTIF_PENCIPTA($SESSION_ID);
-			// 		foreach ($get_user_notif_pencipta as $p => $e) {
-			// 			$data_user_notif[] = array(
-			// 				'DOC_ID' => $si_code,
-			// 				'UR_ID' => $e->NIP,
-			// 			);
-			// 		}
-			// 	}else{
-			// 		$get_user_notif_atasan = $this->M_contribution->GET_USER_NOTIF_ATASAN($SESSION_DIVISI_ID);
-			// 		foreach ($get_user_notif_atasan as $a => $b) {
-			// 			$data_user_notif[] = array(
-			// 				'DOC_ID' => $si_code,
-			// 				'UR_ID' => $b->NIP,
-			// 			);
-			// 		}
-			// 		$get_user_notif_pencipta = $this->M_contribution->GET_USER_NOTIF_PENCIPTA($SESSION_ID);
-			// 		foreach ($get_user_notif_pencipta as $p => $e) {
-			// 			$data_user_notif[] = array(
-			// 				'DOC_ID' => $si_code,
-			// 				'UR_ID' => $e->NIP,
-			// 			);
-			// 		}
-			// 	}
-			// }elseif ($DOC_LEVEL == "DIVISI") {
-			// 	if ($si_owner_dept_pendistribusi == '7550') {
-			// 		$get_user_bpi = $this->M_contribution->GET_USER_NOTIF_PENDISTRIBUSI($si_owner_dept_pendistribusi);
-			// 		foreach ($get_user_bpi as $data => $v) {
-			// 			$data_user_notif[] = array(
-			// 				'DOC_ID' => $si_code,
-			// 				'UR_ID' => $v->NIP,
-			// 			);
-			// 		}
-			// 		$get_user_notif_atasan = $this->M_contribution->GET_USER_NOTIF_ATASAN($SESSION_DIVISI_ID);
-			// 		foreach ($get_user_notif_atasan as $a => $b) {
-			// 			$data_user_notif[] = array(
-			// 				'DOC_ID' => $si_code,
-			// 				'UR_ID' => $b->NIP,
-			// 			);
-			// 		}
-			// 		$get_user_notif_atasan_nya_atasan = $this->M_contribution->GET_USER_NOTIF_ATASANNYA_ATASAN($SESSION_DIREKTORAT_ID);
-			// 		foreach ($get_user_notif_atasan_nya_atasan as $a => $b) {
-			// 			$data_user_notif[] = array(
-			// 				'DOC_ID' => $si_code,
-			// 				'UR_ID' => $b->NIP,
-			// 			);
-			// 		}
-			// 	}else{
-			// 		$get_user_notif_atasan = $this->M_contribution->GET_USER_NOTIF_ATASAN($SESSION_DIVISI_ID);
-			// 		foreach ($get_user_notif_atasan as $a => $b) {
-			// 			$data_user_notif[] = array(
-			// 				'DOC_ID' => $si_code,
-			// 				'UR_ID' => $b->NIP,
-			// 			);
-			// 		}
-			// 		$get_user_notif_atasan_nya_atasan = $this->M_contribution->GET_USER_NOTIF_ATASANNYA_ATASAN($SESSION_DIREKTORAT_ID);
-			// 		foreach ($get_user_notif_atasan_nya_atasan as $a => $b) {
-			// 			$data_user_notif[] = array(
-			// 				'DOC_ID' => $si_code,
-			// 				'UR_ID' => $b->NIP,
-			// 			);
-			// 		}
-			// 	}
-			// }else{
-			// 	$get_user_notif_atasan_nya_atasan = $this->M_contribution->GET_USER_NOTIF_ATASANNYA_ATASAN($SESSION_DIREKTORAT_ID);
-			// 	foreach ($get_user_notif_atasan_nya_atasan as $a => $b) {
-			// 		$data_user_notif[] = array(
-			// 			'DOC_ID' => $si_code,
-			// 			'UR_ID' => $b->NIP,
-			// 		);
-			// 	}
-			// }
-			// $insert = $this->db->insert_batch('tb_document_notification', $data_user_notif);
+			$dt_notification = array(
+				'DOC_ID' => $si_code,
+				'PENGGUNA' => $duallistbox_pengguna_dokumen_list,
+				'PEMILIK' => $si_owner_pemilik_proses,
+				'PENDISTRIBUSI' => $si_owner_dept_pendistribusi
+			);
+			$insert = $this->db->delete('tb_document_notification', array('DOC_ID' => $si_code));
+			$insert = $this->db->insert('tb_document_notification', $dt_notification);
 			$insert = $this->db->delete('tb_notification_history', array('DOC_ID' => $si_code));
+
 			$this->session->set_flashdata('pesan','Berhasil!');
 			redirect(base_url('notification'),'refresh');
 		}else{
@@ -2319,78 +2106,32 @@ class C_notification extends CI_Controller {
 			'DOCD_PELENGKAP_1_STATUS' => $convert_dokumen_pelengkap_2
 		);
 		$is_ok = $this->M_library_database->DB_UPDATE_DATA_DOCUMENT_DETAIL_REFISI_EVO($si_code,$data_update_detail);
-		// Ambil Pendistribusi
-
-		// if ($si_owner_dept_pendistribusi=='7550') {
-		// 	$getPendistribusi = $this->db->get_where('tb_departemen', array('DN_ID'=>$si_owner_dept_pendistribusi));
-		// 	foreach ($getPendistribusi->result() as $data) {
-		// 		$dpt 		= $data->DN_ID;
-		// 		$dpt_code 	= $data->DN_CODE;
-		// 		$dpt_name 	= $data->DN_NAME;
-		// 	}
-		// 	$PENDISTRIBUSI_FINAL_CODE 	= $dpt_code;
-		// 	$PENDISTRIBUSI_FINAL_NAME 	= $dpt_name;
-		// 	$STATUS_FINAL				= $dpt;
-		// }else{
-		// 	$getPendistribusi = $this->M_contribution->GET_PENDISTRIBUSI_DIVISI_FROM_DEPARTEMEN($si_owner_dept_pendistribusi);
-		// 	$getPendistribusi_2 = $this->M_contribution->GET_PENDISTRIBUSI_DIVISI_FROM_DIVISI($si_owner_dept_pendistribusi);
-		// 	if (empty($getPendistribusi)) {
-		// 		foreach ($getPendistribusi as $data) {
-		// 			$dt 		= $data->DT_ID;
-		// 			$dt_name	= $data->DT_NAME;
-		// 		}
-		// 	}else{
-		// 		foreach ($getPendistribusi_2 as $data) {
-		// 			$dt 		= $data->DT_ID;
-		// 			$dt_name	= $data->DT_NAME;
-		// 		}
-		// 	}
-		// 	$PENDISTRIBUSI_FINAL_CODE 	= $dt;
-		// 	$PENDISTRIBUSI_FINAL_NAME 	= $dt_name;
-		// 	$STATUS_FINAL				= $dt;
-		// }
-		// $STATUS_FINAL = "Menunggu Persetujuan dari ".$PENDISTRIBUSI_FINAL_CODE." (".$PENDISTRIBUSI_FINAL_NAME.")";
-		// $Activity = $si_owner_dept_pendistribusi;
-
-		// if ($si_approve == "DITOLAK 7550") {
-		// 	$getPendistribusi = $this->db->get_where('tb_departemen', array('DN_ID' => '7550'))->result();
-		// 	foreach ($getPendistribusi as $data) {
-		// 		$dpt 		= $data->DN_ID;
-		// 		$dpt_code 	= $data->DN_CODE;
-		// 		$dpt_name 	= $data->DN_NAME;
-		// 	}
-		// 	$PENDISTRIBUSI_FINAL_CODE 	= $dpt_code;
-		// 	$PENDISTRIBUSI_FINAL_NAME 	= $dpt_name;
-		// 	$STATUS_FINAL				= "Menunggu Persetujuan dari ".$PENDISTRIBUSI_FINAL_CODE." (".$PENDISTRIBUSI_FINAL_NAME.")";
-		// 	$Activity = $dpt;
-		// }else{
-			if ($si_owner_dept_pendistribusi=='7550') {
-				$getPendistribusi = $this->db->get_where('tb_departemen', array('DN_ID'=>$si_owner_dept_pendistribusi));
-				foreach ($getPendistribusi->result() as $data) {
-					$dt 		= $data->DN_ID;
-					$dt_code 	= $data->DN_CODE;
-					$dt_name 	= $data->DN_NAME;
-				}
-			} else {
-				$getPendistribusi = $this->M_contribution->GET_PENDISTRIBUSI_DIVISI_FROM_DEPARTEMEN($si_owner_dept_pendistribusi);
-				$getPendistribusi_2 = $this->M_contribution->GET_PENDISTRIBUSI_DIVISI_FROM_DIVISI($si_owner_dept_pendistribusi);
-
-				if (!empty($getPendistribusi)) {
-					$dt = $getPendistribusi[0]->DI_ID;
-					$dt_name = $getPendistribusi[0]->DI_NAME;
-					$dt_code = $getPendistribusi[0]->DI_CODE;
-				}else{
-					$dt = $getPendistribusi_2[0]->DI_ID;
-					$dt_name = $getPendistribusi_2[0]->DI_NAME;
-					$dt_code = $getPendistribusi_2[0]->DI_CODE;
-				}
+		if ($si_owner_dept_pendistribusi=='7550') {
+			$getPendistribusi = $this->db->get_where('tb_departemen', array('DN_ID'=>$si_owner_dept_pendistribusi));
+			foreach ($getPendistribusi->result() as $data) {
+				$dt 		= $data->DN_ID;
+				$dt_code 	= $data->DN_CODE;
+				$dt_name 	= $data->DN_NAME;
 			}
+		} else {
+			$getPendistribusi = $this->M_contribution->GET_PENDISTRIBUSI_DIVISI_FROM_DEPARTEMEN($si_owner_dept_pendistribusi);
+			$getPendistribusi_2 = $this->M_contribution->GET_PENDISTRIBUSI_DIVISI_FROM_DIVISI($si_owner_dept_pendistribusi);
 
-			$PENDISTRIBUSI_FINAL_CODE 	= $dt_code;
-			$PENDISTRIBUSI_FINAL_NAME 	= $dt_name;
-			$STATUS_FINAL = "Menunggu Persetujuan dari ".$PENDISTRIBUSI_FINAL_CODE." (".$PENDISTRIBUSI_FINAL_NAME.")";
-			$Activity = $dt;
-		// }
+			if (!empty($getPendistribusi)) {
+				$dt = $getPendistribusi[0]->DI_ID;
+				$dt_name = $getPendistribusi[0]->DI_NAME;
+				$dt_code = $getPendistribusi[0]->DI_CODE;
+			}else{
+				$dt = $getPendistribusi_2[0]->DI_ID;
+				$dt_name = $getPendistribusi_2[0]->DI_NAME;
+				$dt_code = $getPendistribusi_2[0]->DI_CODE;
+			}
+		}
+
+		$PENDISTRIBUSI_FINAL_CODE 	= $dt_code;
+		$PENDISTRIBUSI_FINAL_NAME 	= $dt_name;
+		$STATUS_FINAL = "Menunggu Persetujuan dari ".$PENDISTRIBUSI_FINAL_CODE." (".$PENDISTRIBUSI_FINAL_NAME.")";
+		$Activity = $dt;
 		
 		//Upload Doc
 		$config1['upload_path'] 				= './assets/original';
