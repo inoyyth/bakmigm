@@ -225,7 +225,7 @@ class C_menu extends CI_Controller
 			"replyto" => $this->config->item('email_edoc')['replyto'],
 			"subject" => 'Bagikan - '.$DOC_NOMOR.' - '.$DOC_NAMA,
 			"text" => "This is the text",
-			"html" => "$pengirim.' telah membagikan tautan dokumen ini : '.$DOC_NOMOR.' - '.$DOC_NAMA.'<br>'.'Dengan pesan : <br>'.$pesan.'<br>'.'Link : '.$url.'<br>Sulahkan login dengan Token : '.$token"
+			"html" => $pengirim . " telah membagikan tautan dokumen ini : " . $DOC_NOMOR . " - " . $DOC_NAMA . "<br> Dengan pesan : <br>" . $pesan . "<br>Link : <a href=".$url.">" . $url . "</a><br>Sulahkan login dengan Token : " . $token
 		);
 
 		if($mailin->send_email($data_email)	){
