@@ -227,7 +227,7 @@ class C_menu extends CI_Controller
 			"text" => "This is the text",
 			"html" => $pengirim . " telah membagikan tautan dokumen ini : " . $DOC_NOMOR . " - " . $DOC_NAMA . "<br> Dengan pesan : <br>" . $pesan . "<br>Link : <a href=".$url.">" . $url . "</a><br>Sulahkan login dengan Token : " . $token
 		);
-		var_dump($mailin->send_email($data));die;
+		// var_dump($mailin->send_email($data));die;
 		if($mailin->send_email($data_email)	){
 			$insert = $this->db->insert('tb_document_link', $data);
 			if ($insert) {
