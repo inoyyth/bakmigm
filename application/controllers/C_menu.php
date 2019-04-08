@@ -1,5 +1,7 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
+use Sendinblue\Mailin;
+
 class C_menu extends CI_Controller
 {
 	public function __construct()
@@ -165,27 +167,9 @@ class C_menu extends CI_Controller
 		if ($this->session->userdata('session_bgm_edocument_status') != "LOGIN") {
 			redirect(base_url());
 		}
+		
 		include (APPPATH.'libraries/session_user.php');
 		date_default_timezone_set('Asia/Jakarta');
-		$config = [
-			'useragent' => 'CodeIgniter',
-			'protocol'  => 'smtp',
-			'mailpath'  => '/usr/sbin/sendmail',
-			'smtp_host' => 'ssl://smtp.gmail.com',
-			'smtp_user' => 'akuntest437@gmail.com',
-			'smtp_pass' => 'akuntest123',
-			'smtp_port' => 587,
-			'smtp_keepalive' => TRUE,
-			'smtp_crypto' => 'SSL',
-			'wordwrap'  => TRUE,
-			'wrapchars' => 80,
-			'mailtype'  => 'html',
-			'charset'   => 'utf-8',
-			'validate'  => TRUE,
-			'crlf'      => "\r\n",
-			'newline'   => "\r\n",
-		];
-		$this->load->library('email', $config);
 
 		// Data	
 		$si_key 	= $this->input->post('si_key');
@@ -209,7 +193,7 @@ class C_menu extends CI_Controller
 		for ($z=0; $z < $jml; $z++) { 
 			$get_email = $this->db->get_where('tb_employee', array('NIP' => $id[$z]))->result();
 			foreach ($get_email as $k => $e) {
-				$email[] = $e->EMAIL;
+				$email[$e->EMAIL] = $e->FULL_NAME;
 			}
 		}
 		// Random Kode
@@ -231,11 +215,20 @@ class C_menu extends CI_Controller
 						'TOKEN'		=> $token,
 						'LINK_TIME' => $hasil
 		);
-		$this->email->from($email_pengirim, 'Bakmi GM');
-		$this->email->to($email);
-		$this->email->subject('Bagikan - '.$DOC_NOMOR.' - '.$DOC_NAMA);
-		$this->email->message($pengirim.' telah membagikan tautan dokumen ini : '.$DOC_NOMOR.' - '.$DOC_NAMA.'<br>'.'Dengan pesan : <br>'.$pesan.'<br>'.'Link : '.$url.'<br>Sulahkan login dengan Token : '.$token);
-		if($this->email->send()){
+
+		$mailin = new Mailin('https://api.sendinblue.com/v2.0','AUNpbsTwvXyxQYm6', 50000);
+		$data_email = array( 
+			"to" => $email,
+			"cc" => $this->config->item('email_edoc')['cc'],
+			"bcc" => $this->config->item('email_edoc')['bcc'],
+			"from" => array($email_pengirim, $pengirim), //$this->config->item('email_edoc')['from'],
+			"replyto" => $this->config->item('email_edoc')['replyto'],
+			"subject" => 'Bagikan - '.$DOC_NOMOR.' - '.$DOC_NAMA,
+			"text" => "This is the text",
+			"html" => "$pengirim.' telah membagikan tautan dokumen ini : '.$DOC_NOMOR.' - '.$DOC_NAMA.'<br>'.'Dengan pesan : <br>'.$pesan.'<br>'.'Link : '.$url.'<br>Sulahkan login dengan Token : '.$token"
+		);
+
+		if($mailin->send_email($data_email)	){
 			$insert = $this->db->insert('tb_document_link', $data);
 			if ($insert) {
 				$log = array();
@@ -244,21 +237,20 @@ class C_menu extends CI_Controller
 						'LogDoc' => $si_key,
 						'LogAct' => 'Sharelink',
 						'LogUserName' => $SESSION_ID,
-						'Shareto' => $NIP[$x]
+						// 'Shareto' => $NIP[$x]
 					);
 				}
 				$this->db->insert_batch('m_log', $log);
 				$this->session->set_flashdata('pesan_email','Berhasil!');
 				redirect($url_2,'refresh');
 			}else{
-				$this->session->set_flashdata('pesan_email_gagal','Gagal!');
+				$this->session->set_flashdata('pesan_email_gagal','Gagal1!');
 				redirect($url_2,'refresh');
 			}
 		}else{
-			$this->session->set_flashdata('pesan_email_gagal','Gagal!');
+			$this->session->set_flashdata('pesan_email_gagal','Gagal2!');
 			redirect($url_2,'refresh');
 		}
-
 	}
 
 	public function link($kode)
