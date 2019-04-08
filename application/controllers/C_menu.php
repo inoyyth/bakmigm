@@ -445,7 +445,7 @@ class C_menu extends CI_Controller
 	public function logout()
 	{
 		$this->session->sess_destroy();
-		redirect(base_url());
-		// redirect('http://webportal.bakmigm.co.id/sim/');
+		// redirect(base_url());
+		redirect('http://webportal.bakmigm.co.id/sim/');
 	}
 }

@@ -3,6 +3,11 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 //-----------------------------------------------------------------------------------------------//
 class C_login extends CI_Controller {
+		public function __construct() {
+			parent::__construct();
+			$this->load->model(['M_menu' => 'menu']);
+		}
+
     public function direct_login(){
 		if($_SERVER['REQUEST_METHOD']!="GET" && $this->input->get('NIP')){
 			echo '
@@ -36,7 +41,8 @@ class C_login extends CI_Controller {
 		$session_data['session_bgm_edocument_departement_code'] = $data_login[0]->DN_CODE;
 		$session_data['session_bgm_edocument_departement_name'] = $data_login[0]->DN_NAME;
 		$session_data['session_bgm_edocument_org_parent'] = $data_login[0]->ORG_PARENT;
-
+		$session_data['menu'] = $this->__getSideMenu();
+		$session_data['user_menu'] = $this->__getUserMenu($data_login[0]->NIP_USER);
 		if (empty($data_login[0]->DN_ID)) {
 			$data_login = $this->M_login->DB_GET_LOGIN_DIVISI($si_userid);
 			$session_data['session_bgm_edocument_divisi_id'] = $data_login[0]->DI_ID;
@@ -76,4 +82,66 @@ class C_login extends CI_Controller {
 			redirect(base_url('welcome'));
 		}
 	}
+
+	private function __getUserMenu($user_id) {
+		//get current user role's
+		$get_user_role = $this->db->select('ROLES,ROLES_2,ROLES_3,ROLES_4,ROLES_5')
+										 ->from('tb_employee_detail')
+										 ->where(['NIP' => $user_id])
+										 ->get()->row_array();
+		if ($get_user_role) {
+			$role = array_filter(array_values($get_user_role));
+		} else {
+			$role = array('PENGGUNA');
+		}
+
+		// get role menu by user role's
+		$get_menu_by_role = $this->db->select('ROLE_MENUS')
+												->from('tb_roles')
+												->where_in('RS_ID', $role)
+												->get()->result_array();
+		$data_menus=[];
+		foreach($get_menu_by_role as $k => $v) {
+			$data_menus[] = unserialize($v['ROLE_MENUS']);
+		}
+
+		//merge menu
+		// var_dump($data_menus);die;
+		$data_merge_menu = [];
+		foreach($data_menus as $k => $v) {
+				$data_merge_menu = array_merge($data_merge_menu, $v);	
+		}
+
+		//remove menu with value 0
+		$enable_menu = [];
+		foreach($data_merge_menu as $k => $v) {
+			if ($v['menu']['value'] == "1") {
+				$enable_menu[] = $v['menu']['key'];
+			}
+		}
+		return $enable_menu;							
+	}
+
+	private function __getSideMenu() {
+		$menus = $this->menu->getSideMenu();
+		$structured_menu = $this->__structuredMenu($menus);
+
+		return $structured_menu;
+	}
+
+	private function __structuredMenu(array $data, $parent = 0)
+    {
+    	$items = array();
+		// var_dump($data);die;
+		foreach ($data as $item) 
+		{
+			if ($item['parent'] == $parent) 
+			{
+				$items[$item['id']] = $item;
+				$items[$item['id']]['children'] = $this->__structuredMenu($data, $item['id']);
+			}	
+		}
+
+		return $items;
+		}
 }
