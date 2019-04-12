@@ -526,6 +526,9 @@ $config['rewrite_short_tags'] = FALSE;
 $config['proxy_ips'] = '';
 
 $config['email_edoc'] = array(
+    'url' => 'https://api.sendinblue.com/v2.0',
+    'api_key' => 'AUNpbsTwvXyxQYm6',
+    'timeout' => 50000,
     'cc' => [],
     'bcc' => [],
     'from' => ["edoc@bakmigm.co.id","Edoc Bakmigm"],
