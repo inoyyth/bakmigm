@@ -107,7 +107,11 @@ $count_notification = $count_notification + $count_news;
 					<li class="">
 						<a href="<?php echo base_url($v['slug']); ?>" <?php echo (!empty($v['children']) ? 'class="dropdown-toggle"' : '');?>>
 							<i class="menu-icon fa <?php echo $v['icon'];?>"></i>
-							<span class="menu-text"> <?php echo $v['name'];?> </span>
+							<?php if($v['id'] == 4) { ?>
+								<span class="menu-text"> <?php echo $v['name'];?> <span class="nofication-count"></span> </span>
+							<?php } else { ?>
+								<span class="menu-text"> <?php echo $v['name'];?> </span>
+							<?php } ?>
 						</a>
 						<?php 
 							if(!empty($v['children'])) { 
@@ -131,7 +135,11 @@ $count_notification = $count_notification + $count_news;
 					<li class="">
 						<a href="<?php echo base_url($v['slug']); ?>" <?php echo (!empty($v['children']) ? 'class="dropdown-toggle"' : '');?>>
 							<i class="menu-icon fa <?php echo $v['icon'];?>"></i>
-							<span class="menu-text"> <?php echo $v['name'];?> </span>
+							<?php if($v['id'] == 4) { ?>
+								<span class="menu-text"> <?php echo $v['name'];?> <span class="badge nofication-count"></span> </span>
+							<?php } else { ?>
+								<span class="menu-text"> <?php echo $v['name'];?> </span>
+							<?php } ?>
 						</a>
 						<?php 
 							if(!empty($v['children'])) { 
@@ -300,5 +308,17 @@ $count_notification = $count_notification + $count_news;
 			<i class="ace-icon fa fa-angle-double-up icon-only bigger-110"></i>
 		</a>
 	</div>
+<script type="text/javascript">
+	jQuery(function($) {
+		$.ajax({    //create an ajax request to display.php
+			type: "GET",
+			url: "<?php echo base_url();?>C_notification/getNotification/<?php echo $this->session->userdata("session_bgm_edocument_id");?>/true/",
+			dataType: "html",   //expect html to be returned                
+			success: function(response){
+				$(".nofication-count").text(JSON.parse(response).length);
+			}
+		});
+	});
+</script>
 </body>
 </html>

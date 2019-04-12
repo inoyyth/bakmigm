@@ -20,7 +20,7 @@
 <script src="<?= base_url('template/ckeditor/ckeditor.js'); ?>"></script>
 <script src="<?php echo base_url('template/backend/assets/js/ace-elements.min.js'); ?>"></script>
 <script src="<?php echo base_url('template/backend/assets/js/ace.min.js'); ?>"></script>
-<script>
+<!-- <script>
 	$(document).ready(function() {
 		CKEDITOR.replace('editor1');
 		$('#id-input-file-3').ace_file_input({
@@ -32,4 +32,4 @@
 			thumbnail: 'small',
 		});
 	});
-</script>
+</script> -->
