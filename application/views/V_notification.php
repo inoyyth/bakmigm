@@ -103,6 +103,7 @@ if(empty($get_data_count)||$get_data_count==""){
 			</div>
 		</div>
 	<?php
+	//DItolak untuk atasan
 	elseif (($this->session->userdata("session_bgm_edocument_departement_id") == $FILTER || $this->session->userdata("session_bgm_edocument_divisi_code") == $FILTER || $this->session->userdata("session_bgm_edocument_direktorat_id") == $FILTER) && strrpos($data_row_ext->DOC_STATUS, 'DITOLAK') !== FALSE): 
 	?>
 		<div class="alert alert-warning fade in">
@@ -124,6 +125,7 @@ if(empty($get_data_count)||$get_data_count==""){
 			</div>
 		</div>
 	<?php 
+	//DITOLAK untuk si pembuat
 	elseif($this->session->userdata("session_bgm_edocument_id") == $data_row_ext->DOC_MAKER && strrpos($data_row_ext->DOC_STATUS, 'DITOLAK') !== FALSE):
 	?>
 		<div class="alert alert-danger fade in">
@@ -254,9 +256,20 @@ if(empty($get_data_count)||$get_data_count==""){
 			</div>
 		</div>
 	<?php else:
+		// //ditolak untuk pendistribusi
 		$user_maker_department = $this->M_library_database->getUserMakerDepartemen($data_row_ext->DOC_MAKER);
 		$user_maker_division = $this->M_library_database->getUserMakerDivisi($data_row_ext->DOC_MAKER);
-		if (($user_maker_department['DEPCODE'] == $this->session->userdata("session_bgm_edocument_departement_id") || $user_maker_division['DI_ID'] == $this->session->userdata("session_bgm_edocument_divisi_id")) || ($data_row_ext->DOC_STATUS == 'DITOLAK 7550' && $user_maker_department['DEPCODE'] == $this->session->userdata("session_bgm_edocument_departement_id") || $user_maker_division['DI_ID'] == $this->session->userdata("session_bgm_edocument_divisi_id"))) {
+		$user_approved_department = $this->M_library_database->getUserMakerDepartemen($data_row_ext->DOC_APPROVE);
+		$user_approved_division = $this->M_library_database->getUserMakerDivisi($data_row_ext->DOC_APPROVE);
+		// if (($user_maker_department['DEPCODE'] == $this->session->userdata("session_bgm_edocument_departement_id") || $user_maker_division['DI_ID'] == $this->session->userdata("session_bgm_edocument_divisi_id")) || (strrpos($data_row_ext->DOC_STATUS, 'DITOLAK') !== FALSE && $user_maker_department['DEPCODE'] == $this->session->userdata("session_bgm_edocument_departement_id") || $user_maker_division['DI_ID'] == $this->session->userdata("session_bgm_edocument_divisi_id"))) {
+		if(
+			strrpos($data_row_ext->DOC_STATUS, $this->session->userdata("session_bgm_edocument_departement_id")) !== FALSE || 
+			$user_maker_department['DEPCODE'] == $this->session->userdata("session_bgm_edocument_departement_id") || 
+			$user_maker_division['DI_ID'] == $this->session->userdata("session_bgm_edocument_divisi_id") ||
+			$user_approved_department['DEPCODE'] == $this->session->userdata("session_bgm_edocument_departement_id") || 
+			$user_approved_division['DI_ID'] == $this->session->userdata("session_bgm_edocument_divisi_id") || 
+			$this->session->userdata("session_bgm_edocument_departement_id") == $data_row_ext->DOC_PENDISTRIBUSI
+		) {
 	?>
 		<div class="alert alert-info fade in">
 			<form action="<?= base_url('C_notification/delete_notification'); ?>" method="POST">
