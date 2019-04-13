@@ -1018,6 +1018,7 @@ class M_library_database extends CI_Model {
 		try{
 			$this->db->select('*');
 			$this->db->from($this->tb_document_structure_kategori);
+			$this->db->order_by('DTSEKI_KATEGORI', 'asc');
 			$query = $this->db->get();
 			if ($query->num_rows() > 0) {
 				return $query->result();
@@ -1050,6 +1051,7 @@ class M_library_database extends CI_Model {
 			$this->db->select('*');
 			$this->db->from($this->tb_document_structure_jenis);
 			$this->db->where('DTSEKI_ID', $DTSEKI_ID);
+			$this->db->order_by('DTSEJS_JENIS', 'asc');
 			$query = $this->db->get();
 			if ($query->num_rows() > 0) {
 				return $query->result();
@@ -1067,6 +1069,7 @@ class M_library_database extends CI_Model {
 			$this->db->select('*');
 			$this->db->from($this->tb_document_structure_tipe);
 			$this->db->where('DTSEJS_ID', $DTSEJS_ID);
+			$this->db->order_by('DTSETE_TIPE', 'asc');
 			$query = $this->db->get();
 			if ($query->num_rows() > 0) {
 				return $query->result();

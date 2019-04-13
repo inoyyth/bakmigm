@@ -216,7 +216,7 @@ class C_menu extends CI_Controller
 						'LINK_TIME' => $hasil
 		);
 
-		$mailin = new Mailin('https://api.sendinblue.com/v2.0','AUNpbsTwvXyxQYm6', 50000);
+		$mailin = new Mailin($this->config->item('email_edoc')['url'], $this->config->item('email_edoc')['api_key'], $this->config->item('email_edoc')['timeout']);
 		$data_email = array( 
 			"to" => $email,
 			"cc" => $this->config->item('email_edoc')['cc'],
@@ -270,7 +270,8 @@ class C_menu extends CI_Controller
 					redirect(base_url());
 				}
 				$data['detaillist'] = $this->Model_detail->GET_DOC_BY_KODE($DOC_ID);
-				$this->load->view('V_detail_list', $data);
+				$data['view'] = 'V_detail_list';
+				$this->load->view('template', $data);
 			}else{
 				$delete = $this->Model_detail->DELETE_LINK_FROM_DB($LINK_ID);
 				redirect(base_url(),'refresh');
