@@ -553,21 +553,17 @@
 											
 												<div class="form-group">
 													<label for="dokumen_utama" class="col-sm-6 control-label" style="text-align:left">Dokumen Utama</label>
-													<label for="dokumen_utama" class="col-sm-6 control-label" style="text-align:left">Di Unduh Dalam Format</label>
-													<div class="col-xs-6">
-														<div class="col-xs-4">
-															<input multiple="" type="file" id="dokumen_utama" name="dokumen_utama" style="color:transparent;">
-														</div>
-														<div class="col-xs-6">
-															<?php if ($DOCD_UTAMA_STATUS == 1): ?>
-																
-															<p id="utama"><?= $DOCD_UTAMA.'.pdf'; ?></p>
-															<?php else: ?>
-															<p id="utama"><?= $DOCD_UTAMA.'.'.$DOCD_UTAMA_EXT; ?></p>
-															<?php endif; ?>
-														</div>
+													<!-- <label for="dokumen_utama" class="col-sm-6 control-label" style="text-align:left">Di Unduh Dalam Format</label> -->
+													<div class="col-xs-12">
+														<input multiple="" type="file" id="dokumen_utama" name="dokumen_utama" style="color:transparent;">
+														<?php if ($DOCD_UTAMA_STATUS == 1): ?>
+															
+														<span id="utama" style="font-weight: bolder;">FILE NAME: <?= $DOCD_UTAMA.'.pdf'; ?></span>
+														<?php else: ?>
+														<span id="utama" style="font-weight: bolder;">File Name<?= $DOCD_UTAMA.'.'.$DOCD_UTAMA_EXT; ?></span>
+														<?php endif; ?>
 													</div>
-													<div class="col-xs-6">
+													<div class="col-xs-12">
 														<label>
 														<?php if($DOCD_UTAMA_STATUS!=1): ?>
 														<input name="dokumen_utama_on" type="checkbox" class="ace" id="dokumen_utama_dpdf" />
@@ -579,22 +575,16 @@
 													</div>
 												</div>
 												<div class="form-group">
-													<label for="dokumen_pelengkap_1" class="col-sm-12 control-label" style="text-align:left">Dokumen Pelengkap 1</label>
-													<div class="col-xs-6">
-														<div class="col-xs-4">
+													<label for="dokumen_pelengkap_1" class="col-sm-6 control-label" style="text-align:left">Dokumen Pelengkap 1</label>
+													<div class="col-xs-12">
 															<input multiple="" type="file" id="dokumen_pelengkap_1" name="dokumen_pelengkap_1" style="color:transparent;">
-														</div>
-														<div class="col-xs-6">
 															<?php if ($DOCD_PELENGKAP_1_STATUS == 1): ?>
-																
-															<p id="p1"><?= $DOCD_PELENGKAP_1.'.pdf'; ?></p>
+															<span id="p1" style="font-weight: bolder;"><?= $DOCD_PELENGKAP_1.'.pdf'; ?></span>
 															<?php else: ?>
-															<p id="p1"><?= $DOCD_PELENGKAP_1.'.'.$DOCD_PELENGKAP_1_EXT; ?></p>
+															<span id="p1" style="font-weight: bolder;"><?= $DOCD_PELENGKAP_1.'.'.$DOCD_PELENGKAP_1_EXT; ?></span>
 															<?php endif; ?>
-															
-														</div>
 													</div>
-													<div class="col-xs-6">
+													<div class="col-xs-12">
 														<label>
 														<?php if($DOCD_PELENGKAP_1_STATUS!=1): ?>
 														<input name="dokumen_pelengkap_1_on" type="checkbox" class="ace" id="dokumen_pelengkap_1_dpdf" />
@@ -606,21 +596,16 @@
 													</div>
 												</div>
 												<div class="form-group">
-													<label for="dokumen_pelengkap_2" class="col-sm-12 control-label" style="text-align:left">Dokumen Pelengkap 2</label>
-													<div class="col-xs-6">
-														<div class="col-xs-4">
+													<label for="dokumen_pelengkap_2" class="col-sm-6 control-label" style="text-align:left">Dokumen Pelengkap 2</label>
+													<div class="col-xs-12">
 															<input multiple="" type="file" id="dokumen_pelengkap_2" name="dokumen_pelengkap_2" style="color:transparent;">
-														</div>
-														<div class="col-xs-6">
 															<?php if ($DOCD_PELENGKAP_2_STATUS == 1): ?>
-																
-															<p id="p2"><?= $DOCD_PELENGKAP_2.'.pdf'; ?></p>
+															<p id="p2" style="font-weight: bolder;"><?= $DOCD_PELENGKAP_2.'.pdf'; ?></p>
 															<?php else: ?>
-															<p id="p2"><?= $DOCD_PELENGKAP_2.'.'.$DOCD_PELENGKAP_2_EXT; ?></p>
+															<p id="p2" style="font-weight: bolder;"><?= $DOCD_PELENGKAP_2.'.'.$DOCD_PELENGKAP_2_EXT; ?></p>
 															<?php endif; ?>
-														</div>
 													</div>
-													<div class="col-xs-6">
+													<div class="col-xs-12">
 														<label>
 														<?php if($DOCD_PELENGKAP_2_STATUS!=1): ?>
 														<input name="dokumen_pelengkap_2_on" type="checkbox" class="ace" id="dokumen_pelengkap_2_dpdf" />
@@ -632,14 +617,12 @@
 													</div>
 												</div>
 												<div class="form-group">
-													<label for="dokumen_persetujuan" class="col-sm-12 control-label" style="text-align:left">Dokumen Persetujuan</label>
-													<div class="col-xs-6">
-														<div class="col-xs-4">
+													<label for="dokumen_persetujuan" class="col-sm-6 control-label" style="text-align:left">Dokumen Persetujuan</label>
+													<div class="col-xs-12">
 															<input multiple="" type="file" id="dokumen_persetujuan" name="dokumen_persetujuan" style="color:transparent;">
-														</div>
-														<div class="col-xs-6">
-															<p id="persetujuan"><?= $DOCD_PERSETUJUAN; ?></p>
-														</div>
+													</div>
+													<div class="col-xs-12">
+														<p id="persetujuan" style="font-weight: bolder;"><?= $DOCD_PERSETUJUAN; ?></p>
 													</div>
 												</div>
 											</div>
