@@ -779,8 +779,8 @@ class C_notification extends CI_Controller {
 			$this->news($si_key);
 		}
 		$is_ok = $this->M_library_database->DB_UPDATE_DATA_DOCUMENT($DOC_ID,$data_update);
+		$this->db->delete('tb_notification_history', array('DOC_ID' => $DOC_ID));
 		if($is_ok){
-			$this->db->delete('tb_notification_history', array('DOC_ID'=>$DOC_ID));
 			echo '
 				<script>
 					alert("Pemutakhiran Data Berhasil");
@@ -926,6 +926,7 @@ class C_notification extends CI_Controller {
 
 		//-----------------------------------------------------------------------------------------------//
 		if($is_ok){
+			$this->db->delete('tb_notification_history', array('DOC_ID' => $DOC_ID));
 			//INSERT TO LOG ???
 			//-----------------------------------------------------------------------------------------------//
 			echo '
@@ -2383,7 +2384,7 @@ class C_notification extends CI_Controller {
 			'DOC_APPROVE' => "-"
 		);
 		$is_ok = $this->M_library_database->DB_UPDATE_DATA_DOCUMENT_REFISI_EVO($si_code,$data_update);
-		
+		$this->db->delete('tb_notification_history', array('DOC_ID' => $si_code));
 		if($is_ok){
 			$this->db->update('tb_document_notification', 
 			array(
