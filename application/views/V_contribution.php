@@ -506,44 +506,35 @@
 										<div class="widget-main">
 
 											<div class="form-group row">
-												<label for="dokumen_utama" class="col-sm-6 control-label" style="text-align:left">Dokumen Utama</label>
-												<label for="dokumen_utama" class="col-sm-6 control-label" style="text-align:left">Di Unduh Dalam Format</label>
-												<div class="col-xs-6">
-													<input type="file" id="dokumen_utama" name="dokumen_utama">
-												</div>
-												<div class="col-xs-6">
-													<label>
+												<label for="dokumen_utama" class="col-sm-12 control-label" style="text-align:left">Dokumen Utama</label>
+												<!-- <label for="dokumen_utama" class="col-sm-6 control-label" style="text-align:left">Di Unduh Dalam Format</label> -->
+												<div class="col-xs-12">
+													<input type="file" id="dokumen_utama" name="dokumen_utama"><br>
 													<input name="dokumen_utama_on" type="checkbox" class="ace" id="dokumen_utama_dpdf" name="dokumen_utama_dpdf" />
-													<span class="lbl"> .PDF</span>
-													</label>
+													<span class="lbl"> .PDF (Di unduh dalam format PDF)</span>
 												</div>
 											</div>
+											<hr>
 
 											<div class="form-group row">
 												<label for="dokumen_pelengkap_1" class="col-sm-12 control-label" style="text-align:left">Dokumen Pelengkap 1</label>
-												<div class="col-xs-6">
-													<input multiple="" type="file" id="dokumen_pelengkap_1" name="dokumen_pelengkap_1">
-												</div>
-												<div class="col-xs-6">
-													<label>
+												<div class="col-xs-12">
+													<input multiple="" type="file" id="dokumen_pelengkap_1" name="dokumen_pelengkap_1"><br>
 													<input name="dokumen_pelengkap_1_on" type="checkbox" class="ace" id="dokumen_pelengkap_1_dpdf" name="dokumen_pelengkap_1_dpdf" />
-													<span class="lbl"> .PDF</span>
-													</label>
+													<span class="lbl"> .PDF (Di unduh dalam format PDF)</span>
 												</div>
 											</div>
+											<hr>
 
 											<div class="form-group row">
 												<label for="dokumen_pelengkap_2" class="col-sm-12 control-label" style="text-align:left">Dokumen Pelengkap 2</label>
-												<div class="col-xs-6">
+												<div class="col-xs-12">
 													<input multiple="" type="file" id="dokumen_pelengkap_2" name="dokumen_pelengkap_2">
-												</div>
-												<div class="col-xs-6">
-													<label>
 													<input name="dokumen_pelengkap_2_on" type="checkbox" class="ace" id="dokumen_pelengkap_2_dpdf" name="dokumen_pelengkap_2_dpdf" />
-													<span class="lbl"> .PDF</span>
-													</label>
+													<span class="lbl"> .PDF (Di unduh dalam format PDF)</span>
 												</div>
 											</div>
+											<hr>
 
 											<div class="form-group row">
 												<label for="dokumen_persetujuan" class="col-sm-12 control-label" style="text-align:left">Dokumen Persetujuan (.pdf)</label>
@@ -1245,6 +1236,7 @@
 							type: 'GET',
 							success: function(response){
 								//Parsing Json
+								console.log('a');
 								response = $.parseJSON(response);
 								nom = response[0].kode;
 								$.ajax({
@@ -1252,6 +1244,7 @@
 									type: 'GET',
 									success: function(response){
 										//Parsing Json
+										console.log(response);
 										response = $.parseJSON(response);
 										field_1 = response[0].field_1;
 										field_2 = response[0].field_2;
@@ -1511,6 +1504,7 @@
 				type: 'GET',
 				success: function(response){
 					//Parsing Json
+					console.log('b');
 					response = $.parseJSON(response);
 					nom = response[0].kode;
 					$.ajax({
