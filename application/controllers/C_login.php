@@ -41,6 +41,7 @@ class C_login extends CI_Controller {
 		$session_data['session_bgm_edocument_departement_code'] = $data_login[0]->DN_CODE;
 		$session_data['session_bgm_edocument_departement_name'] = $data_login[0]->DN_NAME;
 		$session_data['session_bgm_edocument_org_parent'] = $data_login[0]->ORG_PARENT;
+		$session_data['session_dep_code_employee'] = $data_login[0]->DEPCODE;
 		$session_data['menu'] = $this->__getSideMenu();
 		$session_data['user_menu'] = $this->__getUserMenu($data_login[0]->NIP_USER);
 		if (empty($data_login[0]->DN_ID)) {
