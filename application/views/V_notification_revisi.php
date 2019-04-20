@@ -791,9 +791,7 @@
 			// filter dokumen persetujuan
 			$('#dokumen_persetujuan').on('change', function() {
 				var persetujuan_doc = $('#dokumen_persetujuan').val();
-				var file = persetujuan_doc.split('\\').pop();
-				var jumlah = file.substr(0, file.lastIndexOf('.'));
-				var exten = persetujuan_doc.split('.')[1]
+				var file_ext = persetujuan_doc.substr(persetujuan_doc.lastIndexOf('.')+1,persetujuan_doc.length);
 				if (exten != 'pdf' ) {
 					alert("File Persetujuan Harus PDF!");
 					$(this).val('');

@@ -57,6 +57,7 @@ class C_index extends CI_Controller {
 			$session_data['session_bgm_edocument_job_level_id'] = $data_login[0]->JBLL_ID;
 			$session_data['session_bgm_edocument_job_level_name'] = $data_login[0]->JBLL_NAME;
 			$session_data['session_bgm_edocument_job_level_index'] = $data_login[0]->JBLL_INDEX;
+			$session_data['session_dep_code_employee'] = $data_login[0]->DEPCODE;
 			
 			$session_data['session_bgm_edocument_roles'] = $data_login[0]->RS_ID;
 			$session_data['session_bgm_edocument_roles2'] = "";
