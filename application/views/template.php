@@ -319,7 +319,7 @@ $count_notification = $count_notification + $count_news;
 				<div class="modal-body">
 					<form action="<?php echo base_url("C_menu/setPictureProfile");?>" method="post" enctype="multipart/form-data">
 						<div class="form-group">
-							<label>Select Picture</label>
+							<label>Select Picture (max. 5MB)</label>
 							<input type="hidden" name="employee_id" value="<?php echo $this->session->userdata("session_bgm_edocument_id");?>">
 							<input type="file" name="picture" id="picture_txt" class="form-control" required="true">
 						</div>
@@ -359,13 +359,23 @@ $count_notification = $count_notification + $count_news;
 		$('#picture_txt').on('change', function() {
 			var filePath = $(this).val(); 
 			var file_ext = filePath.substr(filePath.lastIndexOf('.')+1,filePath.length);
-
+			var file_size = this.files[0].size / 1024;
+			var iSize = (Math.round((file_size / 1024) * 100) / 100);
+		
 			var allow_extention = new Array("png","jpg","jpeg");
 			if (allow_extention.indexOf(file_ext) != -1) {
+				if (iSize > 5) {
+					alert("Maksimal Ukuran File 5MB!");
+					$(this).val('');
+
+					return false;
+				}
+
 				return true;
 			} else {
 				alert("File Harus JPG, PNG Atau JPEG!");
 				$(this).val('');
+
 				return false;
 			}
 		});
