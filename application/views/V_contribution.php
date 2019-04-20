@@ -912,11 +912,14 @@
 			});
 			// filter dokumen persetujuan
 			$('#dokumen_persetujuan').on('change', function() {
-				var persetujuan_doc = $('#dokumen_persetujuan').val();
-				var file = persetujuan_doc.split('\\').pop();
-				var jumlah = file.substr(0, file.lastIndexOf('.'));
-				var exten = persetujuan_doc.split('.')[1]
-				if (exten != 'pdf' ) {
+				// var persetujuan_doc = $('#dokumen_persetujuan').val();
+				// var file = persetujuan_doc.split('\\').pop();
+				// var jumlah = file.substr(0, file.lastIndexOf('.'));
+				// var exten = persetujuan_doc.split('.')[1];
+				var filePath = $("#dokumen_persetujuan").val(); 
+				var file_ext = filePath.substr(filePath.lastIndexOf('.')+1,filePath.length);
+				console.log("File Extension ->-> "+file_ext);
+				if (file_ext != 'pdf' ) {
 					alert("File Persetujuan Harus PDF!");
 					$(this).val('');
 					return false;
@@ -1117,14 +1120,14 @@
 			$( "#btn_unggah_doc" ).click(function() {
 				var utama = $('#dokumen_utama').val();
 				var persetujuan = $('#dokumen_persetujuan').val();
-				var ext = persetujuan.split('.')[1]
+				var file_ext = persetujuan.substr(persetujuan.lastIndexOf('.')+1,persetujuan.length);
 				if (utama == '') {
 					alert('Mohon Masukan Dokumen Utama!');
 					return false;
 				}else if(persetujuan == ''){
 					alert('Mohon Sertakan Dokumen Persetujuan!');
 					return false;
-				}else if(ext != 'pdf'){
+				}else if(file_ext != 'pdf'){
 					alert('File Persetujuan Harus Bertipe PDF!');
 					return false;
 				}else{
