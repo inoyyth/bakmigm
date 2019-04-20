@@ -33,7 +33,7 @@ class C_login extends CI_Controller {
 		}
 		//$data_login[0] BECAUSE ONLY RETURN 1 ARRAY
 		$session_data['session_bgm_edocument_status'] = "LOGIN";
-		$session_data['session_bgm_edocument_id'] = $data_login[0]->NIP;
+		$session_data['session_bgm_edocument_id'] = $data_login[0]->NIP_USER;
 		$session_data['session_bgm_edocument_name'] = $data_login[0]->FULL_NAME;
 		$session_data['session_bgm_edocument_email'] = $data_login[0]->EMAIL;
 		

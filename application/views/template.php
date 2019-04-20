@@ -89,7 +89,8 @@ $count_notification = $count_notification + $count_news;
 			<div id="user-profile-1" class="user-profile row">
 				<div class="col-12 center">
 					<span class="profile-picture">
-						<img id="avatar" class="editable img-responsive" src="<?php echo base_url('template/backend/assets/images/avatars/profile-pic.jpg'); ?>" />
+						<img id="avatar-profile" class="img-responsive" width="180px" height="200px" src="<?php echo base_url('template/backend/assets/images/avatars/profile-pic.jpg'); ?>" />
+						<button id="btn-profile-picture" style="position: fixed;margin-top: -30px; margin-left: 15px;" data-toggle="modal" data-target="#modal-picture">Change</button>
 					</span>
 					<br />
 					<i class="menu-icon fa fa-user"></i>
@@ -308,6 +309,28 @@ $count_notification = $count_notification + $count_news;
 			<i class="ace-icon fa fa-angle-double-up icon-only bigger-110"></i>
 		</a>
 	</div>
+	<div class="modal fade" id="modal-picture" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+		<div class="modal-dialog modal-sm" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="myModalLabel">Change Profile Picture</h4>
+				</div>
+				<div class="modal-body">
+					<form action="<?php echo base_url("C_menu/setPictureProfile");?>" method="post" enctype="multipart/form-data">
+						<div class="form-group">
+							<label>Select Picture (max. 5MB)</label>
+							<input type="hidden" name="employee_id" value="<?php echo $this->session->userdata("session_bgm_edocument_id");?>">
+							<input type="file" name="picture" id="picture_txt" class="form-control" required="true">
+						</div>
+						<div class="form-group">
+							<input type="submit" class="btn btn-primary btn-success" value="Save">
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
 <script type="text/javascript">
 	jQuery(function($) {
 		$.ajax({    //create an ajax request to display.php
@@ -316,6 +339,44 @@ $count_notification = $count_notification + $count_news;
 			dataType: "html",   //expect html to be returned                
 			success: function(response){
 				$(".nofication-count").text(JSON.parse(response).length);
+			}
+		});
+
+		$.ajax({    //create an ajax request to display.php
+			type: "GET",
+			url: "<?php echo base_url();?>C_menu/getProfilePicture/<?php echo $this->session->userdata("session_bgm_edocument_id");?>",
+			dataType: "html",   //expect html to be returned                
+			success: function(res){
+				var response = JSON.parse(res);
+				console.log(response.image_path);
+				if (response.image_path !== "" ) {
+					$("#avatar-profile").removeAttr('src');
+					$("#avatar-profile").attr('src', "<?php echo base_url();?>" + response.image_path);
+				}
+			}
+		});
+
+		$('#picture_txt').on('change', function() {
+			var filePath = $(this).val(); 
+			var file_ext = filePath.substr(filePath.lastIndexOf('.')+1,filePath.length);
+			var file_size = this.files[0].size / 1024;
+			var iSize = (Math.round((file_size / 1024) * 100) / 100);
+		
+			var allow_extention = new Array("png","jpg","jpeg");
+			if (allow_extention.indexOf(file_ext) != -1) {
+				if (iSize > 5) {
+					alert("Maksimal Ukuran File 5MB!");
+					$(this).val('');
+
+					return false;
+				}
+
+				return true;
+			} else {
+				alert("File Harus JPG, PNG Atau JPEG!");
+				$(this).val('');
+
+				return false;
 			}
 		});
 	});

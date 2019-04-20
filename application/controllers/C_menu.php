@@ -435,6 +435,47 @@ class C_menu extends CI_Controller
 		$this->zip->download('['.$ID.'] - '.$DOC_NAMA.'.zip');
 	}
 
+	public function setPictureProfile() {
+		$employee_id=$this->input->post('employee_id');
+		$picture=$this->input->post('picture');
+
+		$config['upload_path']          = './assets/user-picture/';
+		$config['allowed_types']        = 'jpeg|jpg|png';
+		$config['file_name']            =  round(microtime(true)*1000);
+		$config['overwrite']			= true;
+		$config['max_size']             = 5000; // 1MB
+		// $config['max_width']            = 1024;
+		// $config['max_height']           = 768;
+	
+		$this->load->library('upload', $config);
+	
+		if (!$this->upload->do_upload('picture')) {
+			$this->session->set_flashdata('msg', $this->upload->display_errors('',''));
+		}
+		$is_exist_data = $this->db->from('employee_picture')->where('employee_id', $employee_id)->count_all_results();
+		if ($is_exist_data == 1) {
+			$data = array(
+				'image_path' => "assets/user-picture/" . $this->upload->data("file_name")
+			);
+			$this->db->update('employee_picture', $data, ['employee_id' => $employee_id]);
+		} else {
+			$data = array(
+				'employee_id' => $employee_id,
+				'image_path' => "assets/user-picture/" . $this->upload->data("file_name")
+			);
+			
+			$this->db->insert('employee_picture', $data);
+		}
+
+		redirect('welcome');
+	}
+
+	public function getProfilePicture($employee_id) {
+		$data = $this->db->select('image_path')->from('employee_picture')->where('employee_id', $employee_id)->get()->row_array();
+
+		echo json_encode($data);
+	}
+
 	public function logout()
 	{
 		$this->session->sess_destroy();
