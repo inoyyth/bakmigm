@@ -1034,6 +1034,7 @@ class M_library_database extends CI_Model {
 		try{
 			$this->db->select('*');
 			$this->db->from($this->tb_document_structure_tipe);
+			$this->db->order_by('DTSETE_TIPE', 'ASC');
 			$query = $this->db->get();
 			if ($query->num_rows() > 0) {
 				return $query->result();
