@@ -334,18 +334,6 @@ $count_notification = $count_notification + $count_news;
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="" class="col-sm-12 control-label" style="text-align:left">Wujud Dokumen</label>
-								<div class="col-sm-12">
-									<input type="text" class="form-control" value="<?=$DTFM_NAME;?>">
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="" class="col-sm-12 control-label" style="text-align:left">Metode Distribusi</label>
-								<div class="col-sm-12">
-									<input type="text" class="form-control" value="<?=$DNMD_NAME;?>">
-								</div>
-							</div>
-							<div class="form-group">
 								<label for="" class="col-sm-12 control-label" style="text-align:left">Kategori Dokumen</label>
 								<div class="col-sm-12">
 									<input type="text" class="form-control" value="<?=$DTSEKI_KATEGORI;?>">
