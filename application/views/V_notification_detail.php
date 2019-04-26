@@ -404,42 +404,29 @@ $count_notification = $count_notification + $count_news;
 							<div class="form-group">
 								<label for="" class="col-sm-12 control-label" style="text-align:left">Dokumen Terkait</label>
 								<div class="col-sm-12">
-									<?php if(!empty($DOC_TERKAIT) || $DOC_TERKAIT != 0): ?>
-									<?php
-									$DOC_TERKAIT = $DOC_TERKAIT;
-									$DOC_TERKAIT_FINAL_ID = "";
-									$DOC_TERKAIT_FINAL_NAMA = "";
-									if(strpos($DOC_TERKAIT,'|')!==false){
-										$data_array = explode('|',$DOC_TERKAIT);
-										$count = count($data_array);
-										for($x=0;$x<$count;$x++){
-											$get_data = $this->M_library_database->GET_DOC_TERKAIT($data_array[$x]);
-											foreach($get_data as $data_row){
-												$DOC_ID = $data_row->DOC_ID;
-												$DOC_NAMA = $data_row->DOC_NAMA;
-									?>
-												<a target="_blank" href="<?= base_url('C_menu/detail/'.$DOC_ID); ?>"><?= $DOC_NAMA; ?></a><br/>
-									<?php
+									<?php if(!empty($DOC_TERKAIT)) {
+										$doc_array = explode('|',$DOC_TERKAIT);
+										$doc_terkait = [];
+										foreach ($doc_array as $kTerkait=>$vTerkait) {
+											$doc_terkait_query = $this->M_library_database->GET_DOC_TERKAIT($vTerkait);
+											if (!empty($doc_terkait_query)) {
+												$doc_dept_pengguna = explode('|', $doc_terkait_query->DOC_PENGGUNA);
+												$doc_maker_dep = $this->M_library_database->getUserMakerDepartemen($doc_terkait_query->DOC_MAKER);
+												$doc_maker_div = $this->M_library_database->getUserMakerDivisi($doc_terkait_query->DOC_MAKER);
+												if(
+													in_array($this->session->userdata("session_bgm_edocument_departement_id"), $doc_dept_pengguna) || 
+													in_array($this->session->userdata("session_bgm_edocument_departement_id"), $doc_maker_dep) || 
+													in_array($this->session->userdata("session_bgm_edocument_divisi_id"), $doc_maker_div)
+												) {
+													echo '<a target="_blank" href="'.base_url('C_menu/detail/'.$doc_terkait_query->DOC_ID).'">'.$doc_terkait_query->DOC_NAMA.'</a><br/>';
+												} else {
+													echo $doc_terkait_query->DOC_NAMA . "<br>";
+												}
 											}
-											$DOC_TERKAIT_FINAL_ID .= $DOC_ID.",";
-											$DOC_TERKAIT_FINAL_NAMA .= $DOC_NAMA.",";
 										}
-									}else{
-										$get_data = $this->M_library_database->GET_DOC_TERKAIT($DOC_TERKAIT);
-										foreach($get_data as $data_row){
-											$DOC_ID = $data_row->DOC_ID;
-											$DOC_NAMA = $data_row->DOC_NAMA;
-									?>
-										<a target="_blank" href="<?= base_url('C_menu/detail/'.$DOC_ID); ?>"><?= $DOC_NAMA; ?></a>
-									<?php
-										}
-										$DOC_TERKAIT_FINAL_ID = $DOC_ID;
-										$DOC_TERKAIT_FINAL_NAMA = $DOC_NAMA;
-									}
-									?>
-									<?php else: ?>
-									<input type="text" class="form-control" value="Tidak Ada Dokumen Terkait" readonly>
-									<?php endif; ?>
+									} else { ?>
+									Tidak Ada Dokumen Terkait
+									<?php } ?>
 								</div>
 							</div>
 							<div class="form-group">

@@ -187,7 +187,7 @@ class M_library_database extends CI_Model {
 			$this->db->where('tb_document.DOC_ID', $DOC_TERKAIT);
 			$query = $this->db->get();
 			if ($query->num_rows() > 0) {
-				return $query->result();
+				return $query->row();
 			}
 		} catch (Exception $exc) {
 			$error = $exc->getMessage();
