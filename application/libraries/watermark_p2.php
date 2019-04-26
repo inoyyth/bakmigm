@@ -34,6 +34,9 @@ class Watermark_p2 extends FPDI {
         $this->SetFont('Arial', 'B', 50);
         $this->SetTextColor(255, 192, 203);
         $this->RotatedText(50, 200, $GLOBALS['watermark_text'], 50);
+        $this->SetFont('Arial', 'B', 15);
+        $this->SetTextColor(0, 0, 0);
+        $this->RotatedText(63, 205, $GLOBALS['watermark_second_text'], 50);
         
         if (is_null($this->_tplIdx)) {
             $this->numPages = $this->setSourceFile($GLOBALS['dokumen_pelengkap_2']);

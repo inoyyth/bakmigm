@@ -414,6 +414,7 @@ class C_contribution extends CI_Controller {
 			}
 		}
 		$GLOBALS['watermark_text'] = $watermark_text;
+		$GLOBALS['watermark_second_text'] = $this->__getWatermarkText();
 		$config1['upload_path'] = './assets/original';
 		$config1['upload_url'] = './assets/original';
 		$config1['remove_spaces'] = TRUE;
@@ -995,5 +996,35 @@ class C_contribution extends CI_Controller {
 			  );
 			echo json_encode($output);
 			exit();
+	}
+
+	private function __getWatermarkText() {
+		$get_format = $this->db->select("*")
+									->from('m_watermark')
+									->get()->row_array();
+		$field_1 = $this->__conversionWatermarkField($get_format['field_1']);
+		$field_2 = $this->__conversionWatermarkField($get_format['field_2']);
+		$field_3 = $this->__conversionWatermarkField($get_format['field_3']);
+		$field_4 = $this->__conversionWatermarkField($get_format['field_4']);
+
+		return $field_1 . ' - ' . $field_2 . ' - ' . $field_3 . ' - ' . $field_4;
+	}
+
+	private function __conversionWatermarkField($value) {
+		switch($value) {
+			case 'NIP':
+				$text = $this->session->userdata("session_bgm_edocument_id");
+				break;
+			case 'Nama':
+				$text = $this->session->userdata("session_bgm_edocument_name");
+				break;
+			case 'Tanggal/Bulan/Tahun':
+				$text = date('d/M/Y');
+				break;
+			default:
+				$text = $value;
+		}
+
+		return $text;
 	}
 }
