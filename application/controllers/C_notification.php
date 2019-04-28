@@ -2604,5 +2604,10 @@ class C_notification extends CI_Controller {
 			redirect('C_notification');
 		}
 	}
+
+	public function news_dashboard() {
+		$data['view'] = 'news';
+		$this->load->view('template', $data);
+	}
 }
 //-----------------------------------------------------------------------------------------------//

@@ -89,5 +89,7 @@ $route['role-menus'] 				= 'Role_menus/index';
 $route['role-menus/update/(:any)'] 	= 'Role_menus/edit/$1';
 $route['role-menus/save'] 				= 'Role_menus/store';
 
+$route['news'] 					= 'C_notification/news_dashboard';
+
 $route['404_override'] 				= '';
 $route['translate_uri_dashes'] 		= FALSE;
