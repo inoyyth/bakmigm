@@ -27,7 +27,6 @@ class Model_detail extends CI_Model {
 				tb_document.DOC_STATUS = "'.$STATUS2.'" OR
 				tb_document.DOC_STATUS = "'.$STATUS3.'"
 			)
-			AND tb_document.DOC_AKSES_LEVEL LIKE "%'.$JBLL_ID.'%"
 			AND tb_document.DOC_PENGGUNA LIKE "%'.$DN_ID.'%"
 			AND tb_divisi.DI_ID LIKE "%'.$DI_ID.'%"
 			AND tb_direktorat.DT_ID LIKE "%'.$DT_ID.'%"
@@ -66,7 +65,6 @@ class Model_detail extends CI_Model {
 				tb_document.DOC_STATUS = "'.$STATUS2.'" OR 
 				tb_document.DOC_STATUS = "'.$STATUS3.'"
 			)
-			AND tb_document.DOC_AKSES_LEVEL LIKE "%'.$JBLL_ID.'%"
 			AND tb_document.DOC_PENGGUNA LIKE "%'.$DN_ID.'%"
 			AND tb_divisi.DI_ID LIKE "%'.$DI_ID.'%"
 			AND tb_direktorat.DT_ID LIKE "%'.$DT_ID.'%"
