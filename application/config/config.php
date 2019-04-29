@@ -534,3 +534,5 @@ $config['email_edoc'] = array(
     'from' => ["edoc@bakmigm.co.id","Edoc Bakmigm"],
     'replyto' => ["replyto@email.com","reply to!"]
 );
+
+$config['refresh_table_key'] = '5cb916d2f0edc4da914c70b956f1cb66';
