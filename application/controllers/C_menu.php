@@ -58,25 +58,25 @@ class C_menu extends CI_Controller
 		if (empty($SESSION_DEPARTEMENT_ID) && !empty($SESSION_DIVISI_ID)) {
 
 			for ($q=0; $q < $jml_key; $q++) {
-				$data['detail'][] = $this->Model_detail->search($keyword[$q],"DIPUBLIKASI","KADALUARSA","DIARSIPKAN","","",$SESSION_DIVISI_ID,"");
+				$data['detail'] = $this->Model_detail->search($keyword[$q],"DIPUBLIKASI","KADALUARSA","DIARSIPKAN","","",$SESSION_DIVISI_ID,"");
 			}
 
 		}elseif (empty($SESSION_DIVISI_ID) && !empty($SESSION_DIREKRORAT_ID)) {
 
 			for ($q=0; $q < $jml_key; $q++) {
-				$data['detail'][] = $this->Model_detail->search($keyword[$q],"DIPUBLIKASI","KADALUARSA","DIARSIPKAN","","","",$SESSION_DIREKRORAT_ID);
+				$data['detail'] = $this->Model_detail->search($keyword[$q],"DIPUBLIKASI","KADALUARSA","DIARSIPKAN","","","",$SESSION_DIREKRORAT_ID);
 			}
 		}else{
 			if ($SESSION_ROLES == "PENDISTRIBUSI" || $SESSION_ROLES == "ADMIN DOKUMEN" ||$SESSION_ROLES_2 == "PENDISTRIBUSI" || $SESSION_ROLES_2 == "ADMIN DOKUMEN" ||$SESSION_ROLES_3 == "PENDISTRIBUSI" || $SESSION_ROLES_3 == "ADMIN DOKUMEN" ||$SESSION_ROLES_4 == "PENDISTRIBUSI" || $SESSION_ROLES_4 == "ADMIN DOKUMEN" ||$SESSION_ROLES_5 == "PENDISTRIBUSI" || $SESSION_ROLES_5 == "ADMIN DOKUMEN") {
 
 			for ($q=0; $q < $jml_key; $q++) {
-				$data['detail'][] = $this->Model_detail->search($keyword[$q],"DIPUBLIKASI","KADALUARSA","DIARSIPKAN",$SESSION_JOB_LEVEL_ID,"","","");
+				$data['detail'] = $this->Model_detail->search($keyword[$q],"DIPUBLIKASI","KADALUARSA","DIARSIPKAN",$SESSION_JOB_LEVEL_ID,"","","");
 			}
 
 			}elseif ($SESSION_ROLES == "PENCIPTA" || $SESSION_ROLES_2 == "PENCIPTA" || $SESSION_ROLES_3 == "PENCIPTA" || $SESSION_ROLES_4 == "PENCIPTA" || $SESSION_ROLES_5 == "PENCIPTA") {
 
 				for ($q=0; $q < $jml_key; $q++) {
-					$data['detail'][] = $this->Model_detail->search($keyword[$q],"DIPUBLIKASI","KADALUARSA","DIARSIPKAN",$SESSION_JOB_LEVEL_ID,$SESSION_DEPARTEMENT_ID,"","");
+					$data['detail'] = $this->Model_detail->search($keyword[$q],"DIPUBLIKASI","KADALUARSA","DIARSIPKAN",$SESSION_JOB_LEVEL_ID,$SESSION_DEPARTEMENT_ID,"","");
 				}
 
 			}else{

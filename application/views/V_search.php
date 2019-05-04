@@ -127,7 +127,7 @@
 		if(!empty($detail)):
 			// var_dump($detail);die;
 		// $jml = count($detail);
-		foreach($detail[0] as $k=>$v):
+		foreach($detail as $k=>$v):
 		// for ($i=0; $i < $jml; $i++):
 			date_default_timezone_set('Asia/Jakarta');
 			$DOC_DATE_EXPIRED = date('Y-m-d',strtotime($v->DOC_TGL_EXPIRED));
