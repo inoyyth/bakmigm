@@ -17,6 +17,11 @@ if(empty($get_data_count)||$get_data_count==""){
 		</div>
 	</div>
 	<?php
+	$x = [];
+	foreach ($notification as $k=>$v) {
+		$x[] = $v->DOC_NAMA;
+	}
+	// echo '<pre>' . var_dump($x);die;
 	if(count($notification) > 0):
 		foreach ($notification as $data_row_ext):
 			$FILTER = $data_row_ext->DOC_STATUS;
@@ -261,6 +266,11 @@ if(empty($get_data_count)||$get_data_count==""){
 		$user_maker_division = $this->M_library_database->getUserMakerDivisi($data_row_ext->DOC_MAKER);
 		$user_approved_department = $this->M_library_database->getUserMakerDepartemen($data_row_ext->DOC_APPROVE);
 		$user_approved_division = $this->M_library_database->getUserMakerDivisi($data_row_ext->DOC_APPROVE);
+		$dokumen_pengguna = explode("|",$data_row_ext->DOC_PENGGUNA);
+		$is_pengguna = false;
+		if (in_array($this->session->userdata("session_bgm_edocument_departement_id"),$dokumen_pengguna)) {
+			$is_pengguna = true;
+		}
 		// if (($user_maker_department['DEPCODE'] == $this->session->userdata("session_bgm_edocument_departement_id") || $user_maker_division['DI_ID'] == $this->session->userdata("session_bgm_edocument_divisi_id")) || (strrpos($data_row_ext->DOC_STATUS, 'DITOLAK') !== FALSE && $user_maker_department['DEPCODE'] == $this->session->userdata("session_bgm_edocument_departement_id") || $user_maker_division['DI_ID'] == $this->session->userdata("session_bgm_edocument_divisi_id"))) {
 		if(
 			strrpos($data_row_ext->DOC_STATUS, $this->session->userdata("session_bgm_edocument_departement_id")) !== FALSE || 
@@ -268,7 +278,8 @@ if(empty($get_data_count)||$get_data_count==""){
 			$user_maker_division['DI_ID'] == $this->session->userdata("session_bgm_edocument_divisi_id") ||
 			$user_approved_department['DEPCODE'] == $this->session->userdata("session_bgm_edocument_departement_id") || 
 			$user_approved_division['DI_ID'] == $this->session->userdata("session_bgm_edocument_divisi_id") || 
-			$this->session->userdata("session_bgm_edocument_departement_id") == $data_row_ext->DOC_PENDISTRIBUSI
+			$this->session->userdata("session_bgm_edocument_departement_id") == $data_row_ext->DOC_PENDISTRIBUSI || 
+			$is_pengguna == true
 		) {
 	?>
 		<div class="alert alert-info fade in">
