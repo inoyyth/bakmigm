@@ -320,7 +320,7 @@
 										<select id="si_owner_pemilik_proses" name="si_owner_pemilik_proses" class="form-control" />
 											<option value="">Pilih</option>
 											<option value="<?php echo $this->session->userdata("session_bgm_edocument_divisi_id"); ?>"><?php echo $this->session->userdata("session_bgm_edocument_divisi_name"); ?></option>
-											<option value="<?php echo $this->session->userdata("session_bgm_edocument_departement_id"); ?>" selected><?php echo $this->session->userdata("session_bgm_edocument_departement_name"); ?></option>
+											<option value="<?php echo $this->session->userdata("session_bgm_edocument_departement_id"); ?>"><?php echo $this->session->userdata("session_bgm_edocument_departement_name"); ?></option>
 										</select>
 									</div>
 									<span id="req_proses" class="text-danger hide">Harap Isi Departemen Pemilik Proses Dokumen!</span>
@@ -346,7 +346,7 @@
 								<label for="si_owner_dept_pendistribusi" class="col-sm-3 control-label" style="text-align:left">Dept Pendistribusi*</label>
 								<div class="col-sm-5">
 									<select id="si_owner_dept_pendistribusi" name="si_owner_dept_pendistribusi" class="form-control" />
-										<option value="">Pilih</option>
+
 									</select>
 								</div>
 								<span id="req_distribusi_dept" class="text-danger hide">Harap Isi Departemen Pendistribusi Dokumen!</span>
@@ -1664,9 +1664,9 @@
 												$('#si_owner_dept_pendistribusi').append('<option value="<?= $this->session->userdata("session_bgm_edocument_divisi_id"); ?>"><?= $this->session->userdata("session_bgm_edocument_divisi_name"); ?></option>');
 												$('#si_owner_dept_pendistribusi').append('<option value="<?= $this->session->userdata("session_bgm_edocument_departement_id"); ?>"><?= $this->session->userdata("session_bgm_edocument_departement_name"); ?></option>');
 												if (add=='DTSEKI0004' || add=='DTSEKI0001') {
-														// $("#si_owner_dept_penyimpan option[value='7550']").remove();
 														$("#si_owner_dept_pendistribusi option[value='7550']").remove();
 													}else{
+														$('#si_owner_dept_pendistribusi').val('7550');
 														var optionExists = ($('#si_owner_dept_pendistribusi option[value=7550]').length > 0);
 														if(!optionExists)
 														{

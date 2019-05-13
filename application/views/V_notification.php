@@ -8,306 +8,349 @@ if(empty($get_data_count)||$get_data_count==""){
 }
 ?>
 <div class="row">
-	<div class="widget-box">
-		<div class="widget-header">
-			<h4 class="smaller">
-				Notification
+	<ul class="nav nav-tabs" role="tablist">
+    	<li role="presentation" class="active">
+			<a href="#notification" aria-controls="notification" role="tab" data-toggle="tab"
+				>Notification 
 				<span class="badge badge-primary"><?php echo count($notification); ?></span>
-			</h4>
-		</div>
-	</div>
-	<?php
-	$x = [];
-	foreach ($notification as $k=>$v) {
-		$x[] = $v->DOC_NAMA;
-	}
-	// echo '<pre>' . var_dump($x);die;
-	if(count($notification) > 0):
-		foreach ($notification as $data_row_ext):
-			$FILTER = $data_row_ext->DOC_STATUS;
-			// Tanggal
-			date_default_timezone_set('Asia/Jakarta');
-			$sekarang = date('Y-m-d');
-			$exp = $data_row_ext->DOC_TGL_EXPIRED;
-			$sebulan = date('Y-m-d', strtotime('+30 days', strtotime($data_row_ext->DOC_TGL_EXPIRED)));
-			$tgl_efektif = new DateTime($sekarang);
-			$kadaluarsa = new DateTime($exp);
-			$tgl_final = $kadaluarsa->diff($tgl_efektif)->format("%a");
-
-			$sebulan2 = new DateTime($sebulan);
-			$arcived = $sebulan2->diff($tgl_efektif)->format("%a");
-			$versioning_document = $this->M_notification->getVersioning($data_row_ext->DOC_ID);
-			$versioning_date = NULL;
-			if (count($versioning_document) > 0) {
-				$versioning_date = $versioning_document[0]['DOCV_DATE'];
+			</a>
+		</li>
+		<?php if (in_array(5,$this->session->userdata("user_menu"))) { ?>
+    	<li role="presentation">
+			<a href="#news" aria-controls="news" role="tab" data-toggle="tab">
+				News
+				<span class="badge badge-primary"><?php echo $count_news; ?></span>
+			</a>
+		</li>
+		<?php } ?>
+	</ul>
+	<div class="tab-content">
+		<div role="tabpanel" class="tab-pane fade in active" id="notification">
+			<?php
+			$x = [];
+			foreach ($notification as $k=>$v) {
+				$x[] = $v->DOC_NAMA;
 			}
-	?>
-	<!-- Menunggu Persetujuan Anda -->
-	<?php 
-	if ($this->session->userdata("session_bgm_edocument_departement_id")==$FILTER): 
-	?>
-		<div class="alert alert-warning fade in">
-			<div class="row">
-				<div class="col-xs-10">
-					Dokumen <?php echo $data_row_ext->DOC_NAMA; ?>, perlu persetujuan Anda!
-					<br/>
-					<?php 
-					if ($versioning_date) {
-						echo date('d/M/Y G:i', strtotime($versioning_date));
-					} else {
-						echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));
+			// echo '<pre>' . var_dump($x);die;
+			if(count($notification) > 0):
+				foreach ($notification as $data_row_ext):
+					$FILTER = $data_row_ext->DOC_STATUS;
+					// Tanggal
+					date_default_timezone_set('Asia/Jakarta');
+					$sekarang = date('Y-m-d');
+					$exp = $data_row_ext->DOC_TGL_EXPIRED;
+					$sebulan = date('Y-m-d', strtotime('+30 days', strtotime($data_row_ext->DOC_TGL_EXPIRED)));
+					$tgl_efektif = new DateTime($sekarang);
+					$kadaluarsa = new DateTime($exp);
+					$tgl_final = $kadaluarsa->diff($tgl_efektif)->format("%a");
+
+					$sebulan2 = new DateTime($sebulan);
+					$arcived = $sebulan2->diff($tgl_efektif)->format("%a");
+					$versioning_document = $this->M_notification->getVersioning($data_row_ext->DOC_ID);
+					$versioning_date = NULL;
+					if (count($versioning_document) > 0) {
+						$versioning_date = $versioning_document[0]['DOCV_DATE'];
 					}
-					?> WIB
-				</div>
-				<div class="col-xs-2" style="text-align:right;">
-					<a data-toggle="modal" data-target="#modal-preview<?=$data_row_ext->DOC_ID;?>" class="ace-icon fa fa-eye btn btn-sm btn-warning" data-popup="tooltip" data-placement="top" title="Preview"></a>
-				</div>
-			</div>
-		</div>
-	<?php 
-	// as atasan
-	elseif ($this->session->userdata("session_dep_code_employee")==$FILTER):
-	?>
-		<div class="alert alert-warning fade in">
-			<div class="row">
-				<div class="col-xs-10">
-					Dokumen <?php echo $data_row_ext->DOC_NAMA; ?>, perlu persetujuan Anda!
-					<br/>
-					<?php 
-					if ($versioning_date) {
-						echo date('d/M/Y G:i', strtotime($versioning_date));
-					} else {
-						echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));
-					}
-					?> WIB
-				</div>
-				<div class="col-xs-2" style="text-align:right;">
-					<a data-toggle="modal" data-target="#modal-preview<?=$data_row_ext->DOC_ID;?>" class="ace-icon fa fa-eye btn btn-sm btn-warning" data-popup="tooltip" data-placement="top" title="Preview"></a>
-				</div>
-			</div>
-		</div>
-	<?php 
-	elseif ($this->session->userdata("session_bgm_edocument_direktorat_id")==$FILTER):
-	?>
-		<div class="alert alert-warning fade in">
-			<div class="row">
-				<div class="col-xs-10">
-					Dokumen <?php echo $data_row_ext->DOC_NAMA; ?>, perlu persetujuan Anda!
-					<br/>
-					<?php 
-						if ($versioning_date) {
-							echo date('d/M/Y G:i', strtotime($versioning_date));
-						} else {
-							echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));
-						}
-					?> WIB
-				</div>
-				<div class="col-xs-2" style="text-align:right;">
-					<a data-toggle="modal" data-target="#modal-preview<?=$data_row_ext->DOC_ID;?>" class="ace-icon fa fa-eye btn btn-sm btn-warning" data-popup="tooltip" data-placement="top" title="Preview"></a>
-				</div>
-			</div>
-		</div>
-	<?php
-	//DItolak untuk atasan
-	elseif (($this->session->userdata("session_bgm_edocument_departement_id") == $FILTER || $this->session->userdata("session_bgm_edocument_divisi_code") == $FILTER || $this->session->userdata("session_bgm_edocument_direktorat_id") == $FILTER) && strrpos($data_row_ext->DOC_STATUS, 'DITOLAK') !== FALSE): 
-	?>
-		<div class="alert alert-warning fade in">
-			<div class="row">
-				<div class="col-xs-10">
-					Dokumen <?php echo $data_row_ext->DOC_NAMA; ?>, <?php echo $data_row_ext->DOC_STATUS_ACTIVITY; ?>
-					<br/>
-					<?php 
-						if ($versioning_date) {
-							echo date('d/M/Y G:i', strtotime($versioning_date));
-						} else {
-							echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));
-						}
-					?> WIB
-				</div>
-				<div class="col-xs-2" style="text-align:right;">
-					<a data-toggle="modal" data-target="#modal-preview<?=$data_row_ext->DOC_ID;?>" class="ace-icon fa fa-eye btn btn-sm btn-warning" data-popup="tooltip" data-placement="top" title="Preview"></a>
-				</div>
-			</div>
-		</div>
-	<?php 
-	//DITOLAK untuk si pembuat
-	elseif($this->session->userdata("session_bgm_edocument_id") == $data_row_ext->DOC_MAKER && strrpos($data_row_ext->DOC_STATUS, 'DITOLAK') !== FALSE):
-	?>
-		<div class="alert alert-danger fade in">
-			<div class="row">
-				<div class="col-xs-10">
-					Dokumen <?php echo $data_row_ext->DOC_NAMA; ?>, <?php echo $data_row_ext->DOC_STATUS_ACTIVITY; ?>. Mohon untuk segera di perbaiki!
-					<br/>
-					<?php
-					$get_data_info_reject = $this->M_library_database->DB_GET_DATA_DOCUMENT_DETAIL_STATUS_BY_ID_EVO($data_row_ext->DOC_ID);
-					$index_info_reject = 1;
-						foreach($get_data_info_reject as $data_row_info_reject){
-					?>
-							<b>
-							<?php echo $index_info_reject; ?>. Oleh : <?php echo $data_row_info_reject->DTDLSS_MAKER; ?>, Note : <?php echo $data_row_info_reject->DTDLSS_NOTE; ?>. Pada : <?php echo date('d/M/Y G:i', strtotime($data_row_info_reject->DTDLSS_DATE)); ?> WIB
+			?>
+			<!-- Menunggu Persetujuan Anda -->
+			<?php 
+			if ($this->session->userdata("session_bgm_edocument_departement_id")==$FILTER): 
+			?>
+				<div class="alert alert-warning fade in">
+					<div class="row">
+						<div class="col-xs-10">
+							Dokumen <?php echo $data_row_ext->DOC_NAMA; ?>, perlu persetujuan Anda!
 							<br/>
-							</b>
-					<?php
-							$index_info_reject++;
-						}
-					?>
+							<?php 
+							if ($versioning_date) {
+								echo date('d/M/Y G:i', strtotime($versioning_date));
+							} else {
+								echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));
+							}
+							?> WIB
+						</div>
+						<div class="col-xs-2" style="text-align:right;">
+							<a data-toggle="modal" data-target="#modal-preview<?=$data_row_ext->DOC_ID;?>" class="ace-icon fa fa-eye btn btn-sm btn-warning" data-popup="tooltip" data-placement="top" title="Preview"></a>
+						</div>
+					</div>
 				</div>
-				<div class="col-xs-2" style="text-align:right;">
-					<form id="form_revisi[]" name="form_revisi[]" action="<?php echo base_url('C_notification/revisi'); ?>" method="post" enctype="multipart/form-data">
-					<input type="hidden" id="si_key[]" name="si_key[]" value="<?php echo $data_row_ext->DOC_ID; ?>" class="form-control" required/>
-					<button type="submit" class="ace-icon fa fa-pencil btn btn-sm btn-danger"></button>
+			<?php 
+			// as atasan
+			elseif ($this->session->userdata("session_dep_code_employee")==$FILTER):
+			?>
+				<div class="alert alert-warning fade in">
+					<div class="row">
+						<div class="col-xs-10">
+							Dokumen <?php echo $data_row_ext->DOC_NAMA; ?>, perlu persetujuan Anda!
+							<br/>
+							<?php 
+							if ($versioning_date) {
+								echo date('d/M/Y G:i', strtotime($versioning_date));
+							} else {
+								echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));
+							}
+							?> WIB
+						</div>
+						<div class="col-xs-2" style="text-align:right;">
+							<a data-toggle="modal" data-target="#modal-preview<?=$data_row_ext->DOC_ID;?>" class="ace-icon fa fa-eye btn btn-sm btn-warning" data-popup="tooltip" data-placement="top" title="Preview"></a>
+						</div>
+					</div>
+				</div>
+			<?php 
+			elseif ($this->session->userdata("session_bgm_edocument_direktorat_id")==$FILTER):
+			?>
+				<div class="alert alert-warning fade in">
+					<div class="row">
+						<div class="col-xs-10">
+							Dokumen <?php echo $data_row_ext->DOC_NAMA; ?>, perlu persetujuan Anda!
+							<br/>
+							<?php 
+								if ($versioning_date) {
+									echo date('d/M/Y G:i', strtotime($versioning_date));
+								} else {
+									echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));
+								}
+							?> WIB
+						</div>
+						<div class="col-xs-2" style="text-align:right;">
+							<a data-toggle="modal" data-target="#modal-preview<?=$data_row_ext->DOC_ID;?>" class="ace-icon fa fa-eye btn btn-sm btn-warning" data-popup="tooltip" data-placement="top" title="Preview"></a>
+						</div>
+					</div>
+				</div>
+			<?php
+			//DItolak untuk atasan
+			elseif (($this->session->userdata("session_bgm_edocument_departement_id") == $FILTER || $this->session->userdata("session_bgm_edocument_divisi_code") == $FILTER || $this->session->userdata("session_bgm_edocument_direktorat_id") == $FILTER) && strrpos($data_row_ext->DOC_STATUS, 'DITOLAK') !== FALSE): 
+			?>
+				<div class="alert alert-warning fade in">
+					<div class="row">
+						<div class="col-xs-10">
+							Dokumen <?php echo $data_row_ext->DOC_NAMA; ?>, <?php echo $data_row_ext->DOC_STATUS_ACTIVITY; ?>
+							<br/>
+							<?php 
+								if ($versioning_date) {
+									echo date('d/M/Y G:i', strtotime($versioning_date));
+								} else {
+									echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));
+								}
+							?> WIB
+						</div>
+						<div class="col-xs-2" style="text-align:right;">
+							<a data-toggle="modal" data-target="#modal-preview<?=$data_row_ext->DOC_ID;?>" class="ace-icon fa fa-eye btn btn-sm btn-warning" data-popup="tooltip" data-placement="top" title="Preview"></a>
+						</div>
+					</div>
+				</div>
+			<?php 
+			//DITOLAK untuk si pembuat
+			elseif($this->session->userdata("session_bgm_edocument_id") == $data_row_ext->DOC_MAKER && strrpos($data_row_ext->DOC_STATUS, 'DITOLAK') !== FALSE):
+			?>
+				<div class="alert alert-danger fade in">
+					<div class="row">
+						<div class="col-xs-10">
+							Dokumen <?php echo $data_row_ext->DOC_NAMA; ?>, <?php echo $data_row_ext->DOC_STATUS_ACTIVITY; ?>. Mohon untuk segera di perbaiki!
+							<br/>
+							<?php
+							$get_data_info_reject = $this->M_library_database->DB_GET_DATA_DOCUMENT_DETAIL_STATUS_BY_ID_EVO($data_row_ext->DOC_ID);
+							$index_info_reject = 1;
+								foreach($get_data_info_reject as $data_row_info_reject){
+							?>
+									<b>
+									<?php echo $index_info_reject; ?>. Oleh : <?php echo $data_row_info_reject->DTDLSS_MAKER; ?>, Note : <?php echo $data_row_info_reject->DTDLSS_NOTE; ?>. Pada : <?php echo date('d/M/Y G:i', strtotime($data_row_info_reject->DTDLSS_DATE)); ?> WIB
+									<br/>
+									</b>
+							<?php
+									$index_info_reject++;
+								}
+							?>
+						</div>
+						<div class="col-xs-2" style="text-align:right;">
+							<form id="form_revisi[]" name="form_revisi[]" action="<?php echo base_url('C_notification/revisi'); ?>" method="post" enctype="multipart/form-data">
+							<input type="hidden" id="si_key[]" name="si_key[]" value="<?php echo $data_row_ext->DOC_ID; ?>" class="form-control" required/>
+							<button type="submit" class="ace-icon fa fa-pencil btn btn-sm btn-danger"></button>
+							</form>
+						</div>
+					</div>
+				</div>
+			<?php 
+			elseif($FILTER =="DIPUBLIKASI"): 
+			?>
+				<div class="alert alert-success fade in">
+					<form action="<?= base_url('C_notification/delete_notification'); ?>" method="POST">
+						<input type="hidden" name="doc_id" value="<?= $data_row_ext->DOC_ID; ?>">
+						<input type="hidden" name="user_id" value="<?= $data_row_ext->NIP; ?>">
+						<input type="hidden" name="notif_id" value="<?= $data_row_ext->NOTIF_ID; ?>">
+						<button type="submit" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 					</form>
+					<div class="row">
+						<div class="col-xs-10">
+							Dokumen <?php echo $data_row_ext->DOC_NAMA; ?>, <?php echo $data_row_ext->DOC_STATUS_ACTIVITY; ?>
+							<br/>
+							<?php 
+								if ($versioning_date) {
+									echo date('d/M/Y G:i', strtotime($versioning_date));
+								} else {
+									echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));
+								}
+							?> WIB
+						</div>
+					</div>
 				</div>
-			</div>
+			<?php 
+			elseif($this->session->userdata("session_bgm_edocument_id") == $data_row_ext->DOC_MAKER && $FILTER =="DIPUBLIKASI" && $tgl_final <= 90 && $tgl_final >= 1): 
+			?>
+				<div class="alert alert-warning fade in">
+					<div class="row">
+						<div class="col-xs-10">
+							Dokumen <?=$data_row_ext->DOC_NAMA; ?>, Akan <b>Kadaluarsa</b> dalam <?=$tgl_final; ?> hari
+						</div>
+						<div class="col-sm-2" style="width:4%;">
+							<form id="form_versioning[]" name="form_versioning[]" action="<?php echo base_url('C_notification/versioning'); ?>" method="post" enctype="multipart/form-data" target="_blank">
+								<input type="hidden" id="si_key[]" name="si_key[]" value="<?php echo $data_row_ext->DOC_ID; ?>" class="form-control" required/>
+								<button type="submit" class="ace-icon fa fa-edit btn btn-sm btn-info" data-popup="tooltip" data-placement="top" title="Pengkinian"></button>
+							</form>
+						</div>
+						<div class="col-sm-2" style="width:4%;">
+							<form id="form_comment[]" name="form_comment[]" action="<?php echo base_url('C_news/comment'); ?>" method="post" enctype="multipart/form-data">
+								<input type="hidden" id="si_key[]" name="si_key[]" value="<?php echo $data_row_ext->DOC_ID; ?>" class="form-control" required/>
+								<button type="submit" class="ace-icon fa fa-comment btn btn-sm btn-success"></button>
+							</form>
+						</div>
+						<div class="col-sm-2" style="width:4%;">
+							<form id="form_revisi[]" name="form_revisi[]" action="<?php echo base_url('C_notification/obsolete'); ?>" method="post" enctype="multipart/form-data">
+								<input type="hidden" id="si_key" name="si_key" value="<?php echo $data_row_ext->DOC_ID; ?>" class="form-control" required/>
+								<button type="submit" class="ace-icon fa fa-remove btn btn-sm btn-danger"></button>
+							</form>
+						</div>
+					</div>
+				</div>
+			<?php 
+			elseif($this->session->userdata("session_bgm_edocument_id") == $data_row_ext->DOC_MAKER && $FILTER == "KADALUARSA" && $arcived <= 30 && $arcived >= 1): 
+			?>
+				<div class="alert alert-warning fade in">
+					<div class="row">
+						<div class="col-xs-10">
+							Dokumen <?=$data_row_ext->DOC_NAMA; ?>, Akan <b>Diarsipkan</b> dalam <?=$arcived; ?> hari ke depan
+						</div>
+						<div class="col-sm-2" style="width:4%;">
+							<form id="form_versioning[]" name="form_versioning[]" action="<?php echo base_url('C_notification/versioning'); ?>" method="post" enctype="multipart/form-data" target="_blank">
+								<input type="hidden" id="si_key[]" name="si_key[]" value="<?php echo $data_row_ext->DOC_ID; ?>" class="form-control" required/>
+								<button type="submit" class="ace-icon fa fa-edit btn btn-sm btn-info" data-popup="tooltip" data-placement="top" title="Pengkinian"></button>
+							</form>
+						</div>
+						<div class="col-sm-2" style="width:4%;">
+							<form id="form_comment[]" name="form_comment[]" action="<?php echo base_url('C_news/comment'); ?>" method="post" enctype="multipart/form-data">
+								<input type="hidden" id="si_key[]" name="si_key[]" value="<?php echo $data_row_ext->DOC_ID; ?>" class="form-control" required/>
+								<button type="submit" class="ace-icon fa fa-comment btn btn-sm btn-success"></button>
+							</form>
+						</div>
+						<div class="col-sm-2" style="width:4%;">
+							<form id="form_revisi[]" name="form_revisi[]" action="<?php echo base_url('C_notification/obsolete'); ?>" method="post" enctype="multipart/form-data">
+								<input type="hidden" id="si_key" name="si_key" value="<?php echo $data_row_ext->DOC_ID; ?>" class="form-control" required/>
+								<button type="submit" class="ace-icon fa fa-remove btn btn-sm btn-danger"></button>
+							</form>
+						</div>
+					</div>
+				</div>
+			<?php elseif ($FILTER == "DIARSIPKAN"):?>
+				<div class="alert alert-info fade in">
+					<form action="<?= base_url('C_notification/delete_notification'); ?>" method="POST">
+						<input type="hidden" name="id" value="<?= $data_row_ext->DOC_ID; ?>">
+						<button type="submit" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					</form>
+					<div class="row">
+						<div class="col-xs-10">
+							Dokumen <?php echo $data_row_ext->DOC_NAMA; ?>, <?php echo $data_row_ext->DOC_STATUS_ACTIVITY; ?>
+							<br/>
+							<?php 
+								if ($versioning_date) {
+									echo date('d/M/Y G:i', strtotime($versioning_date));
+								} else {
+									echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));
+								}
+							?> WIB
+						</div>
+					</div>
+				</div>
+			<?php else:
+				// //ditolak untuk pendistribusi
+				$user_maker_department = $this->M_library_database->getUserMakerDepartemen($data_row_ext->DOC_MAKER);
+				$user_maker_division = $this->M_library_database->getUserMakerDivisi($data_row_ext->DOC_MAKER);
+				$user_approved_department = $this->M_library_database->getUserMakerDepartemen($data_row_ext->DOC_APPROVE);
+				$user_approved_division = $this->M_library_database->getUserMakerDivisi($data_row_ext->DOC_APPROVE);
+				$dokumen_pengguna = explode("|",$data_row_ext->DOC_PENGGUNA);
+				$is_pengguna = false;
+				if (in_array($this->session->userdata("session_bgm_edocument_departement_id"),$dokumen_pengguna)) {
+					$is_pengguna = true;
+				}
+				// if (($user_maker_department['DEPCODE'] == $this->session->userdata("session_bgm_edocument_departement_id") || $user_maker_division['DI_ID'] == $this->session->userdata("session_bgm_edocument_divisi_id")) || (strrpos($data_row_ext->DOC_STATUS, 'DITOLAK') !== FALSE && $user_maker_department['DEPCODE'] == $this->session->userdata("session_bgm_edocument_departement_id") || $user_maker_division['DI_ID'] == $this->session->userdata("session_bgm_edocument_divisi_id"))) {
+				if(
+					strrpos($data_row_ext->DOC_STATUS, $this->session->userdata("session_bgm_edocument_departement_id")) !== FALSE || 
+					$user_maker_department['DEPCODE'] == $this->session->userdata("session_bgm_edocument_departement_id") || 
+					$user_maker_division['DI_ID'] == $this->session->userdata("session_bgm_edocument_divisi_id") ||
+					$user_approved_department['DEPCODE'] == $this->session->userdata("session_bgm_edocument_departement_id") || 
+					$user_approved_division['DI_ID'] == $this->session->userdata("session_bgm_edocument_divisi_id") || 
+					$this->session->userdata("session_bgm_edocument_departement_id") == $data_row_ext->DOC_PENDISTRIBUSI || 
+					$is_pengguna == true
+				) {
+			?>
+				<div class="alert alert-info fade in">
+					<form action="<?= base_url('C_notification/delete_notification'); ?>" method="POST">
+						<input type="hidden" name="doc_id" value="<?= $data_row_ext->DOC_ID; ?>">
+						<input type="hidden" name="user_id" value="<?= $data_row_ext->NIP; ?>">
+						<input type="hidden" name="notif_id" value="<?= $data_row_ext->NOTIF_ID; ?>">
+						<button type="submit" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					</form>
+					<div class="row">
+						<div class="col-xs-10">
+							Dokumen <?php echo $data_row_ext->DOC_NAMA; ?>, <?php echo $data_row_ext->DOC_STATUS_ACTIVITY; ?>
+							<br/>
+							<?php 
+								if ($versioning_date) {
+									echo date('d/M/Y G:i', strtotime($versioning_date));
+								} else {
+									echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));
+								}
+							?> WIB
+						</div>
+					</div>
+				</div>
+				<?php  } endif; // END if SESSION ?>
+			<?php
+				endforeach; // END data_row_ext
+			endif; // END if is_continue
+			?>
 		</div>
-	<?php 
-	elseif($FILTER =="DIPUBLIKASI"): 
-	?>
-		<div class="alert alert-success fade in">
-			<form action="<?= base_url('C_notification/delete_notification'); ?>" method="POST">
-				<input type="hidden" name="doc_id" value="<?= $data_row_ext->DOC_ID; ?>">
-				<input type="hidden" name="user_id" value="<?= $data_row_ext->NIP; ?>">
-				<input type="hidden" name="notif_id" value="<?= $data_row_ext->NOTIF_ID; ?>">
-				<button type="submit" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-			</form>
-			<div class="row">
-				<div class="col-xs-10">
-					Dokumen <?php echo $data_row_ext->DOC_NAMA; ?>, <?php echo $data_row_ext->DOC_STATUS_ACTIVITY; ?>
-					<br/>
-					<?php 
-						if ($versioning_date) {
-							echo date('d/M/Y G:i', strtotime($versioning_date));
-						} else {
-							echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));
-						}
-					?> WIB
+		<?php if (in_array(5,$this->session->userdata("user_menu"))) { ?>
+		<div role="tabpanel" class="tab-pane fade" id="news">
+			<?php
+				if($count_news > 0){
+					foreach($get_data_count as $data_row){
+				?>
+				<div class="media search-media">
+					<div class="media-body">
+						<div>
+							<h5 class="media-heading">
+								<a class="black"><?= $data_row->FULL_NAME; ?></a>
+							</h5>
+						</div>
+						<div class="space-1"></div>
+						<p>
+							Nomor Dokumen : <?= $data_row->DOC_NOMOR; ?>
+							<br/>
+							Nama Dokumen : <?= $data_row->DOC_NAMA; ?>
+						</p>
+
+						<div class="search-actions text-center">
+							<span class="text-info"><?php echo date('d M Y', strtotime($data_row->DOC_DATE)); ?></span>
+							<br/>
+							<span class="text-info"><?php echo date('G:i', strtotime($data_row->DOC_DATE))." WIB"; ?></span>
+							<a href="<?php echo base_url('document-details-'.$data_row->DOC_ID) ?>" class="search-btn-action btn btn-sm btn-block btn-info">Lihat</a>
+						</div>
+					</div>
 				</div>
-			</div>
+			<?php } } ?>
 		</div>
-	<?php 
-	elseif($this->session->userdata("session_bgm_edocument_id") == $data_row_ext->DOC_MAKER && $FILTER =="DIPUBLIKASI" && $tgl_final <= 90 && $tgl_final >= 1): 
-	?>
-		<div class="alert alert-warning fade in">
-			<div class="row">
-				<div class="col-xs-10">
-					Dokumen <?=$data_row_ext->DOC_NAMA; ?>, Akan <b>Kadaluarsa</b> dalam <?=$tgl_final; ?> hari
-				</div>
-				<div class="col-sm-2" style="width:4%;">
-					<form id="form_versioning[]" name="form_versioning[]" action="<?php echo base_url('C_notification/versioning'); ?>" method="post" enctype="multipart/form-data" target="_blank">
-						<input type="hidden" id="si_key[]" name="si_key[]" value="<?php echo $data_row_ext->DOC_ID; ?>" class="form-control" required/>
-						<button type="submit" class="ace-icon fa fa-edit btn btn-sm btn-info" data-popup="tooltip" data-placement="top" title="Pengkinian"></button>
-					</form>
-				</div>
-				<div class="col-sm-2" style="width:4%;">
-					<form id="form_comment[]" name="form_comment[]" action="<?php echo base_url('C_news/comment'); ?>" method="post" enctype="multipart/form-data">
-						<input type="hidden" id="si_key[]" name="si_key[]" value="<?php echo $data_row_ext->DOC_ID; ?>" class="form-control" required/>
-						<button type="submit" class="ace-icon fa fa-comment btn btn-sm btn-success"></button>
-					</form>
-				</div>
-				<div class="col-sm-2" style="width:4%;">
-					<form id="form_revisi[]" name="form_revisi[]" action="<?php echo base_url('C_notification/obsolete'); ?>" method="post" enctype="multipart/form-data">
-						<input type="hidden" id="si_key" name="si_key" value="<?php echo $data_row_ext->DOC_ID; ?>" class="form-control" required/>
-						<button type="submit" class="ace-icon fa fa-remove btn btn-sm btn-danger"></button>
-					</form>
-				</div>
-			</div>
-		</div>
-	<?php 
-	elseif($this->session->userdata("session_bgm_edocument_id") == $data_row_ext->DOC_MAKER && $FILTER == "KADALUARSA" && $arcived <= 30 && $arcived >= 1): 
-	?>
-		<div class="alert alert-warning fade in">
-			<div class="row">
-				<div class="col-xs-10">
-					Dokumen <?=$data_row_ext->DOC_NAMA; ?>, Akan <b>Diarsipkan</b> dalam <?=$arcived; ?> hari ke depan
-				</div>
-				<div class="col-sm-2" style="width:4%;">
-					<form id="form_versioning[]" name="form_versioning[]" action="<?php echo base_url('C_notification/versioning'); ?>" method="post" enctype="multipart/form-data" target="_blank">
-						<input type="hidden" id="si_key[]" name="si_key[]" value="<?php echo $data_row_ext->DOC_ID; ?>" class="form-control" required/>
-						<button type="submit" class="ace-icon fa fa-edit btn btn-sm btn-info" data-popup="tooltip" data-placement="top" title="Pengkinian"></button>
-					</form>
-				</div>
-				<div class="col-sm-2" style="width:4%;">
-					<form id="form_comment[]" name="form_comment[]" action="<?php echo base_url('C_news/comment'); ?>" method="post" enctype="multipart/form-data">
-						<input type="hidden" id="si_key[]" name="si_key[]" value="<?php echo $data_row_ext->DOC_ID; ?>" class="form-control" required/>
-						<button type="submit" class="ace-icon fa fa-comment btn btn-sm btn-success"></button>
-					</form>
-				</div>
-				<div class="col-sm-2" style="width:4%;">
-					<form id="form_revisi[]" name="form_revisi[]" action="<?php echo base_url('C_notification/obsolete'); ?>" method="post" enctype="multipart/form-data">
-						<input type="hidden" id="si_key" name="si_key" value="<?php echo $data_row_ext->DOC_ID; ?>" class="form-control" required/>
-						<button type="submit" class="ace-icon fa fa-remove btn btn-sm btn-danger"></button>
-					</form>
-				</div>
-			</div>
-		</div>
-	<?php elseif ($FILTER == "DIARSIPKAN"):?>
-		<div class="alert alert-info fade in">
-			<form action="<?= base_url('C_notification/delete_notification'); ?>" method="POST">
-				<input type="hidden" name="id" value="<?= $data_row_ext->DOC_ID; ?>">
-				<button type="submit" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-			</form>
-			<div class="row">
-				<div class="col-xs-10">
-					Dokumen <?php echo $data_row_ext->DOC_NAMA; ?>, <?php echo $data_row_ext->DOC_STATUS_ACTIVITY; ?>
-					<br/>
-					<?php 
-						if ($versioning_date) {
-							echo date('d/M/Y G:i', strtotime($versioning_date));
-						} else {
-							echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));
-						}
-					?> WIB
-				</div>
-			</div>
-		</div>
-	<?php else:
-		// //ditolak untuk pendistribusi
-		$user_maker_department = $this->M_library_database->getUserMakerDepartemen($data_row_ext->DOC_MAKER);
-		$user_maker_division = $this->M_library_database->getUserMakerDivisi($data_row_ext->DOC_MAKER);
-		$user_approved_department = $this->M_library_database->getUserMakerDepartemen($data_row_ext->DOC_APPROVE);
-		$user_approved_division = $this->M_library_database->getUserMakerDivisi($data_row_ext->DOC_APPROVE);
-		$dokumen_pengguna = explode("|",$data_row_ext->DOC_PENGGUNA);
-		$is_pengguna = false;
-		if (in_array($this->session->userdata("session_bgm_edocument_departement_id"),$dokumen_pengguna)) {
-			$is_pengguna = true;
-		}
-		// if (($user_maker_department['DEPCODE'] == $this->session->userdata("session_bgm_edocument_departement_id") || $user_maker_division['DI_ID'] == $this->session->userdata("session_bgm_edocument_divisi_id")) || (strrpos($data_row_ext->DOC_STATUS, 'DITOLAK') !== FALSE && $user_maker_department['DEPCODE'] == $this->session->userdata("session_bgm_edocument_departement_id") || $user_maker_division['DI_ID'] == $this->session->userdata("session_bgm_edocument_divisi_id"))) {
-		if(
-			strrpos($data_row_ext->DOC_STATUS, $this->session->userdata("session_bgm_edocument_departement_id")) !== FALSE || 
-			$user_maker_department['DEPCODE'] == $this->session->userdata("session_bgm_edocument_departement_id") || 
-			$user_maker_division['DI_ID'] == $this->session->userdata("session_bgm_edocument_divisi_id") ||
-			$user_approved_department['DEPCODE'] == $this->session->userdata("session_bgm_edocument_departement_id") || 
-			$user_approved_division['DI_ID'] == $this->session->userdata("session_bgm_edocument_divisi_id") || 
-			$this->session->userdata("session_bgm_edocument_departement_id") == $data_row_ext->DOC_PENDISTRIBUSI || 
-			$is_pengguna == true
-		) {
-	?>
-		<div class="alert alert-info fade in">
-			<form action="<?= base_url('C_notification/delete_notification'); ?>" method="POST">
-				<input type="hidden" name="doc_id" value="<?= $data_row_ext->DOC_ID; ?>">
-				<input type="hidden" name="user_id" value="<?= $data_row_ext->NIP; ?>">
-				<input type="hidden" name="notif_id" value="<?= $data_row_ext->NOTIF_ID; ?>">
-				<button type="submit" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-			</form>
-			<div class="row">
-				<div class="col-xs-10">
-					Dokumen <?php echo $data_row_ext->DOC_NAMA; ?>, <?php echo $data_row_ext->DOC_STATUS_ACTIVITY; ?>
-					<br/>
-					<?php 
-						if ($versioning_date) {
-							echo date('d/M/Y G:i', strtotime($versioning_date));
-						} else {
-							echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));
-						}
-					?> WIB
-				</div>
-			</div>
-		</div>
-		<?php  } endif; // END if SESSION ?>
-	<?php
-		endforeach; // END data_row_ext
-	endif; // END if is_continue
-	?>
+		<?php } ?>
+	</div>
 </div><!-- END Row -->
 
 <!-- Modal Preview-->
