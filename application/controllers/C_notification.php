@@ -89,6 +89,12 @@ class C_notification extends CI_Controller {
 				}
 			}
 			if ($is_ajax) {
+				if (!in_array(27,$this->session->userdata("user_menu"))) { 
+					$new_data = [];
+				}
+				if (!in_array(5,$this->session->userdata("user_menu"))) { 
+					$news = [];
+				}
 				echo json_encode(array("notification" => count($new_data), "news" => count($news)));
 				return true;
 			}
