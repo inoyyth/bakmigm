@@ -9,23 +9,57 @@ if(empty($get_data_count)||$get_data_count==""){
 ?>
 <div class="row">
 	<ul class="nav nav-tabs" role="tablist">
-    	<li role="presentation" class="active">
-			<a href="#notification" aria-controls="notification" role="tab" data-toggle="tab"
-				>Notification 
-				<span class="badge badge-primary"><?php echo count($notification); ?></span>
-			</a>
-		</li>
 		<?php if (in_array(5,$this->session->userdata("user_menu"))) { ?>
-    	<li role="presentation">
+    	<li role="presentation" class="active">
 			<a href="#news" aria-controls="news" role="tab" data-toggle="tab">
 				News
 				<span class="badge badge-primary"><?php echo $count_news; ?></span>
 			</a>
 		</li>
 		<?php } ?>
+		<?php if (in_array(27,$this->session->userdata("user_menu"))) { ?>
+		<li role="presentation">
+			<a href="#notification" aria-controls="notification" role="tab" data-toggle="tab"
+				>Notification 
+				<span class="badge badge-primary"><?php echo count($notification); ?></span>
+			</a>
+		</li>
+		<?php } ?>
 	</ul>
 	<div class="tab-content">
-		<div role="tabpanel" class="tab-pane fade in active" id="notification">
+		<?php if (in_array(5,$this->session->userdata("user_menu"))) { ?>
+		<div role="tabpanel" class="tab-pane fade in active" id="news">
+			<?php
+				if($count_news > 0){
+					foreach($get_data_count as $data_row){
+				?>
+				<div class="media search-media">
+					<div class="media-body">
+						<div>
+							<h5 class="media-heading">
+								<a class="black"><?= $data_row->FULL_NAME; ?></a>
+							</h5>
+						</div>
+						<div class="space-1"></div>
+						<p>
+							Nomor Dokumen : <?= $data_row->DOC_NOMOR; ?>
+							<br/>
+							Nama Dokumen : <?= $data_row->DOC_NAMA; ?>
+						</p>
+
+						<div class="search-actions text-center">
+							<span class="text-info"><?php echo date('d M Y', strtotime($data_row->DOC_DATE)); ?></span>
+							<br/>
+							<span class="text-info"><?php echo date('G:i', strtotime($data_row->DOC_DATE))." WIB"; ?></span>
+							<a href="<?php echo base_url('document-details-'.$data_row->DOC_ID) ?>" class="search-btn-action btn btn-sm btn-block btn-info">Lihat</a>
+						</div>
+					</div>
+				</div>
+			<?php } } ?>
+		</div>
+		<?php } ?>
+		<?php if (in_array(27,$this->session->userdata("user_menu"))) { ?>
+		<div role="tabpanel" class="tab-pane fade" id="notification">
 			<?php
 			$x = [];
 			foreach ($notification as $k=>$v) {
@@ -276,20 +310,15 @@ if(empty($get_data_count)||$get_data_count==""){
 				$user_maker_division = $this->M_library_database->getUserMakerDivisi($data_row_ext->DOC_MAKER);
 				$user_approved_department = $this->M_library_database->getUserMakerDepartemen($data_row_ext->DOC_APPROVE);
 				$user_approved_division = $this->M_library_database->getUserMakerDivisi($data_row_ext->DOC_APPROVE);
-				$dokumen_pengguna = explode("|",$data_row_ext->DOC_PENGGUNA);
-				$is_pengguna = false;
-				if (in_array($this->session->userdata("session_bgm_edocument_departement_id"),$dokumen_pengguna)) {
-					$is_pengguna = true;
-				}
 				// if (($user_maker_department['DEPCODE'] == $this->session->userdata("session_bgm_edocument_departement_id") || $user_maker_division['DI_ID'] == $this->session->userdata("session_bgm_edocument_divisi_id")) || (strrpos($data_row_ext->DOC_STATUS, 'DITOLAK') !== FALSE && $user_maker_department['DEPCODE'] == $this->session->userdata("session_bgm_edocument_departement_id") || $user_maker_division['DI_ID'] == $this->session->userdata("session_bgm_edocument_divisi_id"))) {
 				if(
 					strrpos($data_row_ext->DOC_STATUS, $this->session->userdata("session_bgm_edocument_departement_id")) !== FALSE || 
-					$user_maker_department['DEPCODE'] == $this->session->userdata("session_bgm_edocument_departement_id") || 
-					$user_maker_division['DI_ID'] == $this->session->userdata("session_bgm_edocument_divisi_id") ||
+					$user_maker_department['DEPCODE'] == $this->session->userdata("session_bgm_edocument_departement_id") ||
 					$user_approved_department['DEPCODE'] == $this->session->userdata("session_bgm_edocument_departement_id") || 
 					$user_approved_division['DI_ID'] == $this->session->userdata("session_bgm_edocument_divisi_id") || 
-					$this->session->userdata("session_bgm_edocument_departement_id") == $data_row_ext->DOC_PENDISTRIBUSI || 
-					$is_pengguna == true
+					$this->session->userdata("session_bgm_edocument_departement_id") == $data_row_ext->DOC_PENDISTRIBUSI ||
+					($user_maker_division['DI_ID'] == $this->session->userdata("session_bgm_edocument_divisi_id") &&  
+					$this->session->userdata("session_bgm_edocument_departement_id") == "") 
 				) {
 			?>
 				<div class="alert alert-info fade in">
@@ -301,7 +330,7 @@ if(empty($get_data_count)||$get_data_count==""){
 					</form>
 					<div class="row">
 						<div class="col-xs-10">
-							Dokumen <?php echo $data_row_ext->DOC_NAMA; ?>, <?php echo $data_row_ext->DOC_STATUS_ACTIVITY; ?>
+							DokumenX <?php echo $data_row_ext->DOC_NAMA; ?>, <?php echo $data_row_ext->DOC_STATUS_ACTIVITY; ?>
 							<br/>
 							<?php 
 								if ($versioning_date) {
@@ -318,36 +347,6 @@ if(empty($get_data_count)||$get_data_count==""){
 				endforeach; // END data_row_ext
 			endif; // END if is_continue
 			?>
-		</div>
-		<?php if (in_array(5,$this->session->userdata("user_menu"))) { ?>
-		<div role="tabpanel" class="tab-pane fade" id="news">
-			<?php
-				if($count_news > 0){
-					foreach($get_data_count as $data_row){
-				?>
-				<div class="media search-media">
-					<div class="media-body">
-						<div>
-							<h5 class="media-heading">
-								<a class="black"><?= $data_row->FULL_NAME; ?></a>
-							</h5>
-						</div>
-						<div class="space-1"></div>
-						<p>
-							Nomor Dokumen : <?= $data_row->DOC_NOMOR; ?>
-							<br/>
-							Nama Dokumen : <?= $data_row->DOC_NAMA; ?>
-						</p>
-
-						<div class="search-actions text-center">
-							<span class="text-info"><?php echo date('d M Y', strtotime($data_row->DOC_DATE)); ?></span>
-							<br/>
-							<span class="text-info"><?php echo date('G:i', strtotime($data_row->DOC_DATE))." WIB"; ?></span>
-							<a href="<?php echo base_url('document-details-'.$data_row->DOC_ID) ?>" class="search-btn-action btn btn-sm btn-block btn-info">Lihat</a>
-						</div>
-					</div>
-				</div>
-			<?php } } ?>
 		</div>
 		<?php } ?>
 	</div>

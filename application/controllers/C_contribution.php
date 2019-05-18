@@ -786,7 +786,8 @@ class C_contribution extends CI_Controller {
 				'DOC_ID' => $si_code,
 				'PENGGUNA' => $duallistbox_pengguna_dokumen_list,
 				'PEMILIK' => $si_owner_pemilik_proses,
-				'PENDISTRIBUSI' => $si_owner_dept_pendistribusi
+				'PENDISTRIBUSI' => $si_owner_dept_pendistribusi,
+				'DEP_MAKER' =>  $this->session->userdata("session_bgm_edocument_departement_id")
 			);
 			$insert = $this->db->insert('tb_document_notification', $dt_notification);
 			$insert = $this->db->delete('tb_notification_history', array('DOC_ID' => $si_code));

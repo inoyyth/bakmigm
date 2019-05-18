@@ -44,6 +44,7 @@ class C_notification extends CI_Controller {
 	}
 
 	public function getNotification($nip, $is_ajax = false){
+		$news = $this->M_notification->GET_NEWS_NEW($this->session->userdata("session_bgm_edocument_id"));
 		$user_dept = $_SESSION['session_bgm_edocument_departement_id'];
 		$org = $_SESSION['session_bgm_edocument_org_parent'];
 		
@@ -52,7 +53,7 @@ class C_notification extends CI_Controller {
 				 ->from('tb_document_notification')
 				 ->where(array('PENDISTRIBUSI' => $user_dept))
 				 ->or_where(array('PEMILIK' => $user_dept))
-				 ->or_like(array('PENGGUNA' => $user_dept))
+				 ->or_like(array('DEP_MAKER' => $user_dept))
 				 ->order_by('NOTIF_ID','ASC')
 				 ->get()->result_array();
 		$data = [];
@@ -88,7 +89,7 @@ class C_notification extends CI_Controller {
 				}
 			}
 			if ($is_ajax) {
-				echo json_encode($new_data);
+				echo json_encode(array("notification" => count($new_data), "news" => count($news)));
 				return true;
 			}
 			return $new_data;

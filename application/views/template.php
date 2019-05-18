@@ -338,7 +338,10 @@ $count_notification = $count_notification + $count_news;
 			url: "<?php echo base_url();?>C_notification/getNotification/<?php echo $this->session->userdata("session_bgm_edocument_id");?>/true/",
 			dataType: "html",   //expect html to be returned                
 			success: function(response){
-				$(".nofication-count").text(JSON.parse(response).length);
+				var res = JSON.parse(response);
+				var notification = res.notification;
+				var news = res.news;
+				$(".nofication-count").text(notification + news);
 			}
 		});
 
