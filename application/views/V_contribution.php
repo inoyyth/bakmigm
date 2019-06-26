@@ -729,7 +729,7 @@
 				var optionsText = this.options[this.selectedIndex].value;
 				var kat = $('#si_template_new_kategori').val();
 				if (optionsText == 'EDOC' && kat != 'DTSEKI0004' && kat != 'DTSEKI0001') {
-					console.log('a');
+					console.log('x');
 					$('#btn_terkait_doc').removeClass('hide');
 					$('#btn_terkait_doc_finish').addClass('hide');
 					$('#1').text('1 Of 6');
@@ -911,25 +911,25 @@
 				}
 			});
 			// filter dokumen persetujuan
-			$('#dokumen_persetujuan').on('change', function() {
-				// var persetujuan_doc = $('#dokumen_persetujuan').val();
-				// var file = persetujuan_doc.split('\\').pop();
-				// var jumlah = file.substr(0, file.lastIndexOf('.'));
-				// var exten = persetujuan_doc.split('.')[1];
-				var filePath = $("#dokumen_persetujuan").val(); 
-				var file_ext = filePath.substr(filePath.lastIndexOf('.')+1,filePath.length);
-				console.log("File Extension ->-> "+file_ext);
-				if (file_ext != 'pdf' ) {
-					alert("File Persetujuan Harus PDF!");
-					$(this).val('');
-					return false;
-				}
-				if (jumlah.length > 100) {
-					alert("Nama File Harus Kurang dari 100 Karakter!");
-					$(this).val('');
-					return false;
-				}
-			});
+			// $('#dokumen_persetujuan').on('change', function() {
+			// 	// var persetujuan_doc = $('#dokumen_persetujuan').val();
+			// 	// var file = persetujuan_doc.split('\\').pop();
+			// 	// var jumlah = file.substr(0, file.lastIndexOf('.'));
+			// 	// var exten = persetujuan_doc.split('.')[1];
+			// 	var filePath = $("#dokumen_persetujuan").val(); 
+			// 	var file_ext = filePath.substr(filePath.lastIndexOf('.')+1,filePath.length);
+			// 	console.log("File Extension ->-> "+file_ext);
+			// 	if (file_ext != 'pdf' ) {
+			// 		alert("File Persetujuan Harus PDF!");
+			// 		$(this).val('');
+			// 		return false;
+			// 	}
+			// 	if (jumlah.length > 100) {
+			// 		alert("Nama File Harus Kurang dari 100 Karakter!");
+			// 		$(this).val('');
+			// 		return false;
+			// 	}
+			// });
 			// Dual List Box
 
 			$( "#btn_atr_doc" ).click(function() {
@@ -1167,6 +1167,102 @@
 				$('#unggah_doc').addClass('hide');
 				return false;
 			});
+
+			//Document size and type validation
+			var allow_extention = new Array("doc","docx","xls","xlsx","ppt","pptx","vsd","vsdx","pdf");
+
+			$('#dokumen_utama').on('change', function() {
+				var filePath = $(this).val(); 
+				var file_ext = filePath.substr(filePath.lastIndexOf('.')+1,filePath.length);
+				var file_size = this.files[0].size / 1024;
+				var iSize = (Math.round((file_size / 1024) * 100) / 100);
+			
+				if (allow_extention.indexOf(file_ext) != -1) {
+					if (iSize > 5) {
+						alert("Maksimal Ukuran File 5MB!");
+						$(this).val('');
+
+						return false;
+					}
+
+					return true;
+				} else {
+					alert("File Harus Doc, Docx, Xls, Xlsx, Ppt, Pptx, Vsd, Vsdx Atau Pdf!");
+					$(this).val('');
+
+					return false;
+				}
+			});
+
+			$('#dokumen_pelengkap_1').on('change', function() {
+				var filePath = $(this).val(); 
+				var file_ext = filePath.substr(filePath.lastIndexOf('.')+1,filePath.length);
+				var file_size = this.files[0].size / 1024;
+				var iSize = (Math.round((file_size / 1024) * 100) / 100);
+			
+				if (allow_extention.indexOf(file_ext) != -1) {
+					if (iSize > 5) {
+						alert("Maksimal Ukuran File 5MB!");
+						$(this).val('');
+
+						return false;
+					}
+
+					return true;
+				} else {
+					alert("File Harus Doc, Docx, Xls, Xlsx, Ppt, Pptx, Vsd, Vsdx Atau Pdf!");
+					$(this).val('');
+
+					return false;
+				}
+			});
+
+			$('#dokumen_pelengkap_2').on('change', function() {
+				var filePath = $(this).val(); 
+				var file_ext = filePath.substr(filePath.lastIndexOf('.')+1,filePath.length);
+				var file_size = this.files[0].size / 1024;
+				var iSize = (Math.round((file_size / 1024) * 100) / 100);
+			
+				if (allow_extention.indexOf(file_ext) != -1) {
+					if (iSize > 5) {
+						alert("Maksimal Ukuran File 5MB!");
+						$(this).val('');
+
+						return false;
+					}
+
+					return true;
+				} else {
+					alert("File Harus Doc, Docx, Xls, Xlsx, Ppt, Pptx, Vsd, Vsdx Atau Pdf!");
+					$(this).val('');
+
+					return false;
+				}
+			});
+
+			$('#dokumen_persetujuan').on('change', function() {
+				var filePath = $(this).val(); 
+				var file_ext = filePath.substr(filePath.lastIndexOf('.')+1,filePath.length);
+				var file_size = this.files[0].size / 1024;
+				var iSize = (Math.round((file_size / 1024) * 100) / 100);
+				var allow_extention = new Array("pdf");
+				if (allow_extention.indexOf(file_ext) != -1) {
+					if (iSize > 5) {
+						alert("Maksimal Ukuran File 5MB!");
+						$(this).val('');
+
+						return false;
+					}
+
+					return true;
+				} else {
+					alert("File Harus Pdf!");
+					$(this).val('');
+
+					return false;
+				}
+			});
+
 		});
 	</script>
 	
@@ -1247,15 +1343,12 @@
 									type: 'GET',
 									success: function(response){
 										//Parsing Json
-										console.log(response);
 										response = $.parseJSON(response);
 										field_1 = response[0].field_1;
 										field_2 = response[0].field_2;
 										field_3 = response[0].field_3;
 										field_4 = response[0].field_4;
 										field_5 = response[0].field_5;
-									}
-								});
 								let id_key = si_key;
 								//AJAX Request
 								$.ajax({
@@ -1434,6 +1527,8 @@
 											}
 										}
 									}
+								});
+								}
 								}); // End get tipe
 							}
 						});

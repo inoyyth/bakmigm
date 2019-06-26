@@ -330,7 +330,7 @@ if(empty($get_data_count)||$get_data_count==""){
 					</form>
 					<div class="row">
 						<div class="col-xs-10">
-							DokumenX <?php echo $data_row_ext->DOC_NAMA; ?>, <?php echo $data_row_ext->DOC_STATUS_ACTIVITY; ?>
+							Dokumen <?php echo $data_row_ext->DOC_NAMA; ?>, <?php echo $data_row_ext->DOC_STATUS_ACTIVITY; ?>
 							<br/>
 							<?php 
 								if ($versioning_date) {
@@ -385,19 +385,19 @@ if(empty($get_data_count)||$get_data_count==""){
 						$DOCD_PERSETUJUAN = $data_row_doc->DOCD_PERSETUJUAN;
 					}
 					if ($EXT_UTAMA=="doc" || $EXT_UTAMA=="docx" || $EXT_UTAMA=="xls" || $EXT_UTAMA=="xlsx" || $EXT_UTAMA=="ppt" || $EXT_UTAMA=="pptx") {
-						$url_path_utama = base_url('assets/pdf/').$DOCD_UTAMA.'.pdf';
-					}else{
 						$url_path_utama = base_url('assets/original/').$DOCD_UTAMA.".".$EXT_UTAMA;
+					}else{
+						$url_path_utama = base_url('assets/pdf/').$DOCD_UTAMA.'.pdf';
 					}
 					if ($EXT_1=="doc" || $EXT_1=="docx" || $EXT_1=="xls" || $EXT_1=="xlsx" || $EXT_1=="ppt" || $EXT_1=="pptx") {
-						$url_path_pelengkap_1 = base_url('assets/pdf/').$DOCD_PELENGKAP_1.".pdf";
-					}else{
 						$url_path_pelengkap_1 = base_url('assets/original/').$DOCD_PELENGKAP_1.".".$EXT_1;
+					}else{
+						$url_path_pelengkap_1 = base_url('assets/pdf/').$DOCD_PELENGKAP_1.".pdf";
 					}
 					if ($EXT_2=="doc" || $EXT_2=="docx" || $EXT_2=="xls" || $EXT_2=="xlsx" || $EXT_2=="ppt" || $EXT_2=="pptx") {
-						$url_path_pelengkap_2 = base_url('assets/pdf/').$DOCD_PELENGKAP_2.".pdf";
-					}else{
 						$url_path_pelengkap_2 = base_url('assets/original/').$DOCD_PELENGKAP_2.".".$EXT_2;
+					}else{
+						$url_path_pelengkap_2 = base_url('assets/pdf/').$DOCD_PELENGKAP_2.".pdf";
 					}
 					$url_path_persetujuan = base_url('assets/original/').$DOCD_PERSETUJUAN;
 					// Pemilik Proses

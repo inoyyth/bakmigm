@@ -2083,6 +2083,7 @@ class C_notification extends CI_Controller {
 		}
 		$watermark_text = $this->input->post('watermark');
 		$GLOBALS['watermark_text'] = $watermark_text;
+		$GLOBALS['watermark_second_text'] = $this->__getWatermarkText();
 		//SYSTEM
 		$si_code								= $this->input->post('si_code');
 		$si_userid								= $this->input->post('si_userid');
@@ -2141,19 +2142,21 @@ class C_notification extends CI_Controller {
 		$STATUS_FINAL = "Menunggu Persetujuan dari ".$PENDISTRIBUSI_FINAL_CODE." (".$PENDISTRIBUSI_FINAL_NAME.")";
 		$Activity = $dt;
 		
-		//Upload Doc
-		$config1['upload_path'] 				= './assets/original';
-		$config1['upload_url'] 					= './assets/original';
-		$config1['remove_spaces'] 				= TRUE;
-		$config1['allowed_types'] 				= '*';
-		$this->load->library('upload', $config1);
 		//Dokumen Utama
 		$dokumen_utama = $_FILES['dokumen_utama'];
 		if ($_FILES['dokumen_utama']['size'] != 0) {
+			$document_utama_file_name = 'dokumen-utama-'.time().'-'.$_FILES['dokumen_utama']['name'];
+			$config1['upload_path'] = './assets/original';
+			$config1['upload_url'] = './assets/original';
+			$config1['remove_spaces'] = TRUE;
+			$config1['allowed_types']='*';
+			$config1['file_name'] = $document_utama_file_name;
+			$this->load->library('upload', $config1);
+
 			$dokumen_utama_ext = $_FILES['dokumen_utama']['type'];
 			$dokumen_utama_size = ($_FILES['dokumen_utama']['size'])/(1000*1000);
 			$dokumen_utama_temp = $dokumen_utama['tmp_name'];
-			$dokumen_utama_name = $_FILES['dokumen_utama']['name'];
+			$dokumen_utama_name = $document_utama_file_name;
 			// Extention
 			$dokumen_utama_extention = substr($dokumen_utama_name, strrpos($dokumen_utama_name, '.')+1);
 			if ($this->upload->do_upload('dokumen_utama')) {
@@ -2212,10 +2215,19 @@ class C_notification extends CI_Controller {
 		//Dokumen Pelengkap 1
 		$dokumen_pelengkap_1 = $_FILES['dokumen_pelengkap_1'];
 		if ($_FILES['dokumen_pelengkap_1']['size'] != 0) {
+			unset($this->upload);
+			$document_pelengkap1_file_name = 'dokumen-pelengkap1-'.time().'-'.$_FILES['dokumen_pelengkap_1']['name'];
+			$config2['upload_path'] = './assets/original';
+			$config2['upload_url'] = './assets/original';
+			$config2['remove_spaces'] = TRUE;
+			$config2['allowed_types']='*';
+			$config2['file_name'] = $document_pelengkap1_file_name;
+			$this->load->library('upload', $config2);
+
 			$dokumen_pelengkap_1_ext = $_FILES['dokumen_pelengkap_1']['type'];
 			$dokumen_pelengkap_1_size = ($_FILES['dokumen_pelengkap_1']['size'])/(1000*1000);
 			$dokumen_pelengkap_1_temp = $dokumen_pelengkap_1['tmp_name'];
-			$dokumen_pelengkap_1_name = $_FILES['dokumen_pelengkap_1']['name'];
+			$dokumen_pelengkap_1_name = $document_pelengkap1_file_name;
 			// Extention
 			$dokumen_pelengkap_1_extention = substr($dokumen_pelengkap_1_name, strrpos($dokumen_pelengkap_1_name, '.')+1);
 			if($this->upload->do_upload('dokumen_pelengkap_1')) {
@@ -2267,10 +2279,19 @@ class C_notification extends CI_Controller {
 		//Dokumen Pelengkap 2
 		$dokumen_pelengkap_2 = $_FILES['dokumen_pelengkap_2'];
 		if ($_FILES['dokumen_pelengkap_2']['size'] != 0) {
+			unset($this->upload);
+			$document_pelengkap2_file_name = 'dokumen-pelengkap2-'.time().'-'.$_FILES['dokumen_pelengkap_2']['name'];
+			$config3['upload_path'] = './assets/original';
+			$config3['upload_url'] = './assets/original';
+			$config3['remove_spaces'] = TRUE;
+			$config3['allowed_types']='*';
+			$config3['file_name'] = $document_pelengkap2_file_name;
+			$this->load->library('upload', $config3);
+
 			$dokumen_pelengkap_2_ext = $_FILES['dokumen_pelengkap_2']['type'];
 			$dokumen_pelengkap_2_size = ($_FILES['dokumen_pelengkap_2']['size'])/(1000*1000);//IN MEGABYTE(MB)
 			$dokumen_pelengkap_2_temp = $dokumen_pelengkap_2['tmp_name'];
-			$dokumen_pelengkap_2_name = $_FILES['dokumen_pelengkap_2']['name'];
+			$dokumen_pelengkap_2_name = $document_pelengkap2_file_name;
 			// Extention
 			$dokumen_pelengkap_2_extention = substr($dokumen_pelengkap_2_name, strrpos($dokumen_pelengkap_2_name, '.')+1);
 			if ($this->upload->do_upload('dokumen_pelengkap_2')){
@@ -2323,9 +2344,18 @@ class C_notification extends CI_Controller {
 		//Dokumen Persetujuan
 		$dokumen_persetujuan = $_FILES['dokumen_persetujuan'];
 		if ($_FILES['dokumen_persetujuan']['size'] != 0) {
+			unset($this->upload);
+			$document_persetujuan_file_name = 'dokumen-persetujuan-'.time().'-'.$_FILES['dokumen_persetujuan']['name'];
+			$config4['upload_path'] = './assets/original';
+			$config4['upload_url'] = './assets/original';
+			$config4['remove_spaces'] = TRUE;
+			$config4['allowed_types']='*';
+			$config4['file_name'] = $document_persetujuan_file_name;
+			$this->load->library('upload', $config4);
+
 			$dokumen_persetujuan_ext = $_FILES['dokumen_persetujuan']['type'];
 			$dokumen_persetujuan_temp = $dokumen_persetujuan['tmp_name'];
-			$dokumen_persetujuan_name = $_FILES['dokumen_persetujuan']['name'];
+			$dokumen_persetujuan_name = $document_persetujuan_file_name;
 			if($this->upload->do_upload('dokumen_persetujuan')){
 				$file4 = $this->upload->data('file_name');
 				$GLOBALS['dokumen_persetujuan'] = './assets/original/'.$file4;
@@ -2615,6 +2645,36 @@ class C_notification extends CI_Controller {
 	public function news_dashboard() {
 		$data['view'] = 'news';
 		$this->load->view('template', $data);
+	}
+
+	private function __getWatermarkText() {
+		$get_format = $this->db->select("*")
+									->from('m_watermark')
+									->get()->row_array();
+		$field_1 = $this->__conversionWatermarkField($get_format['field_1']);
+		$field_2 = $this->__conversionWatermarkField($get_format['field_2']);
+		$field_3 = $this->__conversionWatermarkField($get_format['field_3']);
+		$field_4 = $this->__conversionWatermarkField($get_format['field_4']);
+
+		return $field_1 . ' - ' . $field_2 . ' - ' . $field_3 . ' - ' . $field_4;
+	}
+
+	private function __conversionWatermarkField($value) {
+		switch($value) {
+			case 'NIP':
+				$text = $this->session->userdata("session_bgm_edocument_id");
+				break;
+			case 'Nama':
+				$text = $this->session->userdata("session_bgm_edocument_name");
+				break;
+			case 'Tanggal/Bulan/Tahun':
+				$text = date('d/M/Y');
+				break;
+			default:
+				$text = $value;
+		}
+
+		return $text;
 	}
 }
 //-----------------------------------------------------------------------------------------------//
