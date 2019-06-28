@@ -1,3 +1,8 @@
+<style>
+	.datepicker {
+		z-index: 9999;
+	}
+</style>
 <div class="row">
 	<div class="widget-box">
 		<div class="widget-header widget-header-blue widget-header-flat">
@@ -320,7 +325,7 @@
 										<select id="si_owner_pemilik_proses" name="si_owner_pemilik_proses" class="form-control" />
 											<option value="">Pilih</option>
 											<option value="<?php echo $this->session->userdata("session_bgm_edocument_divisi_id"); ?>"><?php echo $this->session->userdata("session_bgm_edocument_divisi_name"); ?></option>
-											<option value="<?php echo $this->session->userdata("session_bgm_edocument_departement_id"); ?>"><?php echo $this->session->userdata("session_bgm_edocument_departement_name"); ?></option>
+											<option value="<?php echo $this->session->userdata("session_bgm_edocument_departement_id"); ?>" selected><?php echo $this->session->userdata("session_bgm_edocument_departement_name"); ?></option>
 										</select>
 									</div>
 									<span id="req_proses" class="text-danger hide">Harap Isi Departemen Pemilik Proses Dokumen!</span>
