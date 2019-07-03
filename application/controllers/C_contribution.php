@@ -416,169 +416,246 @@ class C_contribution extends CI_Controller {
 		
 		// Dokumen Utama
 		$dokumen_utama = $_FILES['dokumen_utama'];
-		if ($_FILES['dokumen_utama']['size']!=0) {
-			$GLOBALS['watermark_text'] = $watermark_text;
-			$GLOBALS['watermark_second_text'] = $this->__getWatermarkText();
-			$document_utama_file_name = 'dokumen-utama-'.time().'-'.$_FILES['dokumen_utama']['name'];
-			$config1['upload_path'] = './assets/original';
-			$config1['upload_url'] = './assets/original';
-			$config1['remove_spaces'] = TRUE;
-			$config1['allowed_types']='*';
-			$config1['file_name'] = $document_utama_file_name;
-			$this->load->library('upload', $config1);
+		try {
+			if ($_FILES['dokumen_utama']['size']!=0) {
+				$GLOBALS['watermark_text'] = $watermark_text;
+				$GLOBALS['watermark_second_text'] = $this->__getWatermarkText();
+				$document_utama_file_name = 'dokumen-utama-'.time().'-'.$_FILES['dokumen_utama']['name'];
+				$config1['upload_path'] = './assets/original';
+				$config1['upload_url'] = './assets/original';
+				$config1['remove_spaces'] = TRUE;
+				$config1['allowed_types']='*';
+				$config1['file_name'] = $document_utama_file_name;
+				$this->load->library('upload', $config1);
 
-			$dokumen_utama_ext = $_FILES['dokumen_utama']['type'];
-			$dokumen_utama_size = ($_FILES['dokumen_utama']['size'])/(1000*1000);
-			$dokumen_utama_temp = $dokumen_utama['tmp_name'];
-			$dokumen_utama_name = $document_utama_file_name;
-			// Extention
-			$dokumen_utama_extention = substr($dokumen_utama_name, strrpos($dokumen_utama_name, '.')+1);
-			if ($this->upload->do_upload('dokumen_utama')) {
-				$file1 = $this->upload->data('file_name');
-				$file1Name = $this->upload->data('raw_name');
-				if ($dokumen_utama_extention == 'doc' || $dokumen_utama_extention == 'docx' || $dokumen_utama_extention == 'xls' || $dokumen_utama_extention == 'xlsx' || $dokumen_utama_extention == 'ppt' || $dokumen_utama_extention == 'pptx' || $dokumen_utama_extention == 'vsd' || $dokumen_utama_extention == 'vsdx' || $dokumen_utama_extention == 'pdf') {
-					// Converter
-					shell_exec('export HOME=/tmp && libreoffice --headless --convert-to pdf --outdir assets/pdf assets/original/'.$file1);
-					if ($dokumen_utama_extention=='pdf') {
-						copy('./assets/original/'.$file1, './assets/pdf/'.$file1);
-					}
-					$dokumen_search_acr = "";
-					$txt1 = new PdfToText(base_url('assets/pdf/'.$file1Name.'.pdf'));
-					$dokumen_search_acr = $txt1->Text;
-					// Watermark Pdf
-					$GLOBALS['dokumen_utama'] = './assets/pdf/'.$file1Name.'.pdf';
-					chmod($GLOBALS['dokumen_utama'], 0777);
-					include (APPPATH.'libraries/watermark_utama.php');
-					$pdf = new Watermark_utama();
-					$pdf->AddPage();
-					$pdf->SetFont('Arial', '', 12);
-					if($pdf->numPages>1) {
-						for($i=2;$i<=$pdf->numPages;$i++) {
-							$pdf->_tplIdx = $pdf->importPage($i);
-							$pdf->AddPage();
+				$dokumen_utama_ext = $_FILES['dokumen_utama']['type'];
+				$dokumen_utama_size = ($_FILES['dokumen_utama']['size'])/(1000*1000);
+				$dokumen_utama_temp = $dokumen_utama['tmp_name'];
+				$dokumen_utama_name = $document_utama_file_name;
+				// Extention
+				$dokumen_utama_extention = substr($dokumen_utama_name, strrpos($dokumen_utama_name, '.')+1);
+				if ($this->upload->do_upload('dokumen_utama')) {
+					$file1 = $this->upload->data('file_name');
+					$file1Name = $this->upload->data('raw_name');
+					if ($dokumen_utama_extention == 'doc' || $dokumen_utama_extention == 'docx' || $dokumen_utama_extention == 'xls' || $dokumen_utama_extention == 'xlsx' || $dokumen_utama_extention == 'ppt' || $dokumen_utama_extention == 'pptx' || $dokumen_utama_extention == 'vsd' || $dokumen_utama_extention == 'vsdx' || $dokumen_utama_extention == 'pdf') {
+						// Converter
+						shell_exec('export HOME=/tmp && libreoffice --headless --convert-to pdf --outdir assets/pdf assets/original/'.$file1);
+						if ($dokumen_utama_extention=='pdf') {
+							copy('./assets/original/'.$file1, './assets/pdf/'.$file1);
 						}
+						$dokumen_search_acr = "";
+						$txt1 = new PdfToText(base_url('assets/pdf/'.$file1Name.'.pdf'));
+						$dokumen_search_acr = $txt1->Text;
+						// Watermark Pdf
+						$GLOBALS['dokumen_utama'] = './assets/pdf/'.$file1Name.'.pdf';
+						chmod($GLOBALS['dokumen_utama'], 0777);
+						include (APPPATH.'libraries/watermark_utama.php');
+						$pdf = new Watermark_utama();
+						$pdf->AddPage();
+						$pdf->SetFont('Arial', '', 12);
+						if($pdf->numPages>1) {
+							for($i=2;$i<=$pdf->numPages;$i++) {
+								$pdf->_tplIdx = $pdf->importPage($i);
+								$pdf->AddPage();
+							}
+						}
+						$pdf->Output($GLOBALS['dokumen_utama'],'F');
+					}else{
+						$dokumen_search_acr = $si_history_abstract;
 					}
-					$pdf->Output($GLOBALS['dokumen_utama'],'F');
-				}else{
-					$dokumen_search_acr = $si_history_abstract;
+					
+					$dokumen_utama_name = $file1Name;
+					if ($dokumen_utama_extention=='pdf') {
+						$convert_dokumen_utama = 1;
+					}elseif ($dokumen_utama_extention == 'png' || $dokumen_utama_extention == 'PNG' || $dokumen_utama_extention == 'JPG' || $dokumen_utama_extention == 'jpeg' || $dokumen_utama_extention == 'jpg' || $dokumen_utama_extention == 'mp4' || $dokumen_utama_extention == 'bmp' || $dokumen_utama_extention == 'BMP') {
+						$convert_dokumen_utama = 0;
+					}elseif (isset($dokumen_utama_on)) {
+						$convert_dokumen_utama = 1;
+					}else{
+						$convert_dokumen_utama = 0;
+					}
+				} else {
+					$errors = $this->upload->display_errors();
+					die($errors);
 				}
-				
-				$dokumen_utama_name = $file1Name;
-				if ($dokumen_utama_extention=='pdf') {
-					$convert_dokumen_utama = 1;
-				}elseif ($dokumen_utama_extention == 'png' || $dokumen_utama_extention == 'PNG' || $dokumen_utama_extention == 'JPG' || $dokumen_utama_extention == 'jpeg' || $dokumen_utama_extention == 'jpg' || $dokumen_utama_extention == 'mp4' || $dokumen_utama_extention == 'bmp' || $dokumen_utama_extention == 'BMP') {
-					$convert_dokumen_utama = 0;
-				}elseif (isset($dokumen_utama_on)) {
-					$convert_dokumen_utama = 1;
-				}else{
-					$convert_dokumen_utama = 0;
-				}
-			} else {
-				$errors = $this->upload->display_errors();
-				die($errors);
+			}else{
+				$dokumen_utama_ext = '-';
+				$dokumen_utama_name = 'File Not Found';
+				$convert_dokumen_utama = 0;
+				$dokumen_utama_extention = '-';
+				$dokumen_search_acr = $si_history_abstract;
 			}
-		}else{
-			$dokumen_utama_ext = '-';
-			$dokumen_utama_name = 'File Not Found';
-			$convert_dokumen_utama = 0;
-			$dokumen_utama_extention = '-';
-			$dokumen_search_acr = $si_history_abstract;
+		} catch (Exception $e) {
+			$data=[];
+			$data['document'] = $_FILES['dokumen_pelengkap_1']['name'];
+			$data['view'] = 'errors/html/contribution_error';
+			$this->load->view('template', $data);
 		}
 
 		// Dokumen Pelengkap 1
 		$dokumen_pelengkap_1 = $_FILES['dokumen_pelengkap_1'];
 		unset($this->upload);
-		if ($_FILES['dokumen_pelengkap_1']['size']!=0) {
-			$GLOBALS['watermark_text'] = $watermark_text;
-			$GLOBALS['watermark_second_text'] = $this->__getWatermarkText();
-			$document_pelengkap1_file_name = 'dokumen-pelengkap1-'.time().'-'.$_FILES['dokumen_pelengkap_1']['name'];
-			$config2['upload_path'] = './assets/original';
-			$config2['upload_url'] = './assets/original';
-			$config2['remove_spaces'] = TRUE;
-			$config2['allowed_types']='*';
-			$config2['file_name'] = $document_pelengkap1_file_name;
-			$this->load->library('upload', $config2);
+		try {
+			if ($_FILES['dokumen_pelengkap_1']['size']!=0) {
+				$GLOBALS['watermark_text'] = $watermark_text;
+				$GLOBALS['watermark_second_text'] = $this->__getWatermarkText();
+				$document_pelengkap1_file_name = 'dokumen-pelengkap1-'.time().'-'.$_FILES['dokumen_pelengkap_1']['name'];
+				$config2['upload_path'] = './assets/original';
+				$config2['upload_url'] = './assets/original';
+				$config2['remove_spaces'] = TRUE;
+				$config2['allowed_types']='*';
+				$config2['file_name'] = $document_pelengkap1_file_name;
+				$this->load->library('upload', $config2);
 
-			$dokumen_pelengkap_1_ext = $_FILES['dokumen_pelengkap_1']['type'];
-			$dokumen_pelengkap_1_temp = $dokumen_pelengkap_1['tmp_name'];
-			$dokumen_pelengkap_1_name = $document_pelengkap1_file_name;
-			// Extention
-			$dokumen_pelengkap_1_extention = substr($dokumen_pelengkap_1_name, strrpos($dokumen_pelengkap_1_name, '.')+1);
-			if($this->upload->do_upload('dokumen_pelengkap_1')) {
-				$file2 = $this->upload->data('file_name');
-				$file2Name = $this->upload->data('raw_name');
-				if ($dokumen_pelengkap_1_extention == 'doc' || $dokumen_pelengkap_1_extention == 'docx' || $dokumen_pelengkap_1_extention == 'xls' || $dokumen_pelengkap_1_extention == 'xlsx' || $dokumen_pelengkap_1_extention == 'ppt' || $dokumen_pelengkap_1_extention == 'pptx' || $dokumen_pelengkap_1_extention == 'vsd' || $dokumen_pelengkap_1_extention == 'vsdx' || $dokumen_pelengkap_1_extention == 'pdf') {
-					shell_exec('export HOME=/tmp && libreoffice --headless -convert-to pdf --outdir assets/pdf assets/original/'.$file2);
-					if ($dokumen_pelengkap_1_extention=='pdf') {
-						copy('./assets/original/'.$file2, './assets/pdf/'.$file2);
-					}
-					// Watermark Pdf
-					$GLOBALS['dokumen_pelengkap_1'] = './assets/pdf/'.$file2Name.'.pdf';
-					chmod($GLOBALS['dokumen_pelengkap_1'], 0777);
-					include (APPPATH.'libraries/watermark_p1.php');
-					$pdf = new Watermark_p1();
-					$pdf->AddPage();
-					$pdf->SetFont('Arial', '', 12);
-					if($pdf->numPages>1) {
-						for($i=2;$i<=$pdf->numPages;$i++) {
-							$pdf->_tplIdx = $pdf->importPage($i);
-							$pdf->AddPage();
+				$dokumen_pelengkap_1_ext = $_FILES['dokumen_pelengkap_1']['type'];
+				$dokumen_pelengkap_1_temp = $dokumen_pelengkap_1['tmp_name'];
+				$dokumen_pelengkap_1_name = $document_pelengkap1_file_name;
+				// Extention
+				$dokumen_pelengkap_1_extention = substr($dokumen_pelengkap_1_name, strrpos($dokumen_pelengkap_1_name, '.')+1);
+				if($this->upload->do_upload('dokumen_pelengkap_1')) {
+					$file2 = $this->upload->data('file_name');
+					$file2Name = $this->upload->data('raw_name');
+					if ($dokumen_pelengkap_1_extention == 'doc' || $dokumen_pelengkap_1_extention == 'docx' || $dokumen_pelengkap_1_extention == 'xls' || $dokumen_pelengkap_1_extention == 'xlsx' || $dokumen_pelengkap_1_extention == 'ppt' || $dokumen_pelengkap_1_extention == 'pptx' || $dokumen_pelengkap_1_extention == 'vsd' || $dokumen_pelengkap_1_extention == 'vsdx' || $dokumen_pelengkap_1_extention == 'pdf') {
+						shell_exec('export HOME=/tmp && libreoffice --headless -convert-to pdf --outdir assets/pdf assets/original/'.$file2);
+						if ($dokumen_pelengkap_1_extention=='pdf') {
+							copy('./assets/original/'.$file2, './assets/pdf/'.$file2);
 						}
+						// Watermark Pdf
+						$GLOBALS['dokumen_pelengkap_1'] = './assets/pdf/'.$file2Name.'.pdf';
+						chmod($GLOBALS['dokumen_pelengkap_1'], 0777);
+						include (APPPATH.'libraries/watermark_p1.php');
+						$pdf = new Watermark_p1();
+						$pdf->AddPage();
+						$pdf->SetFont('Arial', '', 12);
+						if($pdf->numPages>1) {
+							for($i=2;$i<=$pdf->numPages;$i++) {
+								$pdf->_tplIdx = $pdf->importPage($i);
+								$pdf->AddPage();
+							}
+						}
+						$pdf->Output($GLOBALS['dokumen_pelengkap_1'],'F');
 					}
-					$pdf->Output($GLOBALS['dokumen_pelengkap_1'],'F');
-				}
-				$dokumen_pelengkap_1_name = $file2Name;
-				if ($dokumen_pelengkap_1_extention=='pdf') {
-					$convert_dokumen_pelengkap_1 = 1;
-				}elseif ($dokumen_pelengkap_1_extention == 'png' || $dokumen_pelengkap_1_extention == 'PNG' || $dokumen_pelengkap_1_extention == 'JPG' || $dokumen_pelengkap_1_extention == 'jpeg' || $dokumen_pelengkap_1_extention == 'jpg' || $dokumen_pelengkap_1_extention == 'mp4' || $dokumen_pelengkap_1_extention == 'bmp' || $dokumen_pelengkap_1_extention == 'BMP') {
-					$convert_dokumen_pelengkap_1 = 0;
-				}elseif (isset($dokumen_pelengkap_1_on)) {
-					$convert_dokumen_pelengkap_1 = 1;
+					$dokumen_pelengkap_1_name = $file2Name;
+					if ($dokumen_pelengkap_1_extention=='pdf') {
+						$convert_dokumen_pelengkap_1 = 1;
+					}elseif ($dokumen_pelengkap_1_extention == 'png' || $dokumen_pelengkap_1_extention == 'PNG' || $dokumen_pelengkap_1_extention == 'JPG' || $dokumen_pelengkap_1_extention == 'jpeg' || $dokumen_pelengkap_1_extention == 'jpg' || $dokumen_pelengkap_1_extention == 'mp4' || $dokumen_pelengkap_1_extention == 'bmp' || $dokumen_pelengkap_1_extention == 'BMP') {
+						$convert_dokumen_pelengkap_1 = 0;
+					}elseif (isset($dokumen_pelengkap_1_on)) {
+						$convert_dokumen_pelengkap_1 = 1;
+					}else{
+						$convert_dokumen_pelengkap_1 = 0;
+					}
 				}else{
-					$convert_dokumen_pelengkap_1 = 0;
+					$errors = $this->upload->display_errors();
+					die($errors);
 				}
 			}else{
-				$errors = $this->upload->display_errors();
-				die($errors);
+				$dokumen_pelengkap_1_ext = '-';
+				$dokumen_pelengkap_1_name = 'File Not Found';
+				$convert_dokumen_pelengkap_1 = 0;
+				$dokumen_pelengkap_1_extention = '-';
 			}
-		}else{
-			$dokumen_pelengkap_1_ext = '-';
-			$dokumen_pelengkap_1_name = 'File Not Found';
-			$convert_dokumen_pelengkap_1 = 0;
-			$dokumen_pelengkap_1_extention = '-';
+		} catch (Exception $e) {
+			$data=[];
+			$data['document'] = $_FILES['dokumen_pelengkap_1']['name'];
+			$data['view'] = 'errors/html/contribution_error';
+			$this->load->view('template', $data);
 		}
 
 		// Dokumen Pelengkap 2
 		$dokumen_pelengkap_2 = $_FILES['dokumen_pelengkap_2'];
 		unset($this->upload);
-		if ($_FILES['dokumen_pelengkap_2']['size']!=0) {
-			$GLOBALS['watermark_text'] = $watermark_text;
-			$GLOBALS['watermark_second_text'] = $this->__getWatermarkText();
-			$document_pelengkap2_file_name = 'dokumen-pelengkap2-'.time().'-'.$_FILES['dokumen_pelengkap_2']['name'];
-			$config3['upload_path'] = './assets/original';
-			$config3['upload_url'] = './assets/original';
-			$config3['remove_spaces'] = TRUE;
-			$config3['allowed_types']='*';
-			$config3['file_name'] = $document_pelengkap2_file_name;
-			$this->load->library('upload', $config3);
-			$dokumen_pelengkap_2_ext = $_FILES['dokumen_pelengkap_2']['type'];
-			$dokumen_pelengkap_2_temp = $dokumen_pelengkap_2['tmp_name'];
-			$dokumen_pelengkap_2_name = $document_pelengkap2_file_name;
-			// Extention
-			$dokumen_pelengkap_2_extention = substr($dokumen_pelengkap_2_name, strrpos($dokumen_pelengkap_2_name, '.')+1);
-			if ($this->upload->do_upload('dokumen_pelengkap_2')){
-				$file3 = $this->upload->data('file_name');
-				$file3Name = $this->upload->data('raw_name');
-				if ($dokumen_pelengkap_2_extention == 'doc' || $dokumen_pelengkap_2_extention == 'docx' || $dokumen_pelengkap_2_extention == 'xls' || $dokumen_pelengkap_2_extention == 'xlsx' || $dokumen_pelengkap_2_extention == 'ppt' || $dokumen_pelengkap_2_extention == 'pptx' || $dokumen_pelengkap_2_extention == 'vsd' || $dokumen_pelengkap_2_extention == 'vsdx' || $dokumen_pelengkap_2_extention == 'pdf') {
-					shell_exec('export HOME=/tmp && libreoffice --headless -convert-to pdf --outdir assets/pdf assets/original/'.$file3);
-					if ($dokumen_pelengkap_2_extention=='pdf') {
-						copy('./assets/original/'.$file3, './assets/pdf/'.$file3);
+		try {
+			if ($_FILES['dokumen_pelengkap_2']['size']!=0) {
+				$GLOBALS['watermark_text'] = $watermark_text;
+				$GLOBALS['watermark_second_text'] = $this->__getWatermarkText();
+				$document_pelengkap2_file_name = 'dokumen-pelengkap2-'.time().'-'.$_FILES['dokumen_pelengkap_2']['name'];
+				$config3['upload_path'] = './assets/original';
+				$config3['upload_url'] = './assets/original';
+				$config3['remove_spaces'] = TRUE;
+				$config3['allowed_types']='*';
+				$config3['file_name'] = $document_pelengkap2_file_name;
+				$this->load->library('upload', $config3);
+				$dokumen_pelengkap_2_ext = $_FILES['dokumen_pelengkap_2']['type'];
+				$dokumen_pelengkap_2_temp = $dokumen_pelengkap_2['tmp_name'];
+				$dokumen_pelengkap_2_name = $document_pelengkap2_file_name;
+				// Extention
+				$dokumen_pelengkap_2_extention = substr($dokumen_pelengkap_2_name, strrpos($dokumen_pelengkap_2_name, '.')+1);
+				if ($this->upload->do_upload('dokumen_pelengkap_2')){
+					$file3 = $this->upload->data('file_name');
+					$file3Name = $this->upload->data('raw_name');
+					if ($dokumen_pelengkap_2_extention == 'doc' || $dokumen_pelengkap_2_extention == 'docx' || $dokumen_pelengkap_2_extention == 'xls' || $dokumen_pelengkap_2_extention == 'xlsx' || $dokumen_pelengkap_2_extention == 'ppt' || $dokumen_pelengkap_2_extention == 'pptx' || $dokumen_pelengkap_2_extention == 'vsd' || $dokumen_pelengkap_2_extention == 'vsdx' || $dokumen_pelengkap_2_extention == 'pdf') {
+						shell_exec('export HOME=/tmp && libreoffice --headless -convert-to pdf --outdir assets/pdf assets/original/'.$file3);
+						if ($dokumen_pelengkap_2_extention=='pdf') {
+							copy('./assets/original/'.$file3, './assets/pdf/'.$file3);
+						}
+						// Watermark Pdf
+						$GLOBALS['dokumen_pelengkap_2'] = './assets/pdf/'.$file3Name.'.pdf';
+						chmod($GLOBALS['dokumen_pelengkap_2'], 0777);
+						include (APPPATH.'libraries/watermark_p2.php');
+						$pdf = new Watermark_p2();
+						$pdf->AddPage();
+						$pdf->SetFont('Arial', '', 12);
+						if($pdf->numPages>1) {
+							for($i=2;$i<=$pdf->numPages;$i++) {
+								$pdf->_tplIdx = $pdf->importPage($i);
+								$pdf->AddPage();
+							}
+						}
+						$pdf->Output($GLOBALS['dokumen_pelengkap_2'],'F');
 					}
-					// Watermark Pdf
-					$GLOBALS['dokumen_pelengkap_2'] = './assets/pdf/'.$file3Name.'.pdf';
-					chmod($GLOBALS['dokumen_pelengkap_2'], 0777);
-					include (APPPATH.'libraries/watermark_p2.php');
-					$pdf = new Watermark_p2();
+					
+					$dokumen_pelengkap_2_name = $file3Name;
+					if ($dokumen_pelengkap_2_extention=='pdf') {
+						$convert_dokumen_pelengkap_2 = 1;
+					}elseif ($dokumen_pelengkap_2_extention == 'png' || $dokumen_pelengkap_2_extention == 'PNG' || $dokumen_pelengkap_2_extention == 'JPG' || $dokumen_pelengkap_2_extention == 'jpeg' || $dokumen_pelengkap_2_extention == 'jpg' || $dokumen_pelengkap_2_extention == 'mp4' || $dokumen_pelengkap_2_extention == 'bmp' || $dokumen_pelengkap_2_extention == 'BMP') {
+						$convert_dokumen_pelengkap_2 = 0;
+					}elseif (isset($dokumen_pelengkap_2_on)) {
+						$convert_dokumen_pelengkap_2 = 1;
+					}else{
+						$convert_dokumen_pelengkap_2 = 0;
+					}
+				}else{
+					$errors = $this->upload->display_errors();
+					die($errors);
+				}
+			}else{
+				$dokumen_pelengkap_2_ext = '-';
+				$dokumen_pelengkap_2_name = 'File Not Found';
+				$convert_dokumen_pelengkap_2 = 0;
+				$dokumen_pelengkap_2_extention = '-';
+			}
+		} catch (Exception $e) {
+			$data=[];
+			$data['document'] = $_FILES['dokumen_pelengkap_1']['name'];
+			$data['view'] = 'errors/html/contribution_error';
+			$this->load->view('template', $data);
+		}
+		
+		// Dokumen Persetujuan
+		$dokumen_persetujuan = $_FILES['dokumen_persetujuan'];
+		unset($this->upload);
+		try {
+			if ($_FILES['dokumen_persetujuan']['size']!=0) {
+				$GLOBALS['watermark_text'] = $watermark_text;
+				$GLOBALS['watermark_second_text'] = $this->__getWatermarkText();
+				$document_persetujuan_file_name = 'dokumen-persetujuan-'.time().'-'.$_FILES['dokumen_persetujuan']['name'];
+				$config4['upload_path'] = './assets/original';
+				$config4['upload_url'] = './assets/original';
+				$config4['remove_spaces'] = TRUE;
+				$config4['allowed_types']='*';
+				$config4['file_name'] = $document_persetujuan_file_name;
+				$this->load->library('upload', $config4);
+
+				$dokumen_persetujuan_ext = $_FILES['dokumen_persetujuan']['type'];
+				$dokumen_persetujuan_temp = $dokumen_persetujuan['tmp_name'];
+				$dokumen_persetujuan_name = $document_persetujuan_file_name;
+				if($this->upload->do_upload('dokumen_persetujuan')){
+					$file4 = $this->upload->data('file_name');
+					$GLOBALS['dokumen_persetujuan'] = './assets/original/'.$file4;
+					chmod($GLOBALS['dokumen_persetujuan'], 0777);
+					include (APPPATH.'libraries/watermark_persetujuan.php');
+					$pdf = new Watermark_persetujuan();
 					$pdf->AddPage();
 					$pdf->SetFont('Arial', '', 12);
 					if($pdf->numPages>1) {
@@ -587,67 +664,18 @@ class C_contribution extends CI_Controller {
 							$pdf->AddPage();
 						}
 					}
-					$pdf->Output($GLOBALS['dokumen_pelengkap_2'],'F');
-				}
-				
-				$dokumen_pelengkap_2_name = $file3Name;
-				if ($dokumen_pelengkap_2_extention=='pdf') {
-					$convert_dokumen_pelengkap_2 = 1;
-				}elseif ($dokumen_pelengkap_2_extention == 'png' || $dokumen_pelengkap_2_extention == 'PNG' || $dokumen_pelengkap_2_extention == 'JPG' || $dokumen_pelengkap_2_extention == 'jpeg' || $dokumen_pelengkap_2_extention == 'jpg' || $dokumen_pelengkap_2_extention == 'mp4' || $dokumen_pelengkap_2_extention == 'bmp' || $dokumen_pelengkap_2_extention == 'BMP') {
-					$convert_dokumen_pelengkap_2 = 0;
-				}elseif (isset($dokumen_pelengkap_2_on)) {
-					$convert_dokumen_pelengkap_2 = 1;
-				}else{
-					$convert_dokumen_pelengkap_2 = 0;
+					$pdf->Output($GLOBALS['dokumen_persetujuan'],'F');
+					$dokumen_persetujuan_name = $file4;
 				}
 			}else{
-				$errors = $this->upload->display_errors();
-				die($errors);
+				$dokumen_persetujuan_name = "File Not Found";
+				$dokumen_persetujuan_ext = "-";
 			}
-		}else{
-			$dokumen_pelengkap_2_ext = '-';
-			$dokumen_pelengkap_2_name = 'File Not Found';
-			$convert_dokumen_pelengkap_2 = 0;
-			$dokumen_pelengkap_2_extention = '-';
-		}
-		
-		// Dokumen Persetujuan
-		$dokumen_persetujuan = $_FILES['dokumen_persetujuan'];
-		unset($this->upload);
-		if ($_FILES['dokumen_persetujuan']['size']!=0) {
-			$GLOBALS['watermark_text'] = $watermark_text;
-			$GLOBALS['watermark_second_text'] = $this->__getWatermarkText();
-			$document_persetujuan_file_name = 'dokumen-persetujuan-'.time().'-'.$_FILES['dokumen_persetujuan']['name'];
-			$config4['upload_path'] = './assets/original';
-			$config4['upload_url'] = './assets/original';
-			$config4['remove_spaces'] = TRUE;
-			$config4['allowed_types']='*';
-			$config4['file_name'] = $document_persetujuan_file_name;
-			$this->load->library('upload', $config4);
-
-			$dokumen_persetujuan_ext = $_FILES['dokumen_persetujuan']['type'];
-			$dokumen_persetujuan_temp = $dokumen_persetujuan['tmp_name'];
-			$dokumen_persetujuan_name = $document_persetujuan_file_name;
-			if($this->upload->do_upload('dokumen_persetujuan')){
-				$file4 = $this->upload->data('file_name');
-				$GLOBALS['dokumen_persetujuan'] = './assets/original/'.$file4;
-				chmod($GLOBALS['dokumen_persetujuan'], 0777);
-				include (APPPATH.'libraries/watermark_persetujuan.php');
-				$pdf = new Watermark_persetujuan();
-				$pdf->AddPage();
-				$pdf->SetFont('Arial', '', 12);
-				if($pdf->numPages>1) {
-					for($i=2;$i<=$pdf->numPages;$i++) {
-						$pdf->_tplIdx = $pdf->importPage($i);
-						$pdf->AddPage();
-					}
-				}
-				$pdf->Output($GLOBALS['dokumen_persetujuan'],'F');
-				$dokumen_persetujuan_name = $file4;
-			}
-		}else{
-			$dokumen_persetujuan_name = "File Not Found";
-			$dokumen_persetujuan_ext = "-";
+		} catch (Exception $e) {
+			$data=[];
+			$data['document'] = $_FILES['dokumen_pelengkap_1']['name'];
+			$data['view'] = 'errors/html/contribution_error';
+			$this->load->view('template', $data);
 		}
 
 		$data_insert = array(
