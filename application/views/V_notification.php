@@ -9,7 +9,7 @@ if(empty($get_data_count)||$get_data_count==""){
 ?>
 <div class="row">
 	<ul class="nav nav-tabs" role="tablist">
-		<?php if (in_array(5,$this->session->userdata("user_menu"))) { ?>
+		<?php if ($this->session->userdata("user_menu") != NULL && in_array(5,$this->session->userdata("user_menu"))) { ?>
     	<li role="presentation" class="active">
 			<a href="#news" aria-controls="news" role="tab" data-toggle="tab">
 				News
@@ -17,7 +17,7 @@ if(empty($get_data_count)||$get_data_count==""){
 			</a>
 		</li>
 		<?php } ?>
-		<?php if (in_array(27,$this->session->userdata("user_menu"))) { ?>
+		<?php if ($this->session->userdata("user_menu") != NULL && in_array(27,$this->session->userdata("user_menu"))) { ?>
 		<li role="presentation">
 			<a href="#notification" aria-controls="notification" role="tab" data-toggle="tab"
 				>Notification 
@@ -27,7 +27,7 @@ if(empty($get_data_count)||$get_data_count==""){
 		<?php } ?>
 	</ul>
 	<div class="tab-content">
-		<?php if (in_array(5,$this->session->userdata("user_menu"))) { ?>
+		<?php if ($this->session->userdata("user_menu") != NULL && in_array(5,$this->session->userdata("user_menu"))) { ?>
 		<div role="tabpanel" class="tab-pane fade in active" id="news">
 			<?php
 				if($count_news > 0){
@@ -58,7 +58,7 @@ if(empty($get_data_count)||$get_data_count==""){
 			<?php } } ?>
 		</div>
 		<?php } ?>
-		<?php if (in_array(27,$this->session->userdata("user_menu"))) { ?>
+		<?php if ($this->session->userdata("user_menu") != NULL && in_array(27,$this->session->userdata("user_menu"))) { ?>
 		<div role="tabpanel" class="tab-pane fade" id="notification">
 			<?php
 			$x = [];

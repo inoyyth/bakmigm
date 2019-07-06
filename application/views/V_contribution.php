@@ -915,27 +915,6 @@
 					return false;
 				}
 			});
-			// filter dokumen persetujuan
-			// $('#dokumen_persetujuan').on('change', function() {
-			// 	// var persetujuan_doc = $('#dokumen_persetujuan').val();
-			// 	// var file = persetujuan_doc.split('\\').pop();
-			// 	// var jumlah = file.substr(0, file.lastIndexOf('.'));
-			// 	// var exten = persetujuan_doc.split('.')[1];
-			// 	var filePath = $("#dokumen_persetujuan").val(); 
-			// 	var file_ext = filePath.substr(filePath.lastIndexOf('.')+1,filePath.length);
-			// 	console.log("File Extension ->-> "+file_ext);
-			// 	if (file_ext != 'pdf' ) {
-			// 		alert("File Persetujuan Harus PDF!");
-			// 		$(this).val('');
-			// 		return false;
-			// 	}
-			// 	if (jumlah.length > 100) {
-			// 		alert("Nama File Harus Kurang dari 100 Karakter!");
-			// 		$(this).val('');
-			// 		return false;
-			// 	}
-			// });
-			// Dual List Box
 
 			$( "#btn_atr_doc" ).click(function() {
 				var kategori = $('#si_template_new_kategori').val();

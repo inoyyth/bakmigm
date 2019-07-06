@@ -1088,52 +1088,6 @@
 			}
 		});
 		
-		// $("#duallistbox_akses_level").change(function(){
-		// 	var JBLL_ID = $("#duallistbox_akses_level").val();
-		// 	if(JBLL_ID!=null){
-		// 		var JBLL_ID,JBLL_NAME,JBLL_INDEX;
-		// 		//AJAX Request 1
-		// 		$.ajax({
-		// 			url: '<?=base_url('C_contribution/get_data_job_level_evo_ext')?>',
-		// 			type: 'POST',
-		// 			data: {id_key: JBLL_ID},
-		// 			async: false,
-		// 			success: function(response){
-		// 				//Parsing Json
-		// 				response = $.parseJSON(response);
-		// 				//Add Options
-		// 				$.each(response,function(index,data){
-		// 					JBLL_ID = data['JBLL_ID'];
-		// 					JBLL_NAME = data['JBLL_NAME'];
-		// 					JBLL_INDEX = data['JBLL_INDEX'];
-		// 				});
-		// 			}
-		// 		});
-				
-		// 		$("#duallistbox_akses_level").children().remove();
-		// 		//AJAX Request 2
-		// 		$.ajax({
-		// 			url: '<?=base_url('C_contribution/get_data_job_level_evo')?>',
-		// 			type: 'POST',
-		// 			async: false,
-		// 			success: function(response){
-		// 				//Parsing Json
-		// 				response = $.parseJSON(response);
-		// 				//Add Options
-		// 				$.each(response,function(index,data){
-		// 					//LOOP
-		// 					if(JBLL_INDEX>=(data['JBLL_INDEX'])){
-		// 						$('#duallistbox_akses_level').append('<option value="'+data['JBLL_ID']+'" selected>'+data['JBLL_NAME']+'</option>');
-		// 					}else{
-		// 						$('#duallistbox_akses_level').append('<option value="'+data['JBLL_ID']+'">'+data['JBLL_NAME']+'</option>');
-		// 					}
-		// 					//LOOP
-		// 				});
-		// 			}
-		// 		});
-		// 		$("#duallistbox_akses_level").bootstrapDualListbox('refresh', true);
-		// 	}
-		// });
 		$('#si_history_date').on('changeDate', function() {
 			var tgl_awal = $('#si_history_date').val();
 			$('#si_history_date2').val(moment(tgl_awal).format("DD/MMM/YYYY"));
@@ -1567,13 +1521,8 @@
 			});
 			
 			$('#colorpicker1').colorpicker();
-			//$('.colorpicker').last().css('z-index', 2000);//if colorpicker is inside a modal, its z-index should be higher than modal'safe
 			
 			$('#simple-colorpicker-1').ace_colorpicker();
-			//$('#simple-colorpicker-1').ace_colorpicker('pick', 2);//select 2nd color
-			//$('#simple-colorpicker-1').ace_colorpicker('pick', '#fbe983');//select #fbe983 color
-			//var picker = $('#simple-colorpicker-1').data('ace_colorpicker')
-			//picker.pick('red', true);//insert the color if it doesn't exist
 			
 			$(".knob").knob();
 			
@@ -1589,9 +1538,6 @@
 				thumbnail:'large'
 			})
 			
-			//chosen plugin inside a modal will have a zero width because the select element is originally hidden
-			//and its width cannot be determined.
-			//so we set the width after modal is show
 			$('#modal-form').on('shown.bs.modal', function () {
 				if(!ace.vars['touch']) {
 					$(this).find('.chosen-container').each(function(){
@@ -1600,14 +1546,7 @@
 						$(this).find('.chosen-search input').css('width' , '200px');
 					});
 				}
-			})
-			/**
-			//or you can activate the chosen plugin after modal is shown
-			//this way select element becomes visible with dimensions and chosen works as expected
-			$('#modal-form').on('shown', function () {
-				$(this).find('.modal-chosen').chosen();
-			})
-			*/
+			});
 			
 			$(document).one('ajaxloadstart.page', function(e) {
 				autosize.destroy('textarea[class*=autosize]')
@@ -1731,185 +1670,100 @@
 				$('.rating').raty('destroy');
 				$('.multiselect').multiselect('destroy');
 			});
-			//------------------------------------------------------------------------------------------------//
-			//------------------------------------------------------------------------------------------------//
-			//------------------------------------------------------------------------------------------------//
-			//$('[data-rel=tooltip]').tooltip();
-			//
-			//$('.select2').css('width','200px').select2({allowClear:true})
-			//.on('change', function(){
-			//	$(this).closest('form').validate().element($(this));
-			//}); 
-			//
-			//var $validation = false;
-			//$('#fuelux-wizard-container')
-			//.ace_wizard({
-			//	//step: 2 //optional argument. wizard will jump to step "2" at first
-			//	//buttons: '.wizard-actions:eq(0)'
-			//})
-			//.on('actionclicked.fu.wizard' , function(e, info){
-			//	if(info.step == 1 && $validation) {
-			//		if(!$('#validation-form').valid()) e.preventDefault();
-			//	}
-			//})
-			//.on('finished.fu.wizard', function(e) {
-			//	$('#auto_wizard_form').submit();//!!!
-			//}).on('stepclick.fu.wizard', function(e){
-			//	//e.preventDefault();//this will prevent clicking and selecting steps
-			//});
-			//
-			////jump to a step
-			///**
-			//var wizard = $('#fuelux-wizard-container').data('fu.wizard')
-			//wizard.currentStep = 3;
-			//wizard.setState();
-			//*/
-			//
-			////determine selected step
-			////wizard.selectedItem().step
-			//
-			////hide or show the other form which requires validation
-			////this is for demo only, you usullay want just one form in your application
-			//$('#skip-validation').removeAttr('checked').on('click', function(){
-			//	$validation = this.checked;
-			//	if(this.checked) {
-			//		$('#auto_wizard_form').hide();
-			//		$('#validation-form').removeClass('hide');
-			//	}
-			//	else {
-			//		$('#validation-form').addClass('hide');
-			//		$('#auto_wizard_form').show();
-			//	}
-			//})
-			//
-			////documentation : http://docs.jquery.com/Plugins/Validation/validate
-			//
-			//$.mask.definitions['~']='[+-]';
-			//$('#phone').mask('(999) 999-9999');
-			//
-			//jQuery.validator.addMethod("phone", function (value, element) {
-			//	return this.optional(element) || /^\(\d{3}\) \d{3}\-\d{4}( x\d{1,6})?$/.test(value);
-			//}, "Enter a valid phone number.");
-			//
-			//$('#validation-form').validate({
-			//	errorElement: 'div',
-			//	errorClass: 'help-block',
-			//	focusInvalid: false,
-			//	ignore: "",
-			//	rules: {
-			//		upload_file_input: {
-			//			required: true,
-			//			email:true
-			//		},//!!!
-            //
-			//		email: {
-			//			required: true,
-			//			email:true
-			//		},
-			//		password: {
-			//			required: true,
-			//			minlength: 5
-			//		},
-			//		password2: {
-			//			required: true,
-			//			minlength: 5,
-			//			equalTo: "#password"
-			//		},
-			//		name: {
-			//			required: true
-			//		},
-			//		phone: {
-			//			required: true,
-			//			phone: 'required'
-			//		},
-			//		url: {
-			//			required: true,
-			//			url: true
-			//		},
-			//		comment: {
-			//			required: true
-			//		},
-			//		state: {
-			//			required: true
-			//		},
-			//		platform: {
-			//			required: true
-			//		},
-			//		subscription: {
-			//			required: true
-			//		},
-			//		gender: {
-			//			required: true,
-			//		},
-			//		agree: {
-			//			required: true,
-			//		}
-			//	},
-			//
-			//	messages: {
-			//		email: {
-			//			required: "Please provide a valid email.",
-			//			email: "Please provide a valid email."
-			//		},
-			//		password: {
-			//			required: "Please specify a password.",
-			//			minlength: "Please specify a secure password."
-			//		},
-			//		state: "Please choose state",
-			//		subscription: "Please choose at least one option",
-			//		gender: "Please choose gender",
-			//		agree: "Please accept our policy"
-			//	},
-			//
-			//	highlight: function (e) {
-			//		$(e).closest('.form-group').removeClass('has-info').addClass('has-error');
-			//	},
-			//
-			//	success: function (e) {
-			//		$(e).closest('.form-group').removeClass('has-error');//.addClass('has-info');
-			//		$(e).remove();
-			//	},
-			//
-			//	errorPlacement: function (error, element) {
-			//		if(element.is('input[type=checkbox]') || element.is('input[type=radio]')) {
-			//			var controls = element.closest('div[class*="col-"]');
-			//			if(controls.find(':checkbox,:radio').length > 1) controls.append(error);
-			//			else error.insertAfter(element.nextAll('.lbl:eq(0)').eq(0));
-			//		}
-			//		else if(element.is('.select2')) {
-			//			error.insertAfter(element.siblings('[class*="select2-container"]:eq(0)'));
-			//		}
-			//		else if(element.is('.chosen-select')) {
-			//			error.insertAfter(element.siblings('[class*="chosen-container"]:eq(0)'));
-			//		}
-			//		else error.insertAfter(element.parent());
-			//	},
-			//
-			//	submitHandler: function (form) {
-			//	},
-			//	invalidHandler: function (form) {
-			//	}
-			//});
-			//
-			//$('#modal-wizard-container').ace_wizard();
-			//$('#modal-wizard .wizard-actions .btn[data-dismiss=modal]').removeAttr('disabled');
-			//
-			///**
-			//$('#date').datepicker({autoclose:true}).on('changeDate', function(ev) {
-			//	$(this).closest('form').validate().element($(this));
-			//});
-			//
-			//$('#mychosen').chosen().on('change', function(ev) {
-			//	$(this).closest('form').validate().element($(this));
-			//});
-			//*/
-			//
-			//$(document).one('ajaxloadstart.page', function(e) {
-			//	//in ajax mode, remove remaining elements before leaving page
-			//	$('[class*=select2]').remove();
-			//});
-			//------------------------------------------------------------------------------------------------//
-			//------------------------------------------------------------------------------------------------//
-			//------------------------------------------------------------------------------------------------//
+
+			//Document size and type validation
+			var allow_extention = new Array("doc","docx","xls","xlsx","ppt","pptx","vsd","vsdx","pdf");
+
+			$('#dokumen_utama').on('change', function() {
+				var filePath = $(this).val(); 
+				var file_ext = filePath.substr(filePath.lastIndexOf('.')+1,filePath.length);
+				var file_size = this.files[0].size / 1024;
+				var iSize = (Math.round((file_size / 1024) * 100) / 100);
+			
+				if (allow_extention.indexOf(file_ext) != -1) {
+					if (iSize > 5) {
+						alert("Maksimal Ukuran File 5MB!");
+						$(this).val('');
+
+						return false;
+					}
+
+					return true;
+				} else {
+					alert("File Harus Doc, Docx, Xls, Xlsx, Ppt, Pptx, Vsd, Vsdx Atau Pdf!");
+					$(this).val('');
+
+					return false;
+				}
+			});
+
+			$('#dokumen_pelengkap_1').on('change', function() {
+				var filePath = $(this).val(); 
+				var file_ext = filePath.substr(filePath.lastIndexOf('.')+1,filePath.length);
+				var file_size = this.files[0].size / 1024;
+				var iSize = (Math.round((file_size / 1024) * 100) / 100);
+			
+				if (allow_extention.indexOf(file_ext) != -1) {
+					if (iSize > 5) {
+						alert("Maksimal Ukuran File 5MB!");
+						$(this).val('');
+
+						return false;
+					}
+
+					return true;
+				} else {
+					alert("File Harus Doc, Docx, Xls, Xlsx, Ppt, Pptx, Vsd, Vsdx Atau Pdf!");
+					$(this).val('');
+
+					return false;
+				}
+			});
+
+			$('#dokumen_pelengkap_2').on('change', function() {
+				var filePath = $(this).val(); 
+				var file_ext = filePath.substr(filePath.lastIndexOf('.')+1,filePath.length);
+				var file_size = this.files[0].size / 1024;
+				var iSize = (Math.round((file_size / 1024) * 100) / 100);
+			
+				if (allow_extention.indexOf(file_ext) != -1) {
+					if (iSize > 5) {
+						alert("Maksimal Ukuran File 5MB!");
+						$(this).val('');
+
+						return false;
+					}
+
+					return true;
+				} else {
+					alert("File Harus Doc, Docx, Xls, Xlsx, Ppt, Pptx, Vsd, Vsdx Atau Pdf!");
+					$(this).val('');
+
+					return false;
+				}
+			});
+
+			$('#dokumen_persetujuan').on('change', function() {
+				var filePath = $(this).val(); 
+				var file_ext = filePath.substr(filePath.lastIndexOf('.')+1,filePath.length);
+				var file_size = this.files[0].size / 1024;
+				var iSize = (Math.round((file_size / 1024) * 100) / 100);
+				var allow_extention = new Array("pdf");
+				if (allow_extention.indexOf(file_ext) != -1) {
+					if (iSize > 5) {
+						alert("Maksimal Ukuran File 5MB!");
+						$(this).val('');
+
+						return false;
+					}
+
+					return true;
+				} else {
+					alert("File Harus Pdf!");
+					$(this).val('');
+
+					return false;
+				}
+			});
 		});
 	</script>
