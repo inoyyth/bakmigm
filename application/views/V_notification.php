@@ -422,9 +422,9 @@ if(empty($get_data_count)||$get_data_count==""){
 					<?php if ($data_row_ext->DOC_DISTRIBUSI=="EDOC"): ?>
 						<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-xl-6">
 							<div class="form-group">
-								<object data="<?=$url_path_persetujuan;?>" type="application/pdf" width="400px" height="500px">
-									<iframe src="<?=$url_path_persetujuan;?>"></iframe>
-								</object>
+								<!-- <object data="<?=$url_path_persetujuan;?>" type="application/pdf" width="400px" height="500px"> -->
+									<iframe src="<?=$url_path_persetujuan.'#toolbar=0&navpanes=0&scrollbar=0&docId=456';?>" width="400px" height="500px"></iframe>
+								<!-- </object> -->
 								<label for="" class="col-sm-12 control-label" style="text-align:left">
 									<!-- <a target="_blank" href="<?=$url_path_persetujuan;?>">Dokumen Persetujuan</a> -->
 								</label>
