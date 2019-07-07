@@ -2083,7 +2083,7 @@ class C_notification extends CI_Controller {
 		}
 		$watermark_text = $this->input->post('watermark');
 		$GLOBALS['watermark_text'] = $watermark_text;
-		$GLOBALS['watermark_second_text'] = $this->__getWatermarkText();
+		$GLOBALS['watermark_second_text'] = '';//$this->__getWatermarkText();
 		//SYSTEM
 		$si_code								= $this->input->post('si_code');
 		$si_userid								= $this->input->post('si_userid');

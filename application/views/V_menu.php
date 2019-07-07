@@ -123,24 +123,23 @@
 				<th>Aktivitas</th>
 			</tr>
 		</thead>
-		<?php if (!empty($detail)): ?>
-		<?php foreach ($detail as $key) : ?>
-			
-			<?php 
-			date_default_timezone_set('Asia/Jakarta');
-			// Tanggal / Aging
-			$DOC_DATE_EXPIRED = date('Y-m-d',strtotime($key->DOC_TGL_EXPIRED));
+		<?php 
+			if (!empty($detail)): 
+				foreach ($detail as $key) : 
+					date_default_timezone_set('Asia/Jakarta');
+					// Tanggal / Aging
+					$DOC_DATE_EXPIRED = date('Y-m-d',strtotime($key->DOC_TGL_EXPIRED));
 
-			$tanggal = new DateTime($DOC_DATE_EXPIRED);
-			$today = new DateTime('today');
-			$y = $today->diff($tanggal)->y;
-			$m = $today->diff($tanggal)->m;
-			$d = $today->diff($tanggal)->d;
-			if (date('Y-m-d') > $DOC_DATE_EXPIRED) {
-				$aging = "0 tahun 0 bulan 0 hari";
-			}else{
-				$aging = $y." tahun ".$m." bulan ".$d." hari";
-			}
+					$tanggal = new DateTime($DOC_DATE_EXPIRED);
+					$today = new DateTime('today');
+					$y = $today->diff($tanggal)->y;
+					$m = $today->diff($tanggal)->m;
+					$d = $today->diff($tanggal)->d;
+					if (date('Y-m-d') > $DOC_DATE_EXPIRED) {
+						$aging = "0 tahun 0 bulan 0 hari";
+					}else{
+						$aging = $y." tahun ".$m." bulan ".$d." hari";
+					}
 			?>
 			<tbody>
 				<tr>
@@ -163,8 +162,10 @@
 					</td>
 				</tr>
 			</tbody>
-		<?php endforeach; ?>
-	<?php endif; ?>
+		<?php 
+			endforeach; 
+			endif; 
+		?>
 	</table>
 </div>
 <script type="text/javascript">

@@ -344,6 +344,9 @@ class C_menu extends CI_Controller
 			redirect(base_url('menu'),'refresh');
 		}
 		include (APPPATH.'libraries/session_user.php');
+		include (APPPATH.'libraries/FPDF/Fpdf.php');
+		include (APPPATH.'libraries/FPDI/fpdi.php');
+		date_default_timezone_set('Asia/Jakarta');
 		$data = array(
 			'LogDoc' => $ID,
 			'LogAct' => 'Download',
@@ -371,8 +374,24 @@ class C_menu extends CI_Controller
 		}
 		// FIle Dokumen Utama
 		if ($STATUS_UTAMA==1) {
-			$file_utama = $DOCD_UTAMA.'.pdf';
-			$getUtama = './assets/pdf/'.$file_utama;
+			$GLOBALS['watermark_text'] = '';
+			$GLOBALS['watermark_second_text'] = $this->__getWatermarkText();
+			$GLOBALS['dokumen_utama'] = './assets/pdf/'.$DOCD_UTAMA.'.pdf';
+			$GLOBALS['dokumen_utama_copy'] = './assets/pdf/'.$DOCD_UTAMA.'-'.$this->session->userdata("session_bgm_edocument_id").'.pdf';
+			copy($GLOBALS['dokumen_utama'], $GLOBALS['dokumen_utama_copy']);
+			chmod($GLOBALS['dokumen_utama_copy'], 0777);
+			include (APPPATH.'libraries/watermark/watermark_utama.php');
+			$pdf = new Watermark_utama();
+			$pdf->AddPage();
+			$pdf->SetFont('Arial', '', 12);
+			if($pdf->numPages>1) {
+				for($i=2;$i<=$pdf->numPages;$i++) {
+					$pdf->_tplIdx = $pdf->importPage($i);
+					$pdf->AddPage();
+				}
+			}
+			$pdf->Output($GLOBALS['dokumen_utama_copy'],'F');
+			$getUtama = $GLOBALS['dokumen_utama_copy'];
 		}else{
 			$file_utama = $DOCD_UTAMA.'.'.$EXT_UTAMA;
 			$getUtama = './assets/original/'.$file_utama;
@@ -381,8 +400,24 @@ class C_menu extends CI_Controller
 		if ($DOCD_PELENGKAP_1!='File_Not_Found') {
 			if ($EXT_1=='doc'||$EXT_1=='docx'||$EXT_1=='xls'||$EXT_1=='xlsx'||$EXT_1=='vsd'||$EXT_1=='vsdx'||$EXT_1=='ppt'||$EXT_1=='pptx') {
 				if ($STATUS_1==1) {
-					$file_1 = $DOCD_PELENGKAP_1.'.pdf';
-					$get_1 =  './assets/pdf/'.$file_1;
+					$GLOBALS['watermark_text'] = '';
+					$GLOBALS['watermark_second_text'] = $this->__getWatermarkText();
+					$GLOBALS['dokumen_pelengkap1'] = './assets/pdf/'.$DOCD_PELENGKAP_1.'.pdf';
+					$GLOBALS['dokumen_pelengkap1_copy'] = './assets/pdf/'.$DOCD_PELENGKAP_1.'-'.$this->session->userdata("session_bgm_edocument_id").'.pdf';
+					copy($GLOBALS['dokumen_pelengkap1'], $GLOBALS['dokumen_pelengkap1_copy']);
+					chmod($GLOBALS['dokumen_pelengkap1_copy'], 0777);
+					include (APPPATH.'libraries/watermark/watermark_p1.php');
+					$pdf = new Watermark_p1();
+					$pdf->AddPage();
+					$pdf->SetFont('Arial', '', 12);
+					if($pdf->numPages>1) {
+						for($i=2;$i<=$pdf->numPages;$i++) {
+							$pdf->_tplIdx = $pdf->importPage($i);
+							$pdf->AddPage();
+						}
+					}
+					$pdf->Output($GLOBALS['dokumen_pelengkap1_copy'],'F');
+					$get_1 =  $GLOBALS['dokumen_pelengkap1_copy'];
 				}else{
 					$file_1 = $DOCD_PELENGKAP_1.'.'.$EXT_1;
 					$get_1 =  './assets/original/'.$file_1;
@@ -396,8 +431,24 @@ class C_menu extends CI_Controller
 		if ($DOCD_PELENGKAP_2!='File_Not_Found') {
 			if ($EXT_2=='doc'||$EXT_2=='docx'||$EXT_2=='xls'||$EXT_2=='xlsx'||$EXT_2=='vsd'||$EXT_2=='vsdx'||$EXT_2=='ppt'||$EXT_2=='pptx') {
 				if ($STATUS_2==1) {
-					$file_2 = $DOCD_PELENGKAP_2.'.pdf';
-					$get_2 = './assets/pdf/'.$file_2;
+					$GLOBALS['watermark_text'] = '';
+					$GLOBALS['watermark_second_text'] = $this->__getWatermarkText();
+					$GLOBALS['dokumen_pelengkap2'] = './assets/pdf/'.$DOCD_PELENGKAP_2.'.pdf';
+					$GLOBALS['dokumen_pelengkap2_copy'] = './assets/pdf/'.$DOCD_PELENGKAP_2.'-'.$this->session->userdata("session_bgm_edocument_id").'.pdf';
+					copy($GLOBALS['dokumen_pelengkap2'], $GLOBALS['dokumen_pelengkap2_copy']);
+					chmod($GLOBALS['dokumen_pelengkap2_copy'], 0777);
+					include (APPPATH.'libraries/watermark/watermark_p2.php');
+					$pdf = new Watermark_p2();
+					$pdf->AddPage();
+					$pdf->SetFont('Arial', '', 12);
+					if($pdf->numPages>1) {
+						for($i=2;$i<=$pdf->numPages;$i++) {
+							$pdf->_tplIdx = $pdf->importPage($i);
+							$pdf->AddPage();
+						}
+					}
+					$pdf->Output($GLOBALS['dokumen_pelengkap2_copy'],'F');
+					$get_2 =  $GLOBALS['dokumen_pelengkap2_copy'];
 				}else{
 					$file_2 = $DOCD_PELENGKAP_2.'.'.$EXT_2;
 					$get_2 = './assets/original/'.$file_2;
@@ -408,8 +459,24 @@ class C_menu extends CI_Controller
 			}
 		}
 		// File Dokumen Persetujuan
-		$file_persetujuan = $DOCD_PERSETUJUAN;
-		$get_persetujuan = './assets/original/'.$file_persetujuan;
+		$GLOBALS['watermark_text'] = '';
+		$GLOBALS['watermark_second_text'] = $this->__getWatermarkText();
+		$GLOBALS['dokumen_persetujuan'] = './assets/original/'.$DOCD_PERSETUJUAN;
+		$GLOBALS['dokumen_persetujuan_copy'] = './assets/pdf/'.$DOCD_PERSETUJUAN.'-'.$this->session->userdata("session_bgm_edocument_id");
+		copy($GLOBALS['dokumen_persetujuan'], $GLOBALS['dokumen_persetujuan_copy']);
+		chmod($GLOBALS['dokumen_persetujuan_copy'], 0777);
+		include (APPPATH.'libraries/watermark/watermark_persetujuan.php');
+		$pdf = new Watermark_persetujuan();
+		$pdf->AddPage();
+		$pdf->SetFont('Arial', '', 12);
+		if($pdf->numPages>1) {
+			for($i=2;$i<=$pdf->numPages;$i++) {
+				$pdf->_tplIdx = $pdf->importPage($i);
+				$pdf->AddPage();
+			}
+		}
+		$pdf->Output($GLOBALS['dokumen_persetujuan_copy'],'F');
+		$get_persetujuan =  $GLOBALS['dokumen_persetujuan_copy'];
 		// Add Info
 		$tgl = date('Y-m-d');
 		$name = 'info.txt';
@@ -433,6 +500,10 @@ class C_menu extends CI_Controller
 		$this->zip->read_file($get_2);
 		$this->zip->read_file($get_persetujuan);
 		$this->zip->download('['.$ID.'] - '.$DOC_NAMA.'.zip');
+		unlink($GLOBALS['dokumen_utama_copy']);
+		unlink($GLOBALS['dokumen_pelengkap1_copy']);
+		unlink($GLOBALS['dokumen_pelengkap2_copy']);
+		unlink($GLOBALS['dokumen_persetujuan_copy']);
 	}
 
 	public function setPictureProfile() {
@@ -481,5 +552,35 @@ class C_menu extends CI_Controller
 		$this->session->sess_destroy();
 		// redirect(base_url());
 		redirect('http://webportal.bakmigm.co.id/sim/');
+	}
+
+	private function __getWatermarkText() {
+		$get_format = $this->db->select("*")
+									->from('m_watermark')
+									->get()->row_array();
+		$field_1 = $this->__conversionWatermarkField($get_format['field_1']);
+		$field_2 = $this->__conversionWatermarkField($get_format['field_2']);
+		$field_3 = $this->__conversionWatermarkField($get_format['field_3']);
+		$field_4 = $this->__conversionWatermarkField($get_format['field_4']);
+
+		return $field_1 . ' - ' . $field_2 . ' - ' . $field_3 . ' - ' . $field_4;
+	}
+
+	private function __conversionWatermarkField($value) {
+		switch($value) {
+			case 'NIP':
+				$text = $this->session->userdata("session_bgm_edocument_id");
+				break;
+			case 'Nama':
+				$text = $this->session->userdata("session_bgm_edocument_name");
+				break;
+			case 'Tanggal/Bulan/Tahun':
+				$text = date('d/M/Y');
+				break;
+			default:
+				$text = $value;
+		}
+
+		return $text;
 	}
 }
