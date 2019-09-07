@@ -551,7 +551,7 @@ class C_menu extends CI_Controller
 	{
 		$this->session->sess_destroy();
 		// redirect(base_url());
-		redirect('http://webportal.bakmigm.co.id/sim/');
+		redirect('http://webportal.bakmigm.co.id/gms/home.php');
 	}
 
 	private function __getWatermarkText() {
