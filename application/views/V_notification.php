@@ -420,7 +420,8 @@ if(empty($get_data_count)||$get_data_count==""){
 					}
 					?>
 					<?php if ($data_row_ext->DOC_DISTRIBUSI=="EDOC"): ?>
-						<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-xl-6">
+						<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-xl-6" style="position: relative;">
+					<div style="width: 386px;height:500px;background-color:rgba(201, 76, 76, 0);z-index: 99999;position: absolute;"></div>
 							<div class="form-group">
 								<!-- <object data="<?=$url_path_persetujuan;?>" type="application/pdf" width="400px" height="500px"> -->
 									<iframe src="<?=$url_path_persetujuan.'#toolbar=0&navpanes=0&scrollbar=0&docId=456';?>" width="400px" height="500px"></iframe>
@@ -432,20 +433,20 @@ if(empty($get_data_count)||$get_data_count==""){
 							
 							<div class="form-group">
 								<label for="" class="col-sm-12 control-label" style="text-align:left">
-									<a target="_blank" href="<?= base_url('C_notification/document/'.$data_row_ext->DOC_ID.'/'.$DOCD_UTAMA); ?>">Dokumen Utama</a>
+									<a target="_blank" href="<?= base_url('C_notification/document/'.$data_row_ext->DOC_ID.'/'.$DOCD_UTAMA); ?>">Dokumen Utama</a> | Original File Type "<?php echo $EXT_UTAMA;?>"
 								</label>
 							</div>
 							<?php if($data_row_doc->DOCD_PELENGKAP_1!="File_Not_Found"): ?>
 								<div class="form-group">
 									<label for="" class="col-sm-12 control-label" style="text-align:left">
-										<a target="_blank" href="<?= base_url('C_notification/document/'.$data_row_ext->DOC_ID.'/'.$DOCD_PELENGKAP_1); ?>">Dokumen Pelengkap 1</a>
+										<a target="_blank" href="<?= base_url('C_notification/document/'.$data_row_ext->DOC_ID.'/'.$DOCD_PELENGKAP_1); ?>">Dokumen Pelengkap 1</a> | Original File Type "<?php echo $EXT_1;?>"
 									</label>
 								</div>
 							<?php endif; ?>
 							<?php if($data_row_doc->DOCD_PELENGKAP_2!="File_Not_Found"): ?>
 								<div class="form-group">
 									<label for="" class="col-sm-12 control-label" style="text-align:left">
-										<a target="_blank" href="<?= base_url('C_notification/document/'.$data_row_ext->DOC_ID.'/'.$DOCD_PELENGKAP_2); ?>">Dokumen Pelengkap 2</a>
+										<a target="_blank" href="<?= base_url('C_notification/document/'.$data_row_ext->DOC_ID.'/'.$DOCD_PELENGKAP_2); ?>">Dokumen Pelengkap 2</a> | Original File Type "<?php echo $EXT_2;?>"
 									</label>
 								</div>
 							<?php endif; ?>

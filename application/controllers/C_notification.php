@@ -2112,7 +2112,7 @@ class C_notification extends CI_Controller {
 		$data_update_detail = array(
 			'DOCD_UTAMA_STATUS' => $convert_dokumen_utama,
 			'DOCD_PELENGKAP_1_STATUS' => $convert_dokumen_pelengkap_1,
-			'DOCD_PELENGKAP_1_STATUS' => $convert_dokumen_pelengkap_2
+			'DOCD_PELENGKAP_2_STATUS' => $convert_dokumen_pelengkap_2
 		);
 		$is_ok = $this->M_library_database->DB_UPDATE_DATA_DOCUMENT_DETAIL_REFISI_EVO($si_code,$data_update_detail);
 		if ($si_owner_dept_pendistribusi=='7550') {
@@ -2142,10 +2142,8 @@ class C_notification extends CI_Controller {
 		$STATUS_FINAL = "Menunggu Persetujuan dari ".$PENDISTRIBUSI_FINAL_CODE." (".$PENDISTRIBUSI_FINAL_NAME.")";
 		$Activity = $dt;
 		
-		//Dokumen Utama
-		$dokumen_utama = $_FILES['dokumen_utama'];
 		try {
-			if ($_FILES['dokumen_utama']['size'] != 0) {
+			if ($_FILES['dokumen_utama']['name']) {
 				$document_utama_file_name = 'dokumen-utama-'.time().'-'.$_FILES['dokumen_utama']['name'];
 				$config1['upload_path'] = './assets/original';
 				$config1['upload_url'] = './assets/original';
@@ -2153,13 +2151,8 @@ class C_notification extends CI_Controller {
 				$config1['allowed_types']='*';
 				$config1['file_name'] = $document_utama_file_name;
 				$this->load->library('upload', $config1);
-
-				$dokumen_utama_ext = $_FILES['dokumen_utama']['type'];
-				$dokumen_utama_size = ($_FILES['dokumen_utama']['size'])/(1000*1000);
-				$dokumen_utama_temp = $dokumen_utama['tmp_name'];
-				$dokumen_utama_name = $document_utama_file_name;
 				// Extention
-				$dokumen_utama_extention = substr($dokumen_utama_name, strrpos($dokumen_utama_name, '.')+1);
+				$dokumen_utama_extention = substr($document_utama_file_name, strrpos($document_utama_file_name, '.')+1);
 				if ($this->upload->do_upload('dokumen_utama')) {
 					$file1 = $this->upload->data('file_name');
 					$file1Name = $this->upload->data('raw_name');
@@ -2195,14 +2188,14 @@ class C_notification extends CI_Controller {
 					$errors = $this->upload->display_errors();
 					die($errors);
 				}
-				$data_update_detail = array(
+				$data_update_dokumen_utama = array(
 					'DOCD_UTAMA' => $dokumen_utama_name,
-					'DOCD_UTAMA_TYPE' => $dokumen_utama_ext,
+					'DOCD_UTAMA_TYPE' => $this->upload->data('file_type'),
 					'DOCD_UTAMA_STATUS' => $convert_dokumen_utama,
 					'DOCD_UTAMA_EXT' => $dokumen_utama_extention,
 					'DOCD_SEARCH' => $dokumen_search_acr
 				);
-				$is_ok = $this->M_library_database->DB_UPDATE_DATA_DOCUMENT_DETAIL_REFISI_EVO($si_code,$data_update_detail);
+				$is_ok = $this->M_library_database->DB_UPDATE_DATA_DOCUMENT_DETAIL_REFISI_EVO($si_code,$data_update_dokumen_utama);
 				if(!$is_ok){
 					echo '
 						<script>
@@ -2215,15 +2208,14 @@ class C_notification extends CI_Controller {
 			}
 		} catch (Exception $e) {
 			$data=[];
-			$data['document'] = $_FILES['dokumen_pelengkap_1']['name'];
+			$data['document'] = $_FILES['dokumen_utama']['name'];
 			$data['view'] = 'errors/html/contribution_error';
 			$this->load->view('template', $data);
 		}
 		//Dokumen Pelengkap 1
-		$dokumen_pelengkap_1 = $_FILES['dokumen_pelengkap_1'];
 		unset($this->upload);
 		try {
-			if ($_FILES['dokumen_pelengkap_1']['size'] != 0) {
+			if ($_FILES['dokumen_pelengkap_1']['name']) {
 				unset($this->upload);
 				$document_pelengkap1_file_name = 'dokumen-pelengkap1-'.time().'-'.$_FILES['dokumen_pelengkap_1']['name'];
 				$config2['upload_path'] = './assets/original';
@@ -2233,12 +2225,8 @@ class C_notification extends CI_Controller {
 				$config2['file_name'] = $document_pelengkap1_file_name;
 				$this->load->library('upload', $config2);
 
-				$dokumen_pelengkap_1_ext = $_FILES['dokumen_pelengkap_1']['type'];
-				$dokumen_pelengkap_1_size = ($_FILES['dokumen_pelengkap_1']['size'])/(1000*1000);
-				$dokumen_pelengkap_1_temp = $dokumen_pelengkap_1['tmp_name'];
-				$dokumen_pelengkap_1_name = $document_pelengkap1_file_name;
 				// Extention
-				$dokumen_pelengkap_1_extention = substr($dokumen_pelengkap_1_name, strrpos($dokumen_pelengkap_1_name, '.')+1);
+				$dokumen_pelengkap_1_extention = substr($document_pelengkap1_file_name, strrpos($document_pelengkap1_file_name, '.')+1);
 				if($this->upload->do_upload('dokumen_pelengkap_1')) {
 					$file2 = $this->upload->data('file_name');
 					$file2Name = $this->upload->data('raw_name');
@@ -2268,13 +2256,13 @@ class C_notification extends CI_Controller {
 					$errors = $this->upload->display_errors();
 					die($errors);
 				}
-				$data_update_detail = array(
+				$data_update_dokumen_pelengkap_1 = array(
 					'DOCD_PELENGKAP_1' => $dokumen_pelengkap_1_name,
-					'DOCD_PELENGKAP_1_TYPE' => $dokumen_pelengkap_1_ext,
+					'DOCD_PELENGKAP_1_TYPE' => $this->upload->data('file_type'),
 					'DOCD_PELENGKAP_1_STATUS' => $convert_dokumen_pelengkap_1,
 					'DOCD_PELENGKAP_1_EXT' => $dokumen_pelengkap_1_extention
 				);
-				$is_ok = $this->M_library_database->DB_UPDATE_DATA_DOCUMENT_DETAIL_REFISI_EVO($si_code,$data_update_detail);
+				$is_ok = $this->M_library_database->DB_UPDATE_DATA_DOCUMENT_DETAIL_REFISI_EVO($si_code,$data_update_dokumen_pelengkap_1);
 				if(!$is_ok){
 					echo '
 						<script>
@@ -2292,10 +2280,9 @@ class C_notification extends CI_Controller {
 			$this->load->view('template', $data);
 		}
 		//Dokumen Pelengkap 2
-		$dokumen_pelengkap_2 = $_FILES['dokumen_pelengkap_2'];
 		unset($this->upload);
 		try {
-			if ($_FILES['dokumen_pelengkap_2']['size'] != 0) {
+			if ($_FILES['dokumen_pelengkap_2']['name']) {
 				unset($this->upload);
 				$document_pelengkap2_file_name = 'dokumen-pelengkap2-'.time().'-'.$_FILES['dokumen_pelengkap_2']['name'];
 				$config3['upload_path'] = './assets/original';
@@ -2305,12 +2292,8 @@ class C_notification extends CI_Controller {
 				$config3['file_name'] = $document_pelengkap2_file_name;
 				$this->load->library('upload', $config3);
 
-				$dokumen_pelengkap_2_ext = $_FILES['dokumen_pelengkap_2']['type'];
-				$dokumen_pelengkap_2_size = ($_FILES['dokumen_pelengkap_2']['size'])/(1000*1000);//IN MEGABYTE(MB)
-				$dokumen_pelengkap_2_temp = $dokumen_pelengkap_2['tmp_name'];
-				$dokumen_pelengkap_2_name = $document_pelengkap2_file_name;
 				// Extention
-				$dokumen_pelengkap_2_extention = substr($dokumen_pelengkap_2_name, strrpos($dokumen_pelengkap_2_name, '.')+1);
+				$dokumen_pelengkap_2_extention = substr($document_pelengkap2_file_name, strrpos($document_pelengkap2_file_name, '.')+1);
 				if ($this->upload->do_upload('dokumen_pelengkap_2')){
 					$file3 = $this->upload->data('file_name');
 					$file3Name = $this->upload->data('raw_name');
@@ -2343,7 +2326,7 @@ class C_notification extends CI_Controller {
 				}
 				$data_update_detail = array(
 					'DOCD_PELENGKAP_2' => $dokumen_pelengkap_2_name,
-					'DOCD_PELENGKAP_2_TYPE' => $dokumen_pelengkap_2_ext,
+					'DOCD_PELENGKAP_2_TYPE' => $this->upload->data('file_type'),
 					'DOCD_PELENGKAP_2_STATUS' => $convert_dokumen_pelengkap_2,
 					'DOCD_PELENGKAP_2_EXT' => $dokumen_pelengkap_2_extention
 				);
@@ -2360,15 +2343,14 @@ class C_notification extends CI_Controller {
 			}
 		} catch (Exception $e) {
 			$data=[];
-			$data['document'] = $_FILES['dokumen_pelengkap_1']['name'];
+			$data['document'] = $_FILES['dokumen_pelengkap_2']['name'];
 			$data['view'] = 'errors/html/contribution_error';
 			$this->load->view('template', $data);
 		}
 		//Dokumen Persetujuan
-		$dokumen_persetujuan = $_FILES['dokumen_persetujuan'];
 		unset($this->upload);
 		try {
-			if ($_FILES['dokumen_persetujuan']['size'] != 0) {
+			if ($_FILES['dokumen_persetujuan']['name']) {
 				unset($this->upload);
 				$document_persetujuan_file_name = 'dokumen-persetujuan-'.time().'-'.$_FILES['dokumen_persetujuan']['name'];
 				$config4['upload_path'] = './assets/original';
@@ -2378,9 +2360,6 @@ class C_notification extends CI_Controller {
 				$config4['file_name'] = $document_persetujuan_file_name;
 				$this->load->library('upload', $config4);
 
-				$dokumen_persetujuan_ext = $_FILES['dokumen_persetujuan']['type'];
-				$dokumen_persetujuan_temp = $dokumen_persetujuan['tmp_name'];
-				$dokumen_persetujuan_name = $document_persetujuan_file_name;
 				if($this->upload->do_upload('dokumen_persetujuan')){
 					$file4 = $this->upload->data('file_name');
 					$GLOBALS['dokumen_persetujuan'] = './assets/original/'.$file4;
@@ -2401,7 +2380,7 @@ class C_notification extends CI_Controller {
 				if ($this->upload->do_upload('dokumen_persetujuan')){}
 				$data_update_detail = array(
 					'DOCD_PERSETUJUAN' => $dokumen_persetujuan_name,
-					'DOCD_PERSETUJUAN_TYPE' => $dokumen_persetujuan_ext
+					'DOCD_PERSETUJUAN_TYPE' => $this->upload->data('file_type')
 				);
 				$is_ok = $this->M_library_database->DB_UPDATE_DATA_DOCUMENT_DETAIL_REFISI_EVO($si_code,$data_update_detail);
 				if(!$is_ok){
@@ -2416,7 +2395,7 @@ class C_notification extends CI_Controller {
 			}
 		} catch (Exception $e) {
 			$data=[];
-			$data['document'] = $_FILES['dokumen_pelengkap_1']['name'];
+			$data['document'] = $_FILES['dokumen_persetujuan']['name'];
 			$data['view'] = 'errors/html/contribution_error';
 			$this->load->view('template', $data);
 		}
@@ -2676,6 +2655,23 @@ class C_notification extends CI_Controller {
 	public function news_dashboard() {
 		$data['view'] = 'news';
 		$this->load->view('template', $data);
+	}
+
+	public function destroy_document($document_id) {
+		try {
+			$delete_tb_notification_history = $this->db->delete('tb_notification_history', ['DOC_ID' => $document_id]);
+			$delete_tb_document_notification = $this->db->delete('tb_document_notification', ['DOC_ID' => $document_id]);
+			$delete_tb_document_news = $this->db->delete('tb_document_news', ['DOC_ID' => $document_id]);
+			$delete_tb_document_detail_status = $this->db->delete('tb_document_detail_status', ['DOC_ID' => $document_id]);
+			$delete_tb_document_detail = $this->db->delete('tb_document_detail', ['DOC_ID' => $document_id]);
+			$delete_tb_document_comment = $this->db->delete('tb_document_comment', ['DOC_ID' => $document_id]);
+			$delete_tb_document_bookmark = $this->db->delete('tb_document_bookmark', ['DOC_ID' => $document_id]);
+			$delete_tb_document = $this->db->delete('tb_document', ['DOC_ID' => $document_id]);
+		} catch (Exception $e) {
+			var_dump($e->getMessage());
+		}
+
+		redirect('C_notification');
 	}
 
 	private function __getWatermarkText() {

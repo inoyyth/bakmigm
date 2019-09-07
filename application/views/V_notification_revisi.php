@@ -555,7 +555,7 @@
 													<label for="dokumen_utama" class="col-sm-6 control-label" style="text-align:left">Dokumen Utama</label>
 													<!-- <label for="dokumen_utama" class="col-sm-6 control-label" style="text-align:left">Di Unduh Dalam Format</label> -->
 													<div class="col-xs-12">
-														<input multiple="" type="file" id="dokumen_utama" name="dokumen_utama" style="color:transparent;">
+														<input type="file" id="dokumen_utama" name="dokumen_utama" style="color:transparent;">
 														<?php if ($DOCD_UTAMA_STATUS == 1): ?>
 															
 														<span id="utama" style="font-weight: bolder;">FILE NAME: <?= $DOCD_UTAMA.'.pdf'; ?></span>
@@ -577,7 +577,7 @@
 												<div class="form-group">
 													<label for="dokumen_pelengkap_1" class="col-sm-6 control-label" style="text-align:left">Dokumen Pelengkap 1</label>
 													<div class="col-xs-12">
-															<input multiple="" type="file" id="dokumen_pelengkap_1" name="dokumen_pelengkap_1" style="color:transparent;">
+															<input type="file" id="dokumen_pelengkap_1" name="dokumen_pelengkap_1" style="color:transparent;">
 															<?php if ($DOCD_PELENGKAP_1_STATUS == 1): ?>
 															<span id="p1" style="font-weight: bolder;"><?= $DOCD_PELENGKAP_1.'.pdf'; ?></span>
 															<?php else: ?>
@@ -598,7 +598,7 @@
 												<div class="form-group">
 													<label for="dokumen_pelengkap_2" class="col-sm-6 control-label" style="text-align:left">Dokumen Pelengkap 2</label>
 													<div class="col-xs-12">
-															<input multiple="" type="file" id="dokumen_pelengkap_2" name="dokumen_pelengkap_2" style="color:transparent;">
+															<input type="file" id="dokumen_pelengkap_2" name="dokumen_pelengkap_2" style="color:transparent;">
 															<?php if ($DOCD_PELENGKAP_2_STATUS == 1): ?>
 															<p id="p2" style="font-weight: bolder;"><?= $DOCD_PELENGKAP_2.'.pdf'; ?></p>
 															<?php else: ?>
@@ -619,7 +619,7 @@
 												<div class="form-group">
 													<label for="dokumen_persetujuan" class="col-sm-6 control-label" style="text-align:left">Dokumen Persetujuan</label>
 													<div class="col-xs-12">
-															<input multiple="" type="file" id="dokumen_persetujuan" name="dokumen_persetujuan" style="color:transparent;">
+															<input type="file" id="dokumen_persetujuan" name="dokumen_persetujuan" style="color:transparent;">
 													</div>
 													<div class="col-xs-12">
 														<p id="persetujuan" style="font-weight: bolder;"><?= $DOCD_PERSETUJUAN; ?></p>
@@ -634,7 +634,13 @@
 						<?php endif; ?>
 						<div class="row">
 							<div class="col-md-12">
-						<button style="float: right; width:50%; margin-top: 2rem;margin-right:10px;" type="submit" id="simpan" class="ace-icon fa fa-save btn btn-sm btn-success"> Simpan </button>
+								<div class="col-lg-6">
+									<a href="<?php echo base_url('c_notification/destroy_document/' . $DOC_ID);?>" onclick="return confirm('Are you sure?')" class="btn btn-danger btn-block ace-icon fa fa-remove">Delete</a>
+								</div>
+								<div class="col-lg-6">
+									<button class="btn btn-success btn-block ace-icon fa fa-save" type="submit" id="simpan">Simpan</button>
+								</div>
+								<!-- <button style="float: right; width:50%; margin-top: 2rem;margin-right:10px;" type="submit" id="simpan" class="ace-icon fa fa-save btn btn-sm btn-success"> Simpan </button> -->
 							</div>
 						</div>
 						
