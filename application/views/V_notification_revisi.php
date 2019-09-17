@@ -635,7 +635,7 @@
 						<div class="row">
 							<div class="col-md-12">
 								<div class="col-lg-6">
-									<a href="<?php echo base_url('c_notification/destroy_document/' . $DOC_ID);?>" onclick="return confirm('Are you sure?')" class="btn btn-danger btn-block ace-icon fa fa-remove">Delete</a>
+									<a href="<?php echo base_url('c_notification/destroy_document/' . $DOC_ID);?>" onclick="return confirm('Anda yakin hapus dokument ini ?')" class="btn btn-danger btn-block ace-icon fa fa-remove">HAPUS</a>
 								</div>
 								<div class="col-lg-6">
 									<button class="btn btn-success btn-block ace-icon fa fa-save" type="submit" id="simpan">Simpan</button>

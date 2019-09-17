@@ -109,8 +109,8 @@
 		</div>
 	</div>
 </div>
-<div class="row" id="table">
-	<table id="example" class="table table-bordered table-striped table-hovered example">
+
+	<table id="examplex" class="table table-bordered table-striped table-hovered example">
 		<thead>
 			<tr>
 				<th>Nomor Dokumen</th>
@@ -123,6 +123,7 @@
 				<th>Aktivitas</th>
 			</tr>
 		</thead>
+		<tbody>
 		<?php 
 			if (!empty($detail)): 
 				foreach ($detail as $key) : 
@@ -141,37 +142,37 @@
 						$aging = $y." tahun ".$m." bulan ".$d." hari";
 					}
 			?>
-			<tbody>
-				<tr>
-					<td><?php echo $key->DOC_NOMOR;?></td>
-					<td><?php echo $key->DOC_NAMA;?></td>
-					<td><?php echo $key->DTSETE_SINGKATAN;?></td>
-					<td><?php echo $key->DN_CODE;?></td>
-					<td><?php echo date('d/M/Y', strtotime($key->DOC_DATE));?></td>
-					<td><?php echo $key->DOC_STATUS;?></td>
-					<td><?php echo $aging;?></td>
-					<td>
-						<a href="<?php echo base_url('document-details-'.$key->DOC_ID); ?>" class="fa fa-eye" style="font-size: 2rem;text-decoration: none;color: black;" target="_blank"></a>
-						<?php 
-							if (strrpos($key->JBLL_DOWNLOAD, $this->session->userdata("session_bgm_edocument_job_level_id")) !== FALSE): 
-							// $doc_access_level = explode('|', $key->DOC_AKSES_LEVEL);
-							// if (in_array('CRW', $doc_access_level) || in_array($this->session->userdata("session_bgm_edocument_job_level_id"), $doc_access_level)) :
-						?>
-						<a style="font-size: 2rem;text-decoration: none;color: black;" class="fa fa-download" href="<?=base_url('download-'.$key->DOC_ID.".zip");?>" id="btn-unduh" class="btn btn-sm btn-warning"></a>
-						<?php endif; ?>
-					</td>
-				</tr>
-			</tbody>
-		<?php 
-			endforeach; 
-			endif; 
-		?>
+			<tr>
+				<td><?php echo $key->DOC_NOMOR;?></td>
+				<td><?php echo $key->DOC_NAMA;?></td>
+				<td><?php echo $key->DTSETE_SINGKATAN;?></td>
+				<td><?php echo $key->DN_CODE;?></td>
+				<td><?php echo date('d/M/Y', strtotime($key->DOC_DATE));?></td>
+				<td><?php echo $key->DOC_STATUS;?></td>
+				<td><?php echo $aging;?></td>
+				<td>
+					<a href="<?php echo base_url('document-details-'.$key->DOC_ID); ?>" class="fa fa-eye" style="font-size: 2rem;text-decoration: none;color: black;" target="_blank"></a>
+					<?php 
+						if (strrpos($key->JBLL_DOWNLOAD, $this->session->userdata("session_bgm_edocument_job_level_id")) !== FALSE): 
+						// $doc_access_level = explode('|', $key->DOC_AKSES_LEVEL);
+						// if (in_array('CRW', $doc_access_level) || in_array($this->session->userdata("session_bgm_edocument_job_level_id"), $doc_access_level)) :
+					?>
+					<a style="font-size: 2rem;text-decoration: none;color: black;" class="fa fa-download" href="<?=base_url('download-'.$key->DOC_ID.".zip");?>" id="btn-unduh" class="btn btn-sm btn-warning"></a>
+					<?php endif; ?>
+				</td>
+			</tr>
+			<?php 
+				endforeach; 
+				endif; 
+			?>
+		</tbody>
 	</table>
-</div>
+
+<script src="<?php echo base_url('template/backend/assets/js/jquery.dataTables.min.js');?>"></script>
+<script src="<?php echo base_url('template/backend/assets/js/jquery.dataTables.bootstrap.min.js');?>"></script>
+<script src="<?php echo base_url('template/backend/assets/js/dataTables.buttons.min.js');?>"></script>
 <script type="text/javascript">
 	$(document).ready( function () {
-		$('#example').DataTable({
-			"searching": false
-		});
+		$('#examplex').DataTable();
 	});
 </script>
