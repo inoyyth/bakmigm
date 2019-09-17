@@ -110,7 +110,7 @@
 	</div>
 </div>
 <div class="row" id="table">
-	<table id="example" class="table table-bordered table-striped table-hovered example">
+	<table id="examplex" class="table table-bordered table-striped table-hovered example">
 		<thead>
 			<tr>
 				<th>Nomor Dokumen</th>
@@ -123,50 +123,58 @@
 				<th>Aktivitas</th>
 			</tr>
 		</thead>
-		<?php
-		if(!empty($detail)):
-			// var_dump($detail);die;
-		// $jml = count($detail);
-		foreach($detail as $k=>$v):
-		// for ($i=0; $i < $jml; $i++):
-			date_default_timezone_set('Asia/Jakarta');
-			$DOC_DATE_EXPIRED = date('Y-m-d',strtotime($v->DOC_TGL_EXPIRED));
-
-			$tanggal = new DateTime($DOC_DATE_EXPIRED);
-			$today = new DateTime('today');
-			$y = $today->diff($tanggal)->y;
-			$m = $today->diff($tanggal)->m;
-			$d = $today->diff($tanggal)->d;
-			if (date('Y-m-d') > $DOC_DATE_EXPIRED) {
-				$aging = "0 tahun 0 bulan 0 hari";
-			}else{
-				$aging = $y." tahun ".$m." bulan ".$d." hari";
-			}
-		?>
 		<tbody>
-			<tr>
-				<td><?php echo $v->DOC_NOMOR;?></td>
-				<td><?php echo $v->DOC_NAMA;?></td>
-				<td><?php echo $v->DTSETE_SINGKATAN;?></td>
-				<td><?php echo $v->DN_CODE;?></td>
-				<td><?php echo date('d/M/Y', strtotime($v->DOC_DATE));?></td>
-				<td><?php echo $v->DOC_STATUS;?></td>
-				<td><?php echo $aging;?></td>
-				<td>
-					<a href="<?php echo base_url('document-details-'.$v->DOC_ID); ?>" class="fa fa-eye" style="font-size: 2rem;text-decoration: none;color: black;" target="_blank"></a>
-					<?php 
-						if (strrpos($key->JBLL_DOWNLOAD, $this->session->userdata("session_bgm_edocument_job_level_id")) !== FALSE): 
-						// $doc_access_level = explode('|', $v->DOC_AKSES_LEVEL);
-						// if (in_array('CRW', $doc_access_level) || in_array($this->session->userdata("session_bgm_edocument_job_level_id"), $doc_access_level)) :
-					?>
-					<a style="font-size: 2rem;text-decoration: none;color: black;" class="fa fa-download" href="<?=base_url('download-'.$v->DOC_ID.".zip");?>" id="btn-unduh" class="btn btn-sm btn-warning"></a>
-					<?php endif; ?>
-				</td>
-			</tr>
+			<?php
+			if(!empty($detail)):
+				// var_dump($detail);die;
+			// $jml = count($detail);
+			foreach($detail as $k=>$v):
+			// for ($i=0; $i < $jml; $i++):
+				date_default_timezone_set('Asia/Jakarta');
+				$DOC_DATE_EXPIRED = date('Y-m-d',strtotime($v->DOC_TGL_EXPIRED));
+
+				$tanggal = new DateTime($DOC_DATE_EXPIRED);
+				$today = new DateTime('today');
+				$y = $today->diff($tanggal)->y;
+				$m = $today->diff($tanggal)->m;
+				$d = $today->diff($tanggal)->d;
+				if (date('Y-m-d') > $DOC_DATE_EXPIRED) {
+					$aging = "0 tahun 0 bulan 0 hari";
+				}else{
+					$aging = $y." tahun ".$m." bulan ".$d." hari";
+				}
+			?>
+				<tr>
+					<td><?php echo $v->DOC_NOMOR;?></td>
+					<td><?php echo $v->DOC_NAMA;?></td>
+					<td><?php echo $v->DTSETE_SINGKATAN;?></td>
+					<td><?php echo $v->DN_CODE;?></td>
+					<td><?php echo date('d/M/Y', strtotime($v->DOC_DATE));?></td>
+					<td><?php echo $v->DOC_STATUS;?></td>
+					<td><?php echo $aging;?></td>
+					<td>
+						<a href="<?php echo base_url('document-details-'.$v->DOC_ID); ?>" class="fa fa-eye" style="font-size: 2rem;text-decoration: none;color: black;" target="_blank"></a>
+						<?php 
+							if (strrpos($v->JBLL_DOWNLOAD, $this->session->userdata("session_bgm_edocument_job_level_id")) !== FALSE): 
+							// $doc_access_level = explode('|', $v->DOC_AKSES_LEVEL);
+							// if (in_array('CRW', $doc_access_level) || in_array($this->session->userdata("session_bgm_edocument_job_level_id"), $doc_access_level)) :
+						?>
+						<a style="font-size: 2rem;text-decoration: none;color: black;" class="fa fa-download" href="<?=base_url('download-'.$v->DOC_ID.".zip");?>" id="btn-unduh" class="btn btn-sm btn-warning"></a>
+						<?php endif; ?>
+					</td>
+				</tr>
+			<?php
+			endforeach;
+			endif;
+			?>
 		</tbody>
-		<?php
-		endforeach;
-		endif;
-		?>
 	</table>
 </div>
+<script src="<?php echo base_url('template/backend/assets/js/jquery.dataTables.min.js');?>"></script>
+<script src="<?php echo base_url('template/backend/assets/js/jquery.dataTables.bootstrap.min.js');?>"></script>
+<script src="<?php echo base_url('template/backend/assets/js/dataTables.buttons.min.js');?>"></script>
+<script type="text/javascript">
+	$(document).ready( function () {
+		$('#examplex').DataTable();
+	});
+</script>

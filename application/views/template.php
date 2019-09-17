@@ -333,31 +333,34 @@ $count_notification = $count_notification + $count_news;
 	</div>
 <script type="text/javascript">
 	jQuery(function($) {
-		$.ajax({    //create an ajax request to display.php
-			type: "GET",
-			url: "<?php echo base_url();?>C_notification/getNotification/<?php echo $this->session->userdata("session_bgm_edocument_id");?>/true/",
-			dataType: "html",   //expect html to be returned                
-			success: function(response){
-				var res = JSON.parse(response);
-				var notification = res.notification;
-				var news = res.news;
-				$(".nofication-count").text(notification + news);
-			}
-		});
-
-		$.ajax({    //create an ajax request to display.php
-			type: "GET",
-			url: "<?php echo base_url();?>C_menu/getProfilePicture/<?php echo $this->session->userdata("session_bgm_edocument_id");?>",
-			dataType: "html",   //expect html to be returned                
-			success: function(res){
-				var response = JSON.parse(res);
-				console.log(response.image_path);
-				if (response.image_path !== "" ) {
-					$("#avatar-profile").removeAttr('src');
-					$("#avatar-profile").attr('src', "<?php echo base_url();?>" + response.image_path);
+		var session_document_id = "<?php echo $this->session->userdata("session_bgm_edocument_id");?>";
+		if (session_document_id) {
+			$.ajax({    //create an ajax request to display.php
+				type: "GET",
+				url: "<?php echo base_url();?>C_notification/getNotification/<?php echo $this->session->userdata("session_bgm_edocument_id");?>/true/",
+				dataType: "html",   //expect html to be returned                
+				success: function(response){
+					var res = JSON.parse(response);
+					var notification = res.notification;
+					var news = res.news;
+					$(".nofication-count").text(notification + news);
 				}
-			}
-		});
+			});
+
+			$.ajax({    //create an ajax request to display.php
+				type: "GET",
+				url: "<?php echo base_url();?>C_menu/getProfilePicture/<?php echo $this->session->userdata("session_bgm_edocument_id");?>",
+				dataType: "html",   //expect html to be returned                
+				success: function(res){
+					var response = JSON.parse(res);
+					console.log(response.image_path);
+					if (response.image_path !== "" ) {
+						$("#avatar-profile").removeAttr('src');
+						$("#avatar-profile").attr('src', "<?php echo base_url();?>" + response.image_path);
+					}
+				}
+			});
+		}
 
 		$('#picture_txt').on('change', function() {
 			var filePath = $(this).val(); 
