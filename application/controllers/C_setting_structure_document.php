@@ -168,13 +168,13 @@ class C_setting_structure_document extends CI_Controller {
 		$parent = $this->input->post('parent');
 		$nama = $this->input->post('nama');
 		$singkatan = $this->input->post('singkatan');
-		$active = $this->input->post('active');
+		$active = 1;
 		$watermark = $this->input->post('watermark');
-		if (isset($active)) {
-			$active = 1;
-		}else{
-			$active = 0;
-		}
+		// if (isset($active)) {
+		// 	$active = 1;
+		// }else{
+		// 	$active = 0;
+		// }
 		$get_parent = $this->M_admin_setting->GET_PARENT_JENIS($parent);
 		foreach ($get_parent as $get_parent) {
 			$parent2 = $get_parent->DTSEKI_ID;
