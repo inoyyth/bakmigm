@@ -3,6 +3,7 @@
 	<div class="col-md-5">
 		<div class="row">
 			<div class="col-md-12">
+			<div style="height:24px;top:27px;width: 100%;background-color:red;position:inherit;z-index:999;opacity: 0;"></div>
 				<div class="embed-responsive embed-responsive-16by9" style="height:500px;">
 					<object data="<?= base_url('assets/original/'.$key['DOCD_PERSETUJUAN']);?>#toolbar=0&navpanes=0&scrollbar=0" class="mbed-responsive-item">
 					</object>

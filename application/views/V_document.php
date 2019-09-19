@@ -111,6 +111,8 @@ $count_notification = $count_notification + $count_news;
 								$ext=='vsd' ||
 								$ext=='vsdx'
 							): ?>
+							<div style="height:30px;width: 100%;background-color:red;position:absolute;z-index:9999;opacity: 0;">
+							</div>
 							<div class="embed-responsive embed-responsive-16by9" style="height:500px;">
 								<object data="<?=$url;?>#toolbar=0&navpanes=0&scrollbar=0" class="mbed-responsive-item">
 								</object>
