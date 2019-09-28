@@ -758,6 +758,7 @@ class C_notification extends CI_Controller {
 					'DOC_STATUS_ACTIVITY' => "DIPUBLIKASI"
 				);
 				$this->news($si_key);
+				$this->set_publish_story($DOC_ID);
 			}
 		}elseif ($DOC_LEVEL == "DIVISI") {
 			if ($SESSION_DEPARTEMENT_ID=='7550') {
@@ -775,6 +776,7 @@ class C_notification extends CI_Controller {
 					'DOC_STATUS_ACTIVITY' => "DIPUBLIKASI"
 				);
 				$this->news($si_key);
+				$this->set_publish_story($DOC_ID);
 			}
 		}elseif($DOC_LEVEL == "DIREKTORAT"){
 			$data_update = array(
@@ -784,6 +786,7 @@ class C_notification extends CI_Controller {
 				'DOC_STATUS_ACTIVITY' => "DIPUBLIKASI"
 			);
 			$this->news($si_key);
+			$this->set_publish_story($DOC_ID);
 		}
 		$is_ok = $this->M_library_database->DB_UPDATE_DATA_DOCUMENT($DOC_ID,$data_update);
 		$this->db->delete('tb_notification_history', array('DOC_ID' => $DOC_ID));
@@ -804,6 +807,16 @@ class C_notification extends CI_Controller {
 			';
 			exit();
 		}
+	}
+
+	function set_publish_story($doc_id) {
+		$data = [
+			'doc_id' => $doc_id,
+			'activity' => 'DIPUBLIKASI',
+			'date' => date('Y-m-d H:i:s')
+		];
+		$insert = $this->db->insert('tb_document_activity_story', $data);
+		return true;
 	}
 
 	public function reject()

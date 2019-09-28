@@ -536,3 +536,25 @@ $config['email_edoc'] = array(
 );
 
 $config['refresh_table_key'] = '5cb916d2f0edc4da914c70b956f1cb66';
+
+$config['rule_column'] = [
+    'KADALUARSA',
+    // 'DIPERHARUI',
+    'DIPUBLIKASI'
+];
+$config['rule_time'] = [
+    '1' => '1 Hari',
+    '7' => '1 Minggu',
+    '30' => '1 Bulan',
+    '60' => '2 BUlan',
+    '90' => '3 Bulan'
+];
+$config['id_days'] = [
+    'Sun'=>'Minggu',
+    'Mon'=>'Senin',
+    'Tue'=>'Selasa',
+    'Wed'=>'Rabu',
+    'Thu'=>'Kamis',
+    'Fri'=>'Jumat',
+    'Sat'=>'Sabtu'
+];

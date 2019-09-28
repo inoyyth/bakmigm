@@ -12,65 +12,147 @@
 				</div>
 				<div class="panel-collapse collapse in" id="collapse_new_data">
 					<div class="panel-body">
-						<form class="form-horizontal" id="form_new_data" name="form_new_data" action="<?php echo base_url('C_setting_business_rule/store'); ?>" method="post" enctype="multipart/form-data">
+						<form class="form-horizontal" id="form_new_data" name="form_new_data" action="<?php echo base_url('C_setting_business_rule'); ?>" method="post" enctype="multipart/form-data">
 							<div class="form-group">
-								<label class="col-sm-2 control-label" style="text-align:left">Nama Jadwal</label>
-								<div class="col-sm-10">
-									<input type="text" name="rule_name" value="<?php echo $rule->rule_name;?>" class="form-control" required>
+								<label class="col-sm-4 control-label" style="text-align:left">Tipe Aktifitas</label>
+								<div class="col-sm-8">
+									<select class="form-control" required>
+										<option value="">Pilih</option>
+										<option value="NOTIFIKASI">NOTIFIKASI</option>
+										<option value="UNGGAH">UNGGAH</option>
+										<option value="UNDUH">UNDUH</option>
+										<option value="PUBLIKASI">PUBLIKASI</option>
+										<option value="ARSIP">ARSIP</option>
+									</select>
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label" style="text-align:left">Berdasarkan Kolom</label>
+								<label class="col-sm-4 control-label" style="text-align:left">Template Pesan</label>
+								<div class="col-sm-8">
+									<select class="form-control" required>
+										<option value="">Pilih</option>
+										<option value="HTMLNOTIFICATIONOBSELETEDOC">HTMLNOTIFICATIONOBSELETEDOC</option>
+									</select>
+								</div>
+							</div>
+							
+							<div class="form-group">
+								<label class="col-sm-4 control-label" style="text-align:left">Aturan Bisnis</label>
+							</div>
+							<div class="form-group">
+								<div class="col-sm-12">
+									<div class="form-inline">
+										<select class="form-control" required>
+											<option value="">Pilih</option>
+											<option value="IF">IF</option>
+											<option value="AND">AND</option>
+											<option value="OR">OR</option>
+											<option value="IF EQUAL">IF EQUAL</option>
+										</select>
+
+										<select class="form-control" required>
+											<option value="">Pilih</option>
+											<option value="TIME CONDITION">TIME CONDITION</option>
+											<option value="MASTER TYPE">MASTER TYPE</option>
+											<option value="REQUIRED FOR">REQUIRED FOR</option>
+										</select>
+										
+										<select class="form-control" required>
+											<option value="">Pilih</option>
+											<option value="FRMREGISTER.PERIODOFREVIEWDATE">FRMREGISTER.PERIODOFREVIEWDATE</option>
+											<option value="FRMREGISTER.CONFIDENTIALLEVEL">FRMREGISTER.CONFIDENTIALLEVEL</option>
+											<option value="FRMREGISTER.DISTRIBUTIONMETHOD">FRMREGISTER.DISTRIBUTIONMETHOD</option>
+										</select>
+										
+										<select class="form-control" required>
+											<option value="">Pilih</option>
+											<option value="DAYS BEFORE">DAYS BEFORE</option>
+											<option value="DAYS AFTER">DAYS AFTER</option>
+											<option value="EQUAL">EQUAL</option>
+											<option value="NOT EQUAL">NOT EQUAL</option>
+											<option value="GREATER THEN EQUAL">GREATER THEN EQUAL</option>
+											<option value="LOWER THEN EQUAL">LOWER THEN EQUAL</option>
+											<option value="GREATER THEN">GREATER THEN</option>
+											<option value="LOWER THEN">LOWER THEN</option>
+										</select>
+										
+										<select class="form-control" required>
+											<option value="">Pilih</option>
+										</select>
+									</div>
+								</div>
+							</div>
+						
+							<div class="form-group">
+								<label class="col-sm-4 control-label" style="text-align:left">Keluaran Aktifitas</label>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label" style="text-align:left">Media</label>
 								<div class="col-sm-9">
-									<div class="col-sm-6">
-										<select name="rule_column" class="form-control" required>
-											<?php foreach ($this->config->item('rule_column') as $kColumn=>$vColumn) { ?>
-												<option value="<?php echo $vColumn; ?>" <?php echo $rule->rule_column == $vColumn ? 'selected' : '';?>><?php echo $vColumn; ?></option>
-											<?php } ?>
+									<div class="form-inline">
+										<select class="form-control" required>
+											<option value="">Pilih</option>
+											<option value="PUSH NOTIFIKASI">PUSH NOTIFIKASI</option>
+											<option value="EMAIL NOTIFIKASI">EMAIL NOTIFIKASI</option>
+										</select>
+
+										<select class="form-control" required>
+											<option value="">Pilih</option>
+											<option value="NOTIFIKASI TO">NOTIFIKASI TO</option>
+										</select>
+										
+										<select class="form-control" required>
+											<option value="">Pilih</option>
+											<option value="GROUPUSERAUTHOR">GROUPUSERAUTHOR</option>
 										</select>
 									</div>
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-2 control-label" style="text-align:left">Sebelum</label>
-								<div class="col-sm-3">
-									<select name="time_before" class="form-control" required>
-										<?php foreach ($this->config->item('rule_time') as $k_before=>$v_before) { ?>
-											<option value="<?php echo $k_before; ?>" <?php echo $rule->time_before == $k_before ? 'selected' : '';?>><?php echo $v_before; ?></option>
-										<?php } ?>
-									</select>
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="col-sm-2 control-label" style="text-align:left">Sesudah</label>
-								<div class="col-sm-3">
-									<select name="time_after" class="form-control" required>
-										<?php foreach ($this->config->item('rule_time') as $k_after=>$v_after) { ?>
-											<option value="<?php echo $k_after; ?>" <?php echo $rule->time_after == $k_after ? 'selected' : '';?>><?php echo $v_after; ?></option>
-										<?php } ?>
-									</select>
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="col-sm-2 control-label" style="text-align:left">Days</label>
+								<label class="col-sm-3 control-label" style="text-align:left">Di Ulang Setiap</label>
 								<div class="col-sm-9">
-								<?php 
-									foreach ($this->config->item('id_days') as $k_day=>$v_day) {
-										$check = ''; 
-										if (in_array($k_day, explode('|', $rule->days))) {
-											$check = 'checked';
-										}
-									?>
-									<input style="margin-left: 10px;" type="checkbox" name="days[]" value="<?php echo $k_day;?>" <?php echo $check;?>><label><?php echo $v_day;?></label>
-								<?php } ?>
+									<select class="form-control" required>
+										<option value="">Pilih</option>
+										<option value="15 HARI">15 HARI</option>
+										<option value="30 HARI">30 HARI</option>
+										<option value="45 HARI">45 HARI</option>
+										<option value="60 HARI">60 HARI</option>
+									</select>
 								</div>
+							</div>
+						
+							<div class="form-group">
+								<label class="col-sm-4 control-label" style="text-align:left">Aktifitas Berakhir</label>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-2 control-label" style="text-align:left">Efektif</label>
-								<div class="col-sm-3">
-									<input type="text" name="efektif_date" value="<?php echo date("Y-m-d", strtotime($rule->efektif_date));?>" class="form-control date-picker" required>
+								<div class="col-sm-12">
+									<div class="form-inline">
+										<select class="form-control" required>
+											<option value="">Pilih</option>
+											<option value="EQUAL">EQUAL</option>
+											<option value="NOT EQUAL">NOT EQUAL</option>
+											<option value="GREATER THEN">GREATER THEN</option>
+											<option value="LOWER THEN">LOWER THEN</option>
+											<option value="CLOSED">CLOSED</option>
+										</select>
+
+										<select class="form-control" required>
+											<option value="">Pilih</option>
+											<option value="NOTIFIKASI">NOTIFIKASI</option>
+											<option value="UNGGAH">UNGGAH</option>
+											<option value="UNDUH">UNDUH</option>
+											<option value="PUBLIKASI">PUBLIKASI</option>
+											<option value="ARSIP">ARSIP</option>
+										</select>
+										
+										<select class="form-control" required>
+											<option value="">Pilih</option>
+										</select>
+
+									</div>
 								</div>
 							</div>
+						
 							<button type="submit" id="btn_new" name="btn_new" class="ace-icon fa fa-save btn btn-success btn-sm"></button>
 						</form>
 					</div>
