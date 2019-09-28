@@ -308,13 +308,6 @@ class C_bookmarks extends CI_Controller {
 				$AdminName = $value['FULL_NAME'];
 			}
 		}
-		// $get_user = 
-		// $this->db->select('*')
-		// 	->from('tb_document_notification')
-		// 	->join('tb_employee', 'tb_document_notification.NIP = tb_employee.NIP', 'left')
-		// 	->join('tb_document', 'tb_document_notification.DOC_ID = tb_document.DOC_ID', 'left')
-		// 	->where(array('tb_document_notification.DOC_ID' => $DOC_ID))
-		// 	->get()->result_array();
 		$get_user = $this->db->select('*')->from('tb_document')
 							->join('tb_document_notification', 'tb_document_notification.DOC_ID = tb_document.DOC_ID')
 							->join('tb_document_detail', 'tb_document.DOC_ID = tb_document_detail.DOC_ID', 'left')
