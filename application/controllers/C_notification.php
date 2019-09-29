@@ -759,6 +759,7 @@ class C_notification extends CI_Controller {
 				);
 				$this->news($si_key);
 				$this->set_publish_story($DOC_ID);
+				$this->Email_notification($DOC_ID);
 			}
 		}elseif ($DOC_LEVEL == "DIVISI") {
 			if ($SESSION_DEPARTEMENT_ID=='7550') {
@@ -777,6 +778,7 @@ class C_notification extends CI_Controller {
 				);
 				$this->news($si_key);
 				$this->set_publish_story($DOC_ID);
+				$this->Email_notification($DOC_ID);
 			}
 		}elseif($DOC_LEVEL == "DIREKTORAT"){
 			$data_update = array(
@@ -787,6 +789,7 @@ class C_notification extends CI_Controller {
 			);
 			$this->news($si_key);
 			$this->set_publish_story($DOC_ID);
+			$this->Email_notification($DOC_ID);
 		}
 		$is_ok = $this->M_library_database->DB_UPDATE_DATA_DOCUMENT($DOC_ID,$data_update);
 		$this->db->delete('tb_notification_history', array('DOC_ID' => $DOC_ID));
@@ -808,6 +811,147 @@ class C_notification extends CI_Controller {
 			exit();
 		}
 	}
+
+	public function Email_notification($doc_id) {
+		$document = $this->db->
+					select('DOC_NOMOR,DOC_NAMA,DOC_AKSES_LEVEL,DOC_PENGGUNA,DOC_MAKER,DOC_STATUS_ACTIVITY,DOC_DATE,DOC_PENDISTRIBUSI')
+					->from('tb_document')
+					->where('DOC_ID', $doc_id)
+					->get()
+					->row();
+		$level = explode("|", $document->DOC_AKSES_LEVEL);
+		$maker = $this->db
+				->select('NIP,USER_NAME,FULL_NAME,EMAIL,DEPCODE,JOBLVL')
+				->from('tb_employee')
+				->where('NIP', $document->DOC_MAKER)
+				->get()
+				->row();
+		//PENGGUNA
+		$role_pengguna = $this->db
+						->select('waiting_activity')
+						->from('tb_document_activity_notification')
+						->where('role', 'PENGGUNA')
+						->get()
+						->row();
+		if ($role_pengguna->waiting_activity === "1") {
+			$user_pengguna = explode("|", $document->DOC_PENGGUNA);
+			$user_pengguna = $this->db
+							->select('FULL_NAME,EMAIL')
+							->from('tb_employee')
+							->where_in('DEPCODE', $user_pengguna)
+							->get()
+							->result();
+			$pengguna_emails = [];
+			foreach ($user_pengguna as  $pengguna) {
+				if ($pengguna->EMAIL !== "") {
+					$pengguna_emails[$pengguna->EMAIL] = $pengguna->FULL_NAME;
+				}
+			}
+			$this->__sendEmail($document, $maker, $pengguna_emails, 'pengguna');
+		}
+
+		//Pendistribusi
+		$role_pendistribusi = $this->db
+							->select('waiting_activity')
+							->from('tb_document_activity_notification')
+							->where('role', 'PENDISTRIBUSI')
+							->get()
+							->row();
+
+		if ($role_pendistribusi->waiting_activity === "1") {
+			$user_pendistribusi = $this->db
+								->select('FULL_NAME,EMAIL')
+								->from('tb_employee')
+								->where('DEPCODE', $document->DOC_PENDISTRIBUSI)
+								->get()
+								->result();
+			$pendistribusi_emails = [];
+			foreach ($user_pendistribusi as  $pendistribusi) {
+				if ($pendistribusi->EMAIL !== "") {
+					$pendistribusi_emails[$pendistribusi->EMAIL] = $pendistribusi->FULL_NAME;
+				}
+			}
+			$this->__sendEmail($document, $maker, $pendistribusi_emails, 'pendistribusi');
+		}
+
+		//Atasan Pencipta
+		$role_atasan = $this->db
+					->select('waiting_activity')
+					->from('tb_document_activity_notification')
+					->where('role', 'ATASAN PENCIPTA')
+					->get()
+					->row();
+
+		if ($role_atasan->waiting_activity === "1") {
+			$maker_level_index = $this->db->select('*')->from('tb_job_level')->where('JBLL_ID', $maker->JOBLVL)->get()->row();
+			$up_level_maker = $this->db->select('JBLL_ID')->from('tb_job_level')->where('JBLL_INDEX <', $maker_level_index->JBLL_INDEX)->get()->result_array();
+			$user_atasan = $this->db
+						->select('FULL_NAME,EMAIL')
+						->from('tb_employee')
+						->where_in('JOBLVL', array_column($up_level_maker, 'JBLL_ID'))
+						->where('DEPCODE', $maker->DEPCODE)
+						->get()
+						->result();
+
+			$atasan_emails = [];
+			foreach ($user_atasan as  $atasan) {
+				if ($atasan->EMAIL !== "") {
+					$atasan_emails[$atasan->EMAIL] = $atasan->FULL_NAME;
+				}
+			}
+			$this->__sendEmail($document, $maker, $atasan_emails, 'atasan');
+		}
+
+		//Pencipta
+		$role_pencipta = $this->db
+						->select('waiting_activity')
+						->from('tb_document_activity_notification')
+						->where('role', 'PENCIPTA')
+						->get()
+						->row();
+
+		if ($role_pencipta->waiting_activity === "1") {
+			$user_pencipta = $this->db
+							->select('FULL_NAME,EMAIL')
+							->from('tb_employee')
+							->where('NIP', $document->DOC_MAKER)
+							->get()
+							->result();
+
+			$pencipta_emails = [];
+			foreach ($user_pencipta as  $pencipta) {
+				if ($pencipta->EMAIL !== "") {
+					$pencipta_emails[$pencipta->EMAIL] = $pencipta->FULL_NAME;
+				}
+			}
+			$this->__sendEmail($document, $maker, $pencipta_emails, 'pencipta');
+		}
+	}
+
+	private function __sendEmail($document, $maker, $users, $role) {
+		// echo '<pre>' . var_export(array_chunk($users, 50, true), true) . '</pre>';die;
+		$chunk_user = array_chunk($users, 50, true);
+		foreach ($chunk_user as $user) {
+			$mailin = new Mailin($this->config->item('email_edoc')['url'], $this->config->item('email_edoc')['api_key'], $this->config->item('email_edoc')['timeout']);
+			$data_email = array( 
+				"to" => $user,
+				"cc" => $this->config->item('email_edoc')['cc'],
+				"bcc" => $this->config->item('email_edoc')['bcc'],
+				"from" => $this->config->item('email_edoc')['from'], //$this->config->item('email_edoc')['from'],
+				"replyto" => $this->config->item('email_edoc')['replyto'],
+				"subject" => "Document Activity Notification (".$role.")",
+				"text" => $this->load->view('emails/document-activity-text', ['document' => $document, 'maker' => $maker], TRUE),
+				"html" => $this->load->view('emails/document-activity-html', ['document' => $document, 'maker' => $maker], TRUE),
+			);
+			// var_dump($mailin->send_email($data_email));die;
+			$send = $mailin->send_email($data_email);
+			if ($send['code'] === "success") {
+				return true;
+			} else {
+				die($send);
+			}
+		}
+  }
 
 	function set_publish_story($doc_id) {
 		$data = [

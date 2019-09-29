@@ -200,7 +200,7 @@
 			$this->session->userdata("session_bgm_edocument_roles_5") == "PENDISTRIBUSI" || $this->session->userdata("session_bgm_edocument_roles_5") == "PENCIPTA"
 		) 
 		&&
-		$key['DOC_STATUS'] == 'DIPUBLIKASI'): ?>
+		($key['DOC_STATUS'] == 'DIPUBLIKASI' || $key['DOC_STATUS'] == 'KADALUARSA')): ?>
 	<?php 
 		if (in_array('25', $this->session->userdata("user_menu"))) {
 	?>
