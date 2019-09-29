@@ -229,6 +229,30 @@ if(empty($get_data_count)||$get_data_count==""){
 					</div>
 				</div>
 			<?php 
+			elseif($FILTER =="KADALUARSA"): 
+			?>
+				<div class="alert alert-danger fade in">
+					<!-- <form action="<?= base_url('C_notification/delete_notification'); ?>" method="POST">
+						<input type="hidden" name="doc_id" value="<?= $data_row_ext->DOC_ID; ?>">
+						<input type="hidden" name="user_id" value="<?= $data_row_ext->NIP; ?>">
+						<input type="hidden" name="notif_id" value="<?= $data_row_ext->NOTIF_ID; ?>">
+						<button type="submit" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					</form> -->
+					<div class="row">
+						<div class="col-xs-10">
+							Dokumen <?php echo $data_row_ext->DOC_NAMA; ?>, <?php echo $data_row_ext->DOC_STATUS_ACTIVITY; ?>
+							<br/>
+							<?php 
+								if ($versioning_date) {
+									echo date('d/M/Y G:i', strtotime($versioning_date));
+								} else {
+									echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));
+								}
+							?> WIB
+						</div>
+					</div>
+				</div>
+			<?php 
 			elseif($this->session->userdata("session_bgm_edocument_id") == $data_row_ext->DOC_MAKER && $FILTER =="DIPUBLIKASI" && $tgl_final <= 90 && $tgl_final >= 1): 
 			?>
 				<div class="alert alert-warning fade in">
