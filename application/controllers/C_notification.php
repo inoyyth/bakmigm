@@ -1,5 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
+use Sendinblue\Mailin;
 class C_notification extends CI_Controller {
 	public function __construct()
 	{
@@ -2598,12 +2599,14 @@ class C_notification extends CI_Controller {
 			),
 			array('DOC_ID' => $si_code) 
 			);
+			$this->Email_notification($si_code);
 			redirect(base_url('notification'),'refresh');
 		}else{
 			$this->session->set_flashdata('pesan_gagal','Gagal!');
 			redirect(base_url('notification'),'refresh');
 		}
 	}
+
 	public function download_pdf($file)
 	{
 		date_default_timezone_set('Asia/Jakarta');

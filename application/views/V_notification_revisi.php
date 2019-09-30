@@ -1097,6 +1097,21 @@
 		$('#si_history_date').on('changeDate', function() {
 			var tgl_awal = $('#si_history_date').val();
 			$('#si_history_date2').val(moment(tgl_awal).format("DD/MMM/YYYY"));
+			var period = document.getElementById("si_history_period");
+			period = period.options[period.selectedIndex].value;
+
+			var date_start = document.getElementById("si_history_date").value;
+			if(date_start==""){
+				alert("Mohon Isi Tanggal Efektif Berlaku");
+				document.getElementById("si_history_period").selectedIndex = 0;
+			}else{
+				var tgl_awal = $('#si_history_date').val();
+				var tgl_priod = $('#si_history_period').val();
+				a = moment(tgl_awal).add(tgl_priod, 'month').calendar();
+				b = moment(a).subtract(1, 'days').calendar();
+				c = moment(b).format("DD/MMM/YYYY");
+				$('#si_history_date_final').val(c);
+			}	
 		});
 		$('#si_history_period').change(function(){
 			var period = document.getElementById("si_history_period");
