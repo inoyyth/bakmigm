@@ -23,6 +23,7 @@ class C_employee extends CI_Controller {
   }
 
   function sendReminder() {
+
     $rule =  $this->db->select('*')->from('tb_business_rule_new')->where('id', 1)->get()->row();
     $days = explode("|", $rule->days);
     if (in_array(date('D'), $days)) {
@@ -45,7 +46,8 @@ class C_employee extends CI_Controller {
                     ->or_where('DOC_STATUS', 'KADALUARSA')
                     ->get()
                     ->result();
-      }
+			}
+
       foreach($documents as $document) {
         $get_maker_department = $this->db->select('a.NIP,a.FULL_NAME,a.EMAIL,a.DEPCODE,b.DN_NAME')
                                 ->from('tb_employee a')
@@ -54,11 +56,18 @@ class C_employee extends CI_Controller {
                                 ->get()
                                 ->row();
 
-        $get_all_user_by_department = $this->db->select('NIP,FULL_NAME,EMAIL')
-                                      ->from('tb_employee')
-                                      ->where('DEPCODE', $get_maker_department->DEPCODE)
+        $get_all_user_by_department = $this->db->select('a.NIP,a.FULL_NAME,a.EMAIL')
+																			->from('tb_employee a')
+																			->join('tb_employee_detail b', 'a.NIP=b.NIP')
+																			->where('a.DEPCODE', $get_maker_department->DEPCODE)
+																			->where('b.ROLES', 'PENCIPTA')
+																			->or_where('b.ROLES_2', 'PENCIPTA')
+																			->or_where('b.ROLES_3', 'PENCIPTA')
+																			->or_where('b.ROLES_4', 'PENCIPTA')
+																			->or_where('b.ROLES_5', 'PENCIPTA')
                                       ->get()
-                                      ->result();
+																			->result();
+
         $this->__sendEmail($get_maker_department,$get_all_user_by_department, $rule, $document);
       }
     }
