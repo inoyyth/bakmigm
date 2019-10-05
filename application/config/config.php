@@ -544,10 +544,10 @@ $config['rule_column'] = [
 ];
 $config['rule_time'] = [
     '1' => '1 Hari',
-    '7' => '1 Minggu',
-    '30' => '1 Bulan',
-    '60' => '2 BUlan',
-    '90' => '3 Bulan'
+    '7' => '7 Hari',
+    '30' => '30 Hari',
+    '60' => '60 Hari',
+    '90' => '90 Hari'
 ];
 $config['id_days'] = [
     'Sun'=>'Minggu',

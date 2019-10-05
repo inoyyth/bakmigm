@@ -34,9 +34,17 @@
 							<div class="form-group">
 								<label class="col-sm-2 control-label" style="text-align:left">Sebelum</label>
 								<div class="col-sm-3">
-									<select name="time_before" class="form-control" required>
-										<?php foreach ($this->config->item('rule_time') as $k_before=>$v_before) { ?>
-											<option value="<?php echo $k_before; ?>" <?php echo $rule->time_before == $k_before ? 'selected' : '';?>><?php echo $v_before; ?></option>
+									<select name="time_before[]" class="form-control" multiple="multiple" required>
+										<?php 
+										$explode_before = explode("|", $rule->time_before);
+										foreach ($this->config->item('rule_time') as $k_before=>$v_before) { 
+											if (in_array($k_before, $explode_before)) {
+												$select_before = "selected";
+											} else {
+												$select_before = "";
+											}
+										?>
+											<option  value="<?php echo $k_before; ?>" <?php echo $select_before;?>><?php echo $v_before; ?></option>
 										<?php } ?>
 									</select>
 								</div>
@@ -44,25 +52,19 @@
 							<div class="form-group">
 								<label class="col-sm-2 control-label" style="text-align:left">Sesudah</label>
 								<div class="col-sm-3">
-									<select name="time_after" class="form-control" required>
-										<?php foreach ($this->config->item('rule_time') as $k_after=>$v_after) { ?>
-											<option value="<?php echo $k_after; ?>" <?php echo $rule->time_after == $k_after ? 'selected' : '';?>><?php echo $v_after; ?></option>
+									<select name="time_after[]" class="form-control" multiple="multiple" required>
+										<?php 
+										$explode_after = explode("|", $rule->time_after);
+										foreach ($this->config->item('rule_time') as $k_after=>$v_after) { 
+											if (in_array($k_after, $explode_after)) {
+												$select_after = "selected";
+											} else {
+												$select_after = "";
+											}
+										?>
+											<option value="<?php echo $k_after; ?>" <?php echo $select_after;?>><?php echo $v_after; ?></option>
 										<?php } ?>
 									</select>
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="col-sm-2 control-label" style="text-align:left">Days</label>
-								<div class="col-sm-9">
-								<?php 
-									foreach ($this->config->item('id_days') as $k_day=>$v_day) {
-										$check = ''; 
-										if (in_array($k_day, explode('|', $rule->days))) {
-											$check = 'checked';
-										}
-									?>
-									<input style="margin-left: 10px;" type="checkbox" name="days[]" value="<?php echo $k_day;?>" <?php echo $check;?>><label><?php echo $v_day;?></label>
-								<?php } ?>
 								</div>
 							</div>
 							<div class="form-group">

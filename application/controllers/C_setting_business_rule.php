@@ -23,9 +23,9 @@ class C_setting_business_rule extends CI_Controller {
 		$data = [
 			'rule_name' => $this->input->post('rule_name'),
 			'rule_column' => $this->input->post('rule_column'),
-			'time_before' => $this->input->post('time_before'),
-			'time_after' => $this->input->post('time_after'),
-			'days' => implode('|',$this->input->post('days')),
+			'time_before' => implode('|',$this->input->post('time_before')),
+			'time_after' => implode('|',$this->input->post('time_after')),
+			'days' => '',
 			'efektif_date' => date("Y-m-d", strtotime($this->input->post('efektif_date')) )
 		];
 
