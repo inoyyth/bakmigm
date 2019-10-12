@@ -342,7 +342,8 @@ if(empty($get_data_count)||$get_data_count==""){
 					$user_approved_division['DI_ID'] == $this->session->userdata("session_bgm_edocument_divisi_id") || 
 					$this->session->userdata("session_bgm_edocument_departement_id") == $data_row_ext->DOC_PENDISTRIBUSI ||
 					($user_maker_division['DI_ID'] == $this->session->userdata("session_bgm_edocument_divisi_id") &&  
-					$this->session->userdata("session_bgm_edocument_departement_id") == "") 
+					$this->session->userdata("session_bgm_edocument_departement_id") == "") || 
+					$user_maker_division['DI_ID'] == $data_row_ext->DOC_STATUS
 				) {
 			?>
 				<div class="alert alert-info fade in">
