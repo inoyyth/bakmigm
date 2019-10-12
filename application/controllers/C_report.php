@@ -147,11 +147,13 @@ class C_report extends CI_Controller {
 		$excel->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_LANDSCAPE);
 		$excel->getActiveSheet(0)->setTitle("Laporan Rekap Komentar");
 		$excel->setActiveSheetIndex(0);
-		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+
+		$objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+		ob_end_clean();
+		// We'll be outputting an excel file
+		header('Content-type: application/vnd.ms-excel');
 		header('Content-Disposition: attachment; filename="Laporan Rekap Komentar.xlsx"');
-		header('Cache-Control: max-age=0');
-		$write = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
-		$write->save('php://output');
+		$objWriter->save('php://output');
 	}
 
 	public function rekapExp($document,$dari,$sampai)
@@ -183,6 +185,7 @@ class C_report extends CI_Controller {
 				'left' => array('style'  => PHPExcel_Style_Border::BORDER_THIN)
 			)
 		);
+		
 		$excel->setActiveSheetIndex(0)->setCellValue('A1', "REKAP DOKUMEN EXPIRED");
 		$excel->getActiveSheet()->mergeCells('A1:E1');
 		$excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE);
@@ -190,7 +193,7 @@ class C_report extends CI_Controller {
 		$excel->getActiveSheet()->getStyle('A1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 		$excel->setActiveSheetIndex(0)->setCellValue('A3', "Priode Expired");
 		$excel->getActiveSheet()->mergeCells('A3:B3');
-		$excel->setActiveSheetIndex(0)->setCellValue('C3', ": ".date('d/M/Y', strtotime($dari))." s/d ".date('d/M/Y', strtotime($sampai)));
+		// $excel->setActiveSheetIndex(0)->setCellValue('C3', ": ".date('d/M/Y', strtotime($dari))." s/d ".date('d/M/Y', strtotime($sampai)));
 		$excel->getActiveSheet()->mergeCells('C3:E3');
 
 		$excel->setActiveSheetIndex(0)->setCellValue('A5', "No");
@@ -206,8 +209,7 @@ class C_report extends CI_Controller {
 		$no = 1;
 		$numrow = 6;
 
-		for ($x=0; $x < $jml; $x++):
-			$dokumen = $this->db
+		$doc = $this->db
 			->select('*')
 			->from('tb_document')
 			->join('tb_employee', 'tb_document.DOC_MAKER = tb_employee.NIP', 'left')
@@ -215,29 +217,15 @@ class C_report extends CI_Controller {
 			->or_where('tb_document.DOC_STATUS', 'KADALUARSA')
 			->where(
 				array(
-					'tb_document.DOC_ID' => $document[$x], 
 					'tb_document.DOC_TGL_EXPIRED >=' => $dari,
 					'tb_document.DOC_TGL_EXPIRED <=' => $sampai
 				))
+			->where_in('tb_document.DOC_ID', $dokumen)
 			->get()
 			->result();
-		// $dokumen = $this->db
-		// 	->select('*')
-		// 	->from('tb_documentX')
-		// 	->join('tb_employee', 'tb_document.DOC_MAKER = tb_employee.NIP', 'left')
-		// 	->where('tb_document.DOC_STATUS = DIARSIPKAN OR tb_document.DOC_STATUS = KADALUARSA')
-		// 	->where(
-		// 		array(
-		// 			'tb_document.DOC_ID' => $document[$x], 
-		// 			'tb_document.DOC_TGL_EXPIRED >=' => $dari,
-		// 			'tb_document.DOC_TGL_EXPIRED <=' => $sampai
-		// 		)
-		// 	)
-		// 	->get()
-		// 	->result();
-		if (!empty($dokumen)):
 
-		foreach ($dokumen as $k => $data) {
+		foreach ($doc as $k => $data) {
+
 			$excel->setActiveSheetIndex(0)->setCellValue('A'.$numrow, $no);
 			$excel->setActiveSheetIndex(0)->setCellValue('B'.$numrow, $data->DOC_NOMOR);
 			$excel->setActiveSheetIndex(0)->setCellValue('C'.$numrow, $data->DOC_NAMA);
@@ -253,9 +241,6 @@ class C_report extends CI_Controller {
 			$no++;
 		}
 
-		endif;
-		endfor;
-
 		$excel->getActiveSheet()->getColumnDimension('A')->setWidth(25);
 		$excel->getActiveSheet()->getColumnDimension('B')->setWidth(25);
 		$excel->getActiveSheet()->getColumnDimension('C')->setWidth(25);
@@ -264,13 +249,15 @@ class C_report extends CI_Controller {
 
 		$excel->getActiveSheet()->getDefaultRowDimension()->setRowHeight(-1);
 		$excel->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_LANDSCAPE);
-		$excel->getActiveSheet(0)->setTitle("Laporan Rekap Dokumen Expired");
+		$excel->getActiveSheet(0)->setTitle("Laporan Dokumen Expired");
 		$excel->setActiveSheetIndex(0);
-		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-		header('Content-Disposition: attachment; filename="Laporan Rekap Dokumen Expired.xlsx"');
-		header('Cache-Control: max-age=0');
-		$write = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
-		$write->save('php://output');
+
+		$objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+		ob_end_clean();
+		// We'll be outputting an excel file
+		header('Content-type: application/vnd.ms-excel');
+		header('Content-Disposition: attachment; filename="Laporan Dokumen Expired.xlsx"');
+		$objWriter->save('php://output');
 	}
 
 	public function reportRevisi($document,$dari,$sampai)
@@ -380,11 +367,13 @@ class C_report extends CI_Controller {
 		$excel->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_LANDSCAPE);
 		$excel->getActiveSheet(0)->setTitle("Laporan Catatan Revisi");
 		$excel->setActiveSheetIndex(0);
-		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+
+		$objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+		ob_end_clean();
+		// We'll be outputting an excel file
+		header('Content-type: application/vnd.ms-excel');
 		header('Content-Disposition: attachment; filename="Laporan Catatan Revisi.xlsx"');
-		header('Cache-Control: max-age=0');
-		$write = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
-		$write->save('php://output');
+		$objWriter->save('php://output');
 	}
 
 	public function reportAktifitas($document,$dari,$sampai)
@@ -525,8 +514,8 @@ class C_report extends CI_Controller {
 			$this->pdf->load_view('report/pdf/comment', $data);
 		}elseif ($tipe == "expired") {
 			$this->rekapExp($dokumen,$dari,$sampai);
-			$this->pdf->filename = "Rekap_Dokumen_Expired.pdf";
-			$this->pdf->load_view('report/pdf/exp', $data);
+			// $this->pdf->filename = "Rekap_Dokumen_Expired.pdf";
+			// $this->pdf->load_view('report/pdf/exp', $data);
 		}elseif ($tipe == "revisi") {
 			$this->reportRevisi($dokumen,$dari,$sampai);
 			$this->pdf->filename = "Rekap_Revisi_Dokumen.pdf";
@@ -580,7 +569,7 @@ class C_report extends CI_Controller {
 					'DOC_NOMOR' => $q->DOC_NOMOR,
 					'DOC_VERSI' => $q->DOC_VERSI,
 					'DTCT_NOTE' => $q->DTCT_NOTE,
-					'DOC_PENGGUNA' => $get_dept->DN_NAME,
+					'DOC_PENGGUNA' => ($get_dept ? $get_dept->DN_NAME : ''),
 					'COMENTATOR' => $q->FULL_NAME,
 					'COMENT_DATE' => $q->DTCT_DATE
 				);

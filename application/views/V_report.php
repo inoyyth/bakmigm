@@ -628,33 +628,33 @@
 				$('.multiselect').multiselect('destroy');
 			});
 
-      $("#btn-cari").click(function() {
-        var v = $("#tipe").val();
-				if (v === "komentar") {
-					hide_content();
-					show_table_komentar();
-				}
+		$("#btn-cari").click(function() {
+			var v = $("#tipe").val();
+					if (v === "komentar") {
+						hide_content();
+						show_table_komentar();
+					}
 
-				if (v === "revisi") {
-					hide_content();
-					show_table_revisi();
-				}
+					if (v === "revisi") {
+						hide_content();
+						show_table_revisi();
+					}
 
-				if (v === "expired") {
-					hide_content();
-					show_table_expired();
-				}
+					if (v === "expired") {
+						hide_content();
+						show_table_expired();
+					}
 
-				if (v === "pengguna") {
-					hide_content();
-					show_table_pengguna();
-				}
+					if (v === "pengguna") {
+						hide_content();
+						show_table_pengguna();
+					}
 
-				if (v === "logi") {
-					hide_content();
-					show_table_log();
-				}
-      });
+					if (v === "logi") {
+						hide_content();
+						show_table_log();
+					}
+		});
 
 			function hide_content() {
 				$(".table_content").remove();
