@@ -38,7 +38,7 @@
 		$dokumen = $this->db
 			->select('*')
 			->from('m_log')
-			->join('tb_document', 'm_log.DOC_ID = tb_document.DOC_ID', 'left')
+			->join('tb_document', 'm_log.LogDoc = tb_document.DOC_ID', 'left')
 			->join('tb_employee', 'm_log.LogUserName = tb_employee.NIP', 'left')
 			->where(
 				array(

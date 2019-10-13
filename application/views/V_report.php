@@ -52,10 +52,10 @@
 									<option value="komentar">Laporan Rekap Komentar</option>
 									<option value="expired">Laporan Rekap Dokumen Expired</option>
 									<option value="revisi">Laporan Catatan Revisi</option>
-									<?php if($this->session->userdata("session_bgm_edocument_roles")=="ADMIN DOKUMEN"): ?>
+									<!-- <?php if($this->session->userdata("session_bgm_edocument_roles")=="ADMIN DOKUMEN"): ?>
 									<option value="pengguna">Laporan Penggunaan Dokumen</option>
 									<option value="log">Laporan Log Aktivitas penggunaan Dokumen</option>
-									<?php endif; ?>
+									<?php endif; ?> -->
 								</select>
 							</div>
 						</div>

@@ -523,8 +523,8 @@ class C_report extends CI_Controller {
 			$this->reportRevisi($dokumen,$dari,$sampai);
 			$this->pdf->filename = "Rekap_Revisi_Dokumen.pdf";
 			$this->pdf->load_view('report/pdf/revisi', $data);
-		}elseif ($tipe == "Laporan Penggunaan Dokumen") {
-			# code...
+		}elseif ($tipe == "pengguna") {
+			$this->reportRevisi($dokumen,$dari,$sampai);
 		}elseif ($tipe == "log") {
 			$this->pdf->filename = "Rekap_Log_Aktifitas.pdf";
 			$this->pdf->load_view('report/pdf/log', $data);
@@ -623,7 +623,7 @@ class C_report extends CI_Controller {
 					'tb_document_detail_status.DTDLSS_DATE >=' => $dari,
 					'tb_document_detail_status.DTDLSS_DATE <=' => $sampai
 			))
-			->where_in('tb_document.DOC_ID', $dokumen)
+			->where('tb_document.DOC_ID', $dokumen)
 			->get()
 			->result();
 		}
