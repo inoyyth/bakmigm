@@ -1610,6 +1610,22 @@ class M_library_database extends CI_Model {
 		return $query;
 	}
 
+	public function getAllDepartemen() {
+		$query = $this->db->select('*')
+				 ->from('tb_departemen')
+				 ->get()->result();
+		
+		return $query;
+	}
+
+	public function getAllJobLevel() {
+		$query = $this->db->select('*')
+				 ->from('tb_job_level')
+				 ->get()->result();
+		
+		return $query;
+	}
+
 	function getUserMakerDepartemen($maker) {
 		$query = $this->db->select('DEPCODE')
 				 ->from('tb_employee')
