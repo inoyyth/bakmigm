@@ -241,4 +241,43 @@ class C_activity_report extends CI_Controller {
 		$objWriter->save('php://output');
 		exit;
     }
+
+    function activityLogReportDataTable() {
+        $data = [];
+        $departemen= $this->input->get('departemen');
+        $level_akses= $this->input->get('level_akses');
+        $start_date= $this->input->get('start_date');
+        $end_date= $this->input->get('end_date');
+        try {
+            $query = $this->db
+                ->select('a.DOC_ID,a.DOC_NAMA,a.DOC_VERSI,a.DOC_NOMOR,b.LogAct,b.LogDate,c.FULL_NAME')
+                ->from('tb_document a')
+                ->join('m_log b', 'a.DOC_ID = b.LogDoc', 'inner')
+                ->join('tb_employee c', 'b.LogUserName = c.NIP', 'inner')
+                ->where('a.DOC_PEMILIK_PROSES', $departemen)
+                ->where('b.LogDate >=', $start_date)
+                ->where('b.LogDate <=', $end_date)
+                ->like('a.DOC_AKSES_LEVEL', $level_akses)
+                ->order_by('b.LogDate', 'ASC')
+                ->get()->result();
+
+            foreach ($query as $k=>$q) {
+                $data[] = array(
+                    'NO' => $k +1,
+                    'DOC_ID' => $q->DOC_ID,
+                    'FULL_NAME' => $q->FULL_NAME,
+                    'DOC_NOMOR' => $q->DOC_NOMOR,
+                    'DOC_VERSI' => $q->DOC_VERSI,
+                    'DOC_NAMA' => $q->DOC_NAMA,
+                    'ACTIVITY' => $q->LogAct,
+                    'DATE' => $q->LogDate
+                );
+            }
+        } catch (Exception $e) {
+            var_dump($e->getMessage());
+            die;
+        }
+
+        echo json_encode(array('data' => $data));
+    }
 }
