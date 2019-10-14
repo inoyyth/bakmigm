@@ -1613,6 +1613,7 @@ class M_library_database extends CI_Model {
 	public function getAllDepartemen() {
 		$query = $this->db->select('*')
 				 ->from('tb_departemen')
+				 ->order_by('DN_NAME')
 				 ->get()->result();
 		
 		return $query;
