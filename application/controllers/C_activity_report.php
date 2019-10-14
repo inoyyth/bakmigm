@@ -230,11 +230,11 @@ class C_activity_report extends CI_Controller {
 
 		$excel->getActiveSheet()->getDefaultRowDimension()->setRowHeight(-1);
 		$excel->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_LANDSCAPE);
-		$excel->getActiveSheet(0)->setTitle("Laporan Rekap Komentar");
+		$excel->getActiveSheet(0)->setTitle("Laporan Aktifitas Penggunaan Dokumen");
 		$excel->setActiveSheetIndex(0);
 
 		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-		header('Content-Disposition: attachment;filename="Laporan-Aktivitas-Penggunaam-Dokumen.xlsx"');
+		header('Content-Disposition: attachment;filename="Laporan-Aktifitas-Penggunaam-Dokumen.xlsx"');
 		header('Cache-Control: max-age=0');
 		$objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
 		ob_end_clean();
