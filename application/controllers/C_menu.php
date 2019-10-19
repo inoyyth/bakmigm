@@ -128,6 +128,10 @@ class C_menu extends CI_Controller
 
 			}
 		}
+		$data['si_doc_type'] = $si_doc_type;
+		$data['ssa_dept_owner'] = $ssa_dept_owner;
+		$data['ssa_group_proces'] = $ssa_group_proces;
+		$data['ssa_proces'] = $ssa_proces;
 		$data['view'] = 'V_menu';
 		$this->load->view('template', $data);
 	}

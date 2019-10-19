@@ -1,3 +1,5 @@
+
+<?php //var_dump($si_doc_type);die; ?>
 <div class="row">
 	<div class="center">
 		<p class="lead">
@@ -62,7 +64,7 @@
 										if($is_continue){
 											foreach($get_data_ext as $data_row_ext){
 												?>
-												<option value="<?php echo $data_row_ext->DTSETE_ID; ?>"><?php echo $data_row_ext->DTSETE_TIPE; ?></option>
+												<option value="<?php echo $data_row_ext->DTSETE_ID; ?>" <?php echo (isset($si_doc_type) && $si_doc_type === $data_row_ext->DTSETE_ID ? "selected" : '');?>><?php echo $data_row_ext->DTSETE_TIPE; ?></option>
 												<?php
 											}
 										}
@@ -75,8 +77,8 @@
 								<div class="col-sm-8">
 									<select id="ssa_dept_owner" name="ssa_dept_owner" class="form-control">
 										<option value="">Pilih</option>
-										<option value="<?php echo $SESSION_DIVISI_ID; ?>"><?php echo $SESSION_DIVISI_NAME; ?></option>
-										<option value="<?php echo $SESSION_DEPARTEMENT_ID; ?>"><?php echo $SESSION_DEPARTEMENT_NAME; ?></option>
+										<option value="<?php echo $this->session->userdata('session_bgm_edocument_divisi_id'); ?>" <?php echo (isset($ssa_dept_owner) && $ssa_dept_owner === $this->session->userdata('session_bgm_edocument_divisi_id') ? "selected" : '');?>><?php echo $this->session->userdata('session_bgm_edocument_divisi_name'); ?></option>
+										<option value="<?php echo $this->session->userdata('session_bgm_edocument_departement_id'); ?>" <?php echo (isset($ssa_dept_owner) && $ssa_dept_owner === $this->session->userdata('session_bgm_edocument_departement_id') ? "selected" : '');?>><?php echo $this->session->userdata('session_bgm_edocument_departement_name'); ?></option>
 									</select>
 								</div>
 							</div>
@@ -85,7 +87,7 @@
 								<div class="col-sm-8">
 									<select id="ssa_group_proces" name="ssa_group_proces" class="form-control">
 										<option value="">Pilih</option>
-										<option value="GROUP PROSES">GROUP PROSES</option>
+										<option value="GROUP PROSES" <?php echo (isset($ssa_group_proces) && $ssa_group_proces === "GROUP PROSES" ? "selected" : '');?>>GROUP PROSES</option>
 									</select>
 								</div>
 							</div>
@@ -94,7 +96,7 @@
 								<div class="col-sm-8">
 									<select id="ssa_proces" name="ssa_proces" class="form-control">
 										<option value="">Pilih</option>
-										<option value="PROSES">PROSES</option>
+										<option value="PROSES" <?php echo (isset($ssa_proces) && $ssa_proces === "PROSES" ? "selected" : '');?>>PROSES</option>
 									</select>
 								</div>
 							</div>
