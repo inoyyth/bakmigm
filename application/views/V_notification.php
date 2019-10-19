@@ -1,4 +1,5 @@
 <?php 
+// var_dump($is_search);die;
 $count_news = 0;
 $get_data_count = $this->M_notification->GET_NEWS_NEW($this->session->userdata("session_bgm_edocument_id"));
 if(empty($get_data_count)||$get_data_count==""){
@@ -10,7 +11,7 @@ if(empty($get_data_count)||$get_data_count==""){
 <div class="row">
 	<ul class="nav nav-tabs" role="tablist">
 		<?php if ($this->session->userdata("user_menu") != NULL && in_array(5,$this->session->userdata("user_menu"))) { ?>
-    	<li role="presentation" class="active">
+    	<li role="presentation" class="<?php echo (isset($is_search) && $is_search == 1 ? '' : 'active');?>">
 			<a href="#news" aria-controls="news" role="tab" data-toggle="tab">
 				News
 				<span class="badge badge-primary"><?php echo $count_news; ?></span>
@@ -18,9 +19,8 @@ if(empty($get_data_count)||$get_data_count==""){
 		</li>
 		<?php } ?>
 		<?php if ($this->session->userdata("user_menu") != NULL && in_array(27,$this->session->userdata("user_menu"))) { ?>
-		<li role="presentation">
-			<a href="#notification" aria-controls="notification" role="tab" data-toggle="tab"
-				>Notification 
+		<li role="presentation" class="<?php echo (isset($is_search) && $is_search == 1 ? 'active' : '');?>">
+			<a href="#notification" aria-controls="notification" role="tab" data-toggle="tab">Notification 
 				<span class="badge badge-primary"><?php echo count($notification); ?></span>
 			</a>
 		</li>
@@ -28,7 +28,7 @@ if(empty($get_data_count)||$get_data_count==""){
 	</ul>
 	<div class="tab-content">
 		<?php if ($this->session->userdata("user_menu") != NULL && in_array(5,$this->session->userdata("user_menu"))) { ?>
-		<div role="tabpanel" class="tab-pane fade in active" id="news">
+		<div role="tabpanel" class="tab-pane fade in <?php echo (isset($is_search) && $is_search == 1 ? '' : 'active');?>" id="news">
 			<?php
 				if($count_news > 0){
 					foreach($get_data_count as $data_row){
@@ -59,7 +59,35 @@ if(empty($get_data_count)||$get_data_count==""){
 		</div>
 		<?php } ?>
 		<?php if ($this->session->userdata("user_menu") != NULL && in_array(27,$this->session->userdata("user_menu"))) { ?>
-		<div role="tabpanel" class="tab-pane fade" id="notification">
+		<div role="tabpanel" class="tab-pane fade in <?php echo (isset($is_search) && $is_search == 1 ? 'active' : '');?>" id="notification">
+			<div class="row">
+				<div class="col-lg-12">
+					<form class="form-inline" method="post" action="<?php echo base_url('C_notification/index'); ?>">
+						<div class="form-group">
+							<label for="exampleInputName2">Dari</label>
+							<input type="hidden" name="is_search" value="1">
+							<input type="text" value="<?php echo ($start_date ? $start_date : '');?>" class="form-control date-picker" name="start_date">
+						</div>
+						<div class="form-group">
+							<label>Sampai</label>
+							<input type="text" value="<?php echo ($end_date ? $end_date : '');?>" class="form-control date-picker" name="end_date">
+						</div>
+						<div class="form-group">
+							<label for="exampleInputEmail2">Status Dokumen</label>
+							<select class="form-control" placeholder="jane.doe@example.com" name="status_document">
+								<option value=""> -pilih -</option>
+								<?php 
+									$doc_status_list = ['DIPUBLIKASI','DITOLAK','KADALUARSA','MENUNGGU'];
+									foreach($doc_status_list as $v_status) {
+								?>
+								<option value="<?php echo $v_status;?>" <?php echo ($status_document ? ($status_document == $v_status ? 'selected' : '') : '');?>><?php echo $v_status;?></option>
+								<?php } ?>
+							</select>
+						</div>
+						<button type="submit" class="btn btn-default">Cari</button>
+					</form>
+				</div>
+			</div>
 			<?php
 			$x = [];
 			foreach ($notification as $k=>$v) {
@@ -557,3 +585,13 @@ if(empty($get_data_count)||$get_data_count==""){
 </div>
 <?php } } ?>
 <!-- END Modal Preview-->
+<script src="<?php echo base_url('template/backend/assets/js/bootstrap-datepicker.min.js'); ?>"></script>
+<script>
+ $(document).ready(function () {
+    $('.date-picker').datepicker({
+        format: 'yyyy-mm-dd',
+        autoclose: true,
+        todayHighlight: true
+    });
+ });
+ </script>

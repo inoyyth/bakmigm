@@ -38,25 +38,60 @@ class C_notification extends CI_Controller {
 	public function index()
 	{
 		$nip  = $_SESSION['session_bgm_edocument_id'];
-		$data['notification'] = $this->getNotification($nip);
+		$data['start_date'] = $this->input->post('start_date') ? $this->input->post('start_date') : '';
+		$data['end_date'] = $this->input->post('end_date') ? $this->input->post('end_date') : '';
+		$data['status_document'] = $this->input->post('status_document') ? $this->input->post('status_document') : '';
+		$data['notification'] = $this->getNotification($nip, false, $data);
 		$data['news'] = $this->__getNews($nip, false);
+		$data['document_status'] = $this->db->select('*')->from('tb_document_status')->get()->result();
+		$data['is_search'] =  $this->input->post('is_search') ? $this->input->post('is_search') : '';
 		$data['view'] = 'V_notification';
 		$this->load->view('template', $data);
 	}
 
-	public function getNotification($nip, $is_ajax = false){
+	public function getNotification($nip, $is_ajax = false, $params){
 		$news = $this->M_notification->GET_NEWS_NEW($this->session->userdata("session_bgm_edocument_id"));
 		$user_dept = $_SESSION['session_bgm_edocument_departement_id'];
 		$org = $_SESSION['session_bgm_edocument_org_parent'];
 		
 		$query_is_pendistribusi = $this->db
-				 ->select('*')
+				 ->select('tb_document_notification.*')
 				 ->from('tb_document_notification')
-				 ->where(array('PENDISTRIBUSI' => $user_dept))
-				 ->or_where(array('PEMILIK' => $user_dept))
-				 ->or_like(array('DEP_MAKER' => $user_dept))
-				 ->order_by('NOTIF_ID','ASC')
-				 ->get()->result_array();
+				 ->join('tb_document', 'tb_document_notification.DOC_ID=tb_document.DOC_ID', 'inner')
+				 ->where("(tb_document_notification.PENDISTRIBUSI = '".$user_dept."' OR tb_document_notification.PEMILIK = '".$user_dept."' OR tb_document_notification.DEP_MAKER='".$user_dept."')");
+
+		if ($params['start_date'] !== '' && $params['end_date'] === '') {
+			$query_is_pendistribusi = $query_is_pendistribusi->where('tb_document.DOC_DATE >=', $params['start_date']);
+		}
+
+		if ($params['start_date'] === '' && $params['end_date'] !== '') {
+			$query_is_pendistribusi = $query_is_pendistribusi->where('tb_document.DOC_DATE >=', $params['start_date']);
+		}
+
+		if ($params['start_date'] !== '' && $params['end_date'] !== '') {
+			$query_is_pendistribusi = $query_is_pendistribusi->where('tb_document.DOC_DATE BETWEEN "'. $params['start_date'] . '" and "'. $params['end_date'] .'"');
+		}
+
+		if ($params['status_document'] !== '') {
+			if ($params['status_document'] === 'DIPUBLIKASI') {
+				$query_is_pendistribusi = $query_is_pendistribusi->where('tb_document.DOC_STATUS', 'DIPUBLIKASI');
+			}
+
+			if ($params['status_document'] === 'DITOLAK') {
+				$query_is_pendistribusi = $query_is_pendistribusi->like('tb_document.DOC_STATUS', 'DITOLAK');
+			}
+
+			if ($params['status_document'] === 'KADALUARSA') {
+				$query_is_pendistribusi = $query_is_pendistribusi->where('tb_document.DOC_STATUS', 'KADALUARSA');
+			}
+
+			if ($params['status_document'] === 'MENUNGGU') {
+				$query_is_pendistribusi = $query_is_pendistribusi->like('tb_document.DOC_STATUS_ACTIVITY', 'menunggu');
+			}
+		}
+		$query_is_pendistribusi = 
+				$query_is_pendistribusi->order_by('tb_document_notification.NOTIF_ID','ASC')
+				->get()->result_array();
 		$data = [];
 		if (count($query_is_pendistribusi) > 0) {
 			$data = array_merge($query_is_pendistribusi);

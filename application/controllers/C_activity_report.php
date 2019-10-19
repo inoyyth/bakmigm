@@ -230,7 +230,7 @@ class C_activity_report extends CI_Controller {
 
 		$excel->getActiveSheet()->getDefaultRowDimension()->setRowHeight(-1);
 		$excel->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_LANDSCAPE);
-		$excel->getActiveSheet(0)->setTitle("Laporan Aktifitas Penggunaan Dokumen");
+		$excel->getActiveSheet(0)->setTitle("Log Akt. Pengguna Dokumen");
 		$excel->setActiveSheetIndex(0);
 
 		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
