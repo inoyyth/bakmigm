@@ -48,7 +48,8 @@ class M_notification extends CI_Model {
 		$this->db->from('tb_document_news');
 		$this->db->join('tb_document', 'tb_document_news.DOC_ID = tb_document.DOC_ID', 'left');
 		$this->db->join('tb_employee', 'tb_document.DOC_MAKER = tb_employee.NIP', 'left');
-		$this->db->where(array('tb_document_news.UR_ID' => $id, 'tb_document.DOC_STATUS' => 'DIPUBLIKASI'));
+		$this->db->where(array('tb_document.DOC_STATUS' => 'DIPUBLIKASI'));
+		$this->db->where("(tb_document.DOC_PEMILIK_PROSES='".$this->session->userdata('session_bgm_edocument_divisi_id')."' OR tb_document.DOC_PEMILIK_PROSES='".$this->session->userdata('session_bgm_edocument_departement_id')."')");
 		$this->db->order_by('tb_document.DOC_DATE', 'DESC');
 		return $this->db->get()->result();
 	}
