@@ -180,6 +180,7 @@
 									<label for="si_header_no" class="col-sm-3 control-label" style="text-align:left">Nomor Dokumen*</label>
 									<div class="col-sm-5">
 										<input type="text" id="si_header_no" name="si_header_no" maxlength="40" class="form-control" />
+										<span>Harap nomor sesuai yg tertera di hardcopy</span>
 									</div>
 									<span id="req_nomor" class="text-danger hide">Harap Isi Nomor Dokumen!</span>
 									<span id="no_result"></span>

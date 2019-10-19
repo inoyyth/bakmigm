@@ -173,6 +173,8 @@
 <script src="<?php echo base_url('template/backend/assets/js/dataTables.buttons.min.js');?>"></script>
 <script type="text/javascript">
 	$(document).ready( function () {
-		$('#examplex').DataTable();
+		$('#examplex').DataTable({
+			searching: false
+		});
 	});
 </script>
