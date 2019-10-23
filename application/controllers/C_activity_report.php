@@ -106,12 +106,12 @@ class C_activity_report extends CI_Controller {
     }
 
     public function activity_excel() {
-        $doc_id= $this->input->get('nama_dokumen');
-        $kategori= $this->input->get('kategori_dokumen');
-        $jenis= $this->input->get('jenis_dokumen');
-        $tipe= $this->input->get('tipe_dokumen');
-        $group= $this->input->get('group_prosess');
-        $proses= $this->input->get('proses');
+        $doc_id= $this->input->post('nama_dokumen');
+        $kategori= $this->input->post('kategori_dokumen');
+        $jenis= $this->input->post('jenis_dokumen');
+        $tipe= $this->input->post('tipe_dokumen');
+        $group= $this->input->post('group_prosess');
+        $proses= $this->input->post('proses');
 
         include APPPATH.'third_party/PHPExcel/PHPExcel.php';
 		$excel = new PHPExcel();
@@ -282,10 +282,10 @@ class C_activity_report extends CI_Controller {
     }
 
     public function activity_log_excel() {
-        $departemen= $this->input->get('departemen');
-        $level_akses= $this->input->get('job_level');
-        $start_date= $this->input->get('si_date_from');
-        $end_date= $this->input->get('si_date_to');
+        $departemen= $this->input->post('departemen');
+        $level_akses= $this->input->post('job_level');
+        $start_date= $this->input->post('si_date_from');
+        $end_date= $this->input->post('si_date_to');
 
         include APPPATH.'third_party/PHPExcel/PHPExcel.php';
 		$excel = new PHPExcel();
