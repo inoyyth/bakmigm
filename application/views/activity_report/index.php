@@ -13,7 +13,7 @@
 				</div>
 				<div class="panel-collapse collapse in" id="collapse_new_data">
 					<div class="panel-body">
-                    <form name="activity_pengguna_form" id="activity_pengguna_form" method="get" action="<?php echo base_url('C_activity_report/activity_excel');?>">
+                    <form name="activity_pengguna_form" id="activity_pengguna_form" method="post" action="<?php echo base_url('C_activity_report/activity_excel');?>">
                         <div class="row">
                             <div class="form-group">
                                 <label for="si_template_new_kategori" class="col-sm-3 control-label" style="text-align:left">Kategori Dokumen*</label>
@@ -164,7 +164,7 @@
 				</div>
 				<div class="panel-collapse collapse in" id="collapse_new_data_log">
 					<div class="panel-body">
-                        <form name="activity_log_form" id="activity_log_form" method="get" action="<?php echo base_url('C_activity_report/activity_log_excel');?>">
+                        <form name="activity_log_form" id="activity_log_form" method="post" action="<?php echo base_url('C_activity_report/activity_log_excel');?>">
                             <div class="row">
                                 <div class="form-group">
                                     <label for="si_template_new_kategori" class="col-sm-3 control-label" style="text-align:left">Departemen/Store*</label>
