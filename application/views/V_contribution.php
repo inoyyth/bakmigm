@@ -1155,7 +1155,7 @@
 
 			//Document size and type validation
 			var allow_extention = new Array("doc","docx","xls","xlsx","ppt","pptx","vsd","vsdx","pdf");
-
+			var size_limit = <?php echo $this->config->item('upload_size');?>;
 			$('#dokumen_utama').on('change', function() {
 				var filePath = $(this).val(); 
 				var file_ext = filePath.substr(filePath.lastIndexOf('.')+1,filePath.length);
@@ -1163,8 +1163,8 @@
 				var iSize = (Math.round((file_size / 1024) * 100) / 100);
 			
 				if (allow_extention.indexOf(file_ext) != -1) {
-					if (iSize > 5) {
-						alert("Maksimal Ukuran File 5MB!");
+					if (iSize > size_limit) {
+						alert("Maksimal Ukuran File "+size_limit+"MB!");
 						$(this).val('');
 
 						return false;
@@ -1186,8 +1186,8 @@
 				var iSize = (Math.round((file_size / 1024) * 100) / 100);
 			
 				if (allow_extention.indexOf(file_ext) != -1) {
-					if (iSize > 5) {
-						alert("Maksimal Ukuran File 5MB!");
+					if (iSize > size_limit) {
+						alert("Maksimal Ukuran File "+size_limit+"MB!");
 						$(this).val('');
 
 						return false;
@@ -1209,8 +1209,8 @@
 				var iSize = (Math.round((file_size / 1024) * 100) / 100);
 			
 				if (allow_extention.indexOf(file_ext) != -1) {
-					if (iSize > 5) {
-						alert("Maksimal Ukuran File 5MB!");
+					if (iSize > size_limit) {
+						alert("Maksimal Ukuran File "+size_limit+"MB!");
 						$(this).val('');
 
 						return false;
@@ -1232,8 +1232,8 @@
 				var iSize = (Math.round((file_size / 1024) * 100) / 100);
 				var allow_extention = new Array("pdf");
 				if (allow_extention.indexOf(file_ext) != -1) {
-					if (iSize > 5) {
-						alert("Maksimal Ukuran File 5MB!");
+					if (iSize > size_limit) {
+						alert("Maksimal Ukuran File "+size_limit+"MB!");
 						$(this).val('');
 
 						return false;
