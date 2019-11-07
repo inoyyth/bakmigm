@@ -75,8 +75,19 @@
 								<div class="col-sm-8">
 									<select id="ssa_dept_owner" name="ssa_dept_owner" class="form-control">
 										<option value="">Pilih</option>
-										<option value="<?php echo $SESSION_DIVISI_ID; ?>"><?php echo $SESSION_DIVISI_NAME; ?></option>
-										<option value="<?php echo $SESSION_DEPARTEMENT_ID; ?>"><?php echo $SESSION_DEPARTEMENT_NAME; ?></option>
+										<?php 
+											$dept_selected = "";
+											foreach($list_department as $ls_dept) {
+												if(isset($ssa_dept_owner)) {
+													if ($ssa_dept_owner === $ls_dept->DN_ID) {
+														$dept_selected = "selected";
+													} else {
+														$dept_selected = "";
+													}
+												}
+										?>
+											<option value="<?php echo $ls_dept->DN_ID;?>" <?php echo $dept_selected;?>><?php echo $ls_dept->DN_NAME;?></option>
+										<?php } ?>
 									</select>
 								</div>
 							</div>
