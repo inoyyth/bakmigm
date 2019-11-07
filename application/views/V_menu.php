@@ -77,8 +77,19 @@
 								<div class="col-sm-8">
 									<select id="ssa_dept_owner" name="ssa_dept_owner" class="form-control">
 										<option value="">Pilih</option>
-										<option value="<?php echo $this->session->userdata('session_bgm_edocument_divisi_id'); ?>" <?php echo (isset($ssa_dept_owner) && $ssa_dept_owner === $this->session->userdata('session_bgm_edocument_divisi_id') ? "selected" : '');?>><?php echo $this->session->userdata('session_bgm_edocument_divisi_name'); ?></option>
-										<option value="<?php echo $this->session->userdata('session_bgm_edocument_departement_id'); ?>" <?php echo (isset($ssa_dept_owner) && $ssa_dept_owner === $this->session->userdata('session_bgm_edocument_departement_id') ? "selected" : '');?>><?php echo $this->session->userdata('session_bgm_edocument_departement_name'); ?></option>
+										<?php 
+											$dept_selected = "";
+											foreach($list_department as $ls_dept) {
+												if(isset($ssa_dept_owner)) {
+													if ($ssa_dept_owner === $ls_dept->DN_ID) {
+														$dept_selected = "selected";
+													} else {
+														$dept_selected = "";
+													}
+												}
+										?>
+											<option value="<?php echo $ls_dept->DN_ID;?>" <?php echo $dept_selected;?>><?php echo $ls_dept->DN_NAME;?></option>
+										<?php } ?>
 									</select>
 								</div>
 							</div>
@@ -149,7 +160,7 @@
 				<td><?php echo $key->DOC_NAMA;?></td>
 				<td><?php echo $key->DTSETE_SINGKATAN;?></td>
 				<td><?php echo $key->DN_CODE;?></td>
-				<td><?php echo date('d/M/Y', strtotime($key->DOC_DATE));?></td>
+				<td><?php echo date('d/M/Y', strtotime($key->DOC_TGL_EFEKTIF));?></td>
 				<td><?php echo $key->DOC_STATUS;?></td>
 				<td><?php echo $aging;?></td>
 				<td>

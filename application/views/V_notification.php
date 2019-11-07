@@ -64,13 +64,13 @@ if(empty($get_data_count)||$get_data_count==""){
 				<div class="col-lg-12">
 					<form class="form-inline" method="post" action="<?php echo base_url('C_notification/index'); ?>">
 						<div class="form-group">
-							<label for="exampleInputName2">Dari</label>
+							<!-- <label for="exampleInputName2">Dari</label> -->
 							<input type="hidden" name="is_search" value="1">
-							<input type="text" value="<?php echo ($start_date ? $start_date : '');?>" class="form-control date-picker" name="start_date">
+							<input type="hidden" value="<?php echo ($start_date ? $start_date : '');?>" class="form-control date-picker" name="start_date">
 						</div>
 						<div class="form-group">
-							<label>Sampai</label>
-							<input type="text" value="<?php echo ($end_date ? $end_date : '');?>" class="form-control date-picker" name="end_date">
+							<!-- <label>Sampai</label> -->
+							<input type="hidden" value="<?php echo ($end_date ? $end_date : '');?>" class="form-control date-picker" name="end_date">
 						</div>
 						<div class="form-group">
 							<label for="exampleInputEmail2">Status Dokumen</label>
