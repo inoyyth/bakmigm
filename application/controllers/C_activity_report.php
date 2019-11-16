@@ -140,20 +140,17 @@ class C_activity_report extends CI_Controller {
 			)
 		);
 		$excel->setActiveSheetIndex(0)->setCellValue('A1', "LAPORAN PENGGUNAAN DOKUMEN");
-		$excel->getActiveSheet()->mergeCells('A1:G1');
+		$excel->getActiveSheet()->mergeCells('A1:F1');
 		$excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE);
 		$excel->getActiveSheet()->getStyle('A1')->getFont()->setSize(15);
 		$excel->getActiveSheet()->getStyle('A1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-		$excel->setActiveSheetIndex(0)->setCellValue('A3', "No");
-		$excel->setActiveSheetIndex(0)->setCellValue('B3', "Dokumen");
-		$excel->setActiveSheetIndex(0)->setCellValue('C3', "Nama");
-        $excel->setActiveSheetIndex(0)->setCellValue('D3', "Aktifitas");
-        $excel->setActiveSheetIndex(0)->setCellValue('E3', "Tanggal");
-		$excel->getActiveSheet()->getStyle('A3')->applyFromArray($style_col);
-		$excel->getActiveSheet()->getStyle('B3')->applyFromArray($style_col);
-		$excel->getActiveSheet()->getStyle('C3')->applyFromArray($style_col);
-        $excel->getActiveSheet()->getStyle('D3')->applyFromArray($style_col);
-        $excel->getActiveSheet()->getStyle('E3')->applyFromArray($style_col);
+        $excel->setActiveSheetIndex(0)->setCellValue('A3', "No");
+        $excel->setActiveSheetIndex(0)->setCellValue('B3', "Nomor Dokumen");
+		$excel->setActiveSheetIndex(0)->setCellValue('C3', "Nama Dokumen");
+		$excel->setActiveSheetIndex(0)->setCellValue('D3', "Nama");
+        $excel->setActiveSheetIndex(0)->setCellValue('E3', "Aktifitas");
+        $excel->setActiveSheetIndex(0)->setCellValue('F3', "Tanggal");
+		$excel->getActiveSheet()->getStyle('A3:F3')->applyFromArray($style_col);
 		$no = 1;
         $numrow = 4;
         $datas = [];
@@ -189,34 +186,28 @@ class C_activity_report extends CI_Controller {
                 $query = $query->where('b.LogDoc', $doc_id);
             }
                 
-            $query = $query->where_in('b.LogAct',['Lihat','Download'])->order_by('b.LogDoc','ASC')->order_by('b.LogDate', 'ASC')->get()->result();
+            $query = $query->where_in('b.LogAct',['Lihat','Download'])->order_by('b.LogDoc','ASC')->order_by('b.LogDate', 'ASC')->get()->result_array();
 
-            foreach ($query as $k=>$q) {
-                $datas[] = array(
-                    'DOC_ID' => $q->DOC_ID . ' / ' . $q->DOC_NAMA  ,
-                    'FULL_NAME' => $q->FULL_NAME,
-                    'ACTIVITY' => $q->LogAct,
-                    'DATE' => $q->LogDate
-                );
-            }
         } catch (Exception $e) {
             var_dump($e->getMessage());
             die;
         }
         // var_dump($datas);die;
-        if (!empty($datas)){
-            foreach ($datas as $k => $data) {
+        if (!empty($query)){
+            foreach ($query as $k => $data) {
                 $excel->setActiveSheetIndex(0)->setCellValue('A'.$numrow, $no);
-                $excel->setActiveSheetIndex(0)->setCellValue('B'.$numrow, $data['DOC_ID']);
-                $excel->setActiveSheetIndex(0)->setCellValue('C'.$numrow, $data['FULL_NAME']);
-                $excel->setActiveSheetIndex(0)->setCellValue('D'.$numrow, $data['DATE']);
-                $excel->setActiveSheetIndex(0)->setCellValue('E'.$numrow, $data['ACTIVITY']);
+                $excel->setActiveSheetIndex(0)->setCellValue('B'.$numrow, "'".$data['DOC_ID']);
+                $excel->setActiveSheetIndex(0)->setCellValue('C'.$numrow, $data['DOC_NAMA']);
+                $excel->setActiveSheetIndex(0)->setCellValue('D'.$numrow, $data['FULL_NAME']);
+                $excel->setActiveSheetIndex(0)->setCellValue('E'.$numrow, $data['LogAct']);
+                $excel->setActiveSheetIndex(0)->setCellValue('F'.$numrow, $data['LogDate']);
 
                 $excel->getActiveSheet()->getStyle('A'.$numrow)->applyFromArray($style_row);
                 $excel->getActiveSheet()->getStyle('B'.$numrow)->applyFromArray($style_row);
                 $excel->getActiveSheet()->getStyle('C'.$numrow)->applyFromArray($style_row);
                 $excel->getActiveSheet()->getStyle('D'.$numrow)->applyFromArray($style_row);
                 $excel->getActiveSheet()->getStyle('E'.$numrow)->applyFromArray($style_row);
+                $excel->getActiveSheet()->getStyle('F'.$numrow)->applyFromArray($style_row);
                 $numrow++;
                 $no++;
             }
@@ -227,14 +218,15 @@ class C_activity_report extends CI_Controller {
 		$excel->getActiveSheet()->getColumnDimension('C')->setWidth(25);
         $excel->getActiveSheet()->getColumnDimension('D')->setWidth(25);
         $excel->getActiveSheet()->getColumnDimension('E')->setWidth(25);
+        $excel->getActiveSheet()->getColumnDimension('F')->setWidth(25);
 
 		$excel->getActiveSheet()->getDefaultRowDimension()->setRowHeight(-1);
 		$excel->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_LANDSCAPE);
-		$excel->getActiveSheet(0)->setTitle("Log Akt. Pengguna Dokumen");
+		$excel->getActiveSheet(0)->setTitle("Lap Akt. Penggunaan Dokumen");
 		$excel->setActiveSheetIndex(0);
 
 		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-		header('Content-Disposition: attachment;filename="Laporan-Aktifitas-Penggunaam-Dokumen.xlsx"');
+		header('Content-Disposition: attachment;filename="Laporan-Aktifitas-Penggunaan-Dokumen.xlsx"');
 		header('Cache-Control: max-age=0');
 		$objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
 		ob_end_clean();

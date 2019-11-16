@@ -86,7 +86,8 @@ class C_notification extends CI_Controller {
 			}
 
 			if ($params['status_document'] === 'MENUNGGU') {
-				$query_is_pendistribusi = $query_is_pendistribusi->like('tb_document.DOC_STATUS_ACTIVITY', 'menunggu');
+				$query_is_pendistribusi = $query_is_pendistribusi->like('tb_document.DOC_STATUS_ACTIVITY', 'menunggu persetujuan');
+				$query_is_pendistribusi = $query_is_pendistribusi->where('tb_document.DOC_STATUS', $this->session->userdata("session_bgm_edocument_departement_id"));
 			}
 		}
 		$query_is_pendistribusi = 
@@ -2830,11 +2831,29 @@ class C_notification extends CI_Controller {
 			exit();
 		}
 	}
+
 	public function delete_notification()
 	{
 		$user_id = $_SESSION['session_bgm_edocument_id'];
 		$doc_id = $this->input->post('doc_id');
 		$delete = $this->db->insert('tb_notification_history',
+			array(
+				'DOC_ID' => $doc_id,
+				'USER_ID' => $user_id,
+				'DELETE_DATE' => date('Y-m-d H:i:s')
+			)
+		);
+
+		if ($delete) {
+			redirect('C_notification');
+		}
+	}
+
+	public function delete_news()
+	{
+		$user_id = $_SESSION['session_bgm_edocument_id'];
+		$doc_id = $this->input->post('news_doc_id');
+		$delete = $this->db->insert('tb_news_history',
 			array(
 				'DOC_ID' => $doc_id,
 				'USER_ID' => $user_id,
