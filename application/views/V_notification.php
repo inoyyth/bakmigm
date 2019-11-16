@@ -51,7 +51,17 @@ if(empty($get_data_count)||$get_data_count==""){
 							<span class="text-info"><?php echo date('d M Y', strtotime($data_row->DOC_DATE)); ?></span>
 							<br/>
 							<span class="text-info"><?php echo date('G:i', strtotime($data_row->DOC_DATE))." WIB"; ?></span>
-							<a href="<?php echo base_url('document-details-'.$data_row->DOC_ID) ?>" class="search-btn-action btn btn-sm btn-block btn-info">Lihat</a>
+							<div class="row" style="margin-top: 10px;">
+								<div class="col-lg-6">
+									<a href="<?php echo base_url('document-details-'.$data_row->DOC_ID) ?>" class="btn btn-sm btn-block btn-info">Lihat</a>
+								</div>
+								<div class="col-lg-6">
+									<form onSubmit="if(!confirm('Hapus Berita ?')){return false;}" action="<?= base_url('C_notification/delete_news'); ?>" method="POST">
+										<input type="hidden" name="news_doc_id" value="<?php echo $data_row->DOC_ID; ?>">
+										<button type="submit" class="btn btn-sm btn-danger btn-block text-center">Delete</button>
+									</form>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>

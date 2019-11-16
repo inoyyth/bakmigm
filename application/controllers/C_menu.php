@@ -10,6 +10,7 @@ class C_menu extends CI_Controller
 		if ($this->session->userdata('session_bgm_edocument_status') != "LOGIN") {
 			redirect(base_url());
 		}
+		$this->load->model('M_library_database');
 	}
 	public function index()
 	{
@@ -39,6 +40,7 @@ class C_menu extends CI_Controller
 
 			}
 		}
+		$data['list_department'] = $this->M_library_database->getAllDepartemen();
 		$data['view'] = 'V_menu';
 		$this->load->view('template', $data);
 	}
@@ -94,6 +96,7 @@ class C_menu extends CI_Controller
 		function _remove_empty_internal($value) {
 			return !empty($value) || $value === 0;
 		}
+		$data['list_department'] = $this->M_library_database->getAllDepartemen();
 		$data['detail'] = array_values(remove_empty($test['detail']));
 		$data['view'] = 'V_search';
 		$this->load->view('template', $data);
@@ -128,6 +131,7 @@ class C_menu extends CI_Controller
 
 			}
 		}
+		$data['list_department'] = $this->M_library_database->getAllDepartemen();
 		$data['si_doc_type'] = $si_doc_type;
 		$data['ssa_dept_owner'] = $ssa_dept_owner;
 		$data['ssa_group_proces'] = $ssa_group_proces;
