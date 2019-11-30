@@ -176,6 +176,23 @@ class M_notification extends CI_Model {
 		return $query;
 	}
 
+	public function getDepartnameByDivision($division_id) {
+		$query = $this->db->select('DN_ID')
+				->from('tb_departemen')
+				->where('DI_ID', $division_id)
+				->get()
+				->result();
+		$dt = [];
+		if (count($query) > 0) {
+			foreach ($query as $v) {
+				$dt[] = $v->DN_ID;
+			}
+		}
+		$dt = implode(",", $dt);
+
+		return $dt;
+	}
+
 	private function __getRemovedNews($user_id) {
 		$this->db->select('DOC_ID');
 		$this->db->from('tb_news_history');

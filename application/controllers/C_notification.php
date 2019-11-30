@@ -53,24 +53,16 @@ class C_notification extends CI_Controller {
 		$news = $this->M_notification->GET_NEWS_NEW($this->session->userdata("session_bgm_edocument_id"));
 		$user_dept = $_SESSION['session_bgm_edocument_departement_id'];
 		$org = $_SESSION['session_bgm_edocument_org_parent'];
-		
+	
+		$isDirection = stripos($org, 'DIR');
+		if ($isDirection !== FALSE) {
+			$user_dept = $this->M_notification->getDepartnameByDivision($user_dept);
+		}
 		$query_is_pendistribusi = $this->db
 				 ->select('tb_document_notification.*')
 				 ->from('tb_document_notification')
 				 ->join('tb_document', 'tb_document_notification.DOC_ID=tb_document.DOC_ID', 'inner')
-				 ->where("(tb_document_notification.PENDISTRIBUSI = '".$user_dept."' OR tb_document_notification.PEMILIK = '".$user_dept."' OR tb_document_notification.DEP_MAKER='".$user_dept."')");
-
-		if ($params['start_date'] !== '' && $params['end_date'] === '') {
-			$query_is_pendistribusi = $query_is_pendistribusi->where('tb_document.DOC_DATE >=', $params['start_date']);
-		}
-
-		if ($params['start_date'] === '' && $params['end_date'] !== '') {
-			$query_is_pendistribusi = $query_is_pendistribusi->where('tb_document.DOC_DATE >=', $params['start_date']);
-		}
-
-		if ($params['start_date'] !== '' && $params['end_date'] !== '') {
-			$query_is_pendistribusi = $query_is_pendistribusi->where('tb_document.DOC_DATE BETWEEN "'. $params['start_date'] . '" and "'. $params['end_date'] .'"');
-		}
+				 ->where("(tb_document_notification.PENDISTRIBUSI IN (".$user_dept.") OR tb_document_notification.PEMILIK IN (".$user_dept.") OR tb_document_notification.DEP_MAKER IN (".$user_dept."))");
 
 		if ($params['status_document'] !== '') {
 			if ($params['status_document'] === 'DIPUBLIKASI') {
@@ -93,6 +85,7 @@ class C_notification extends CI_Controller {
 		$query_is_pendistribusi = 
 				$query_is_pendistribusi->order_by('tb_document_notification.NOTIF_ID','ASC')
 				->get()->result_array();
+		
 		$data = [];
 		if (count($query_is_pendistribusi) > 0) {
 			$data = array_merge($query_is_pendistribusi);
