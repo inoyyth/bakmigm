@@ -90,18 +90,28 @@ class C_index extends CI_Controller {
 			$session_data['session_bgm_edocument_org_parent'] = $data_login[0]->ORG_PARENT;
 			$session_data['session_dep_code_employee'] = $data_login[0]->DEPCODE;
 
-			if (empty($data_login[0]->DN_ID)) {
+			if (empty($data_login[0]->DN_ID) || $data_login[0]->DN_ID === NULL) {
 				$data_login = $this->M_login->DB_GET_LOGIN_DIVISI($si_userid);
+				$session_data['session_bgm_edocument_departement_id'] = $data_login[0]->DEPCODE;
+				$session_data['session_bgm_edocument_departement_code'] = $data_login[0]->DEPCODE;
+				$session_data['session_bgm_edocument_departement_name'] = $data_login[0]->DEPNAME;
+				$session_data['session_bgm_edocument_org_parent'] = $data_login[0]->ORG_PARENT;
+				$session_data['session_dep_code_employee'] = $data_login[0]->DEPCODE;
 				$session_data['session_bgm_edocument_divisi_id'] = $data_login[0]->DI_ID;
 				$session_data['session_bgm_edocument_divisi_code'] = $data_login[0]->DI_CODE;
 				$session_data['session_bgm_edocument_divisi_name'] = $data_login[0]->DI_NAME;
 			}else{
+				$session_data['session_bgm_edocument_departement_id'] = $data_login[0]->DN_ID;
+				$session_data['session_bgm_edocument_departement_code'] = $data_login[0]->DN_CODE;
+				$session_data['session_bgm_edocument_departement_name'] = $data_login[0]->DN_NAME;
+				$session_data['session_bgm_edocument_org_parent'] = $data_login[0]->ORG_PARENT;
+				$session_data['session_dep_code_employee'] = $data_login[0]->DEPCODE;
 				$session_data['session_bgm_edocument_divisi_id'] = $data_login[0]->DI_ID;
 				$session_data['session_bgm_edocument_divisi_code'] = $data_login[0]->DI_CODE;
 				$session_data['session_bgm_edocument_divisi_name'] = $data_login[0]->DI_NAME;
 			}
 
-			if (empty($data_login[0]->DI_ID)) {
+			if (empty($data_login[0]->DI_ID) || $data_login[0]->DI_ID === NULL) {
 				$data_login = $this->M_login->DB_GET_LOGIN_DIREKTORAT($si_userid);
 				$session_data['session_bgm_edocument_direktorat_id'] = $data_login[0]->DT_ID;
 				$session_data['session_bgm_edocument_direktorat_name'] = $data_login[0]->DT_NAME;

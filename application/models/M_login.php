@@ -33,6 +33,7 @@ class M_login extends CI_Model {
 		$this->db->from('tb_employee');
 		$this->db->join('tb_employee_detail', 'tb_employee.NIP = tb_employee_detail.NIP', 'left');
 		$this->db->join('tb_job_level', 'tb_employee.JOBLVL = tb_job_level.JBLL_ID', 'left');
+		$this->db->join('tb_departemen', 'tb_employee.DEPCODE = tb_departemen.DN_ID', 'left');
 		$this->db->join('tb_divisi', 'tb_employee.DEPCODE = tb_divisi.DI_ID', 'left');
 		$this->db->join('tb_direktorat', 'tb_divisi.DT_ID = tb_direktorat.DT_ID', 'left');
 		$this->db->where('tb_employee.NIP = "'.$username.'" OR tb_employee.USER_NAME = "'.$username.'"');
