@@ -2838,7 +2838,7 @@ class C_notification extends CI_Controller {
 		);
 
 		if ($delete) {
-			redirect('C_notification');
+			echo json_encode(['status'=>'success']);
 		}
 	}
 
