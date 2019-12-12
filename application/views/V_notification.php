@@ -245,11 +245,11 @@ if(empty($get_data_count)||$get_data_count==""){
 			<?php 
 			elseif($FILTER =="DIPUBLIKASI"): 
 			?>
-				<div class="alert alert-success fade in">
-					<form action="<?= base_url('C_notification/delete_notification'); ?>" method="POST">
-						<input type="hidden" name="doc_id" value="<?= $data_row_ext->DOC_ID; ?>">
-						<input type="hidden" name="user_id" value="<?= $data_row_ext->NIP; ?>">
-						<input type="hidden" name="notif_id" value="<?= $data_row_ext->NOTIF_ID; ?>">
+				<div id="div_delete_notif_<?= $data_row_ext->NOTIF_ID; ?>" class="alert alert-success fade in">
+					<form id="form_delete_notif<?= $data_row_ext->NOTIF_ID; ?>" onsubmit="return form_delete_notif(<?= $data_row_ext->NOTIF_ID; ?>);">
+						<input type="hidden" id="doc_delete_notif_<?= $data_row_ext->NOTIF_ID; ?>" name="doc_id" value="<?= $data_row_ext->DOC_ID; ?>">
+						<input type="hidden" id="user_delete_notif_<?= $data_row_ext->NOTIF_ID; ?>" name="user_id" value="<?= $data_row_ext->NIP; ?>">
+						<input type="hidden" id="notif_delete_notif_<?= $data_row_ext->NOTIF_ID; ?>" name="notif_id" value="<?= $data_row_ext->NOTIF_ID; ?>">
 						<button type="submit" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 					</form>
 					<div class="row">
@@ -269,13 +269,13 @@ if(empty($get_data_count)||$get_data_count==""){
 			<?php 
 			elseif($FILTER =="KADALUARSA"): 
 			?>
-				<div class="alert alert-danger fade in">
-					<!-- <form action="<?= base_url('C_notification/delete_notification'); ?>" method="POST">
-						<input type="hidden" name="doc_id" value="<?= $data_row_ext->DOC_ID; ?>">
-						<input type="hidden" name="user_id" value="<?= $data_row_ext->NIP; ?>">
-						<input type="hidden" name="notif_id" value="<?= $data_row_ext->NOTIF_ID; ?>">
+				<div id="div_delete_notif_<?= $data_row_ext->NOTIF_ID; ?>" class="alert alert-danger fade in">
+					<form id="form_delete_notif<?= $data_row_ext->NOTIF_ID; ?>" onsubmit="return form_delete_notif(<?= $data_row_ext->NOTIF_ID; ?>);">
+						<input type="hidden" id="doc_delete_notif_<?= $data_row_ext->NOTIF_ID; ?>" name="doc_id" value="<?= $data_row_ext->DOC_ID; ?>">
+						<input type="hidden" id="user_delete_notif_<?= $data_row_ext->NOTIF_ID; ?>" name="user_id" value="<?= $data_row_ext->NIP; ?>">
+						<input type="hidden" id="notif_delete_notif_<?= $data_row_ext->NOTIF_ID; ?>" name="notif_id" value="<?= $data_row_ext->NOTIF_ID; ?>">
 						<button type="submit" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-					</form> -->
+					</form>
 					<div class="row">
 						<div class="col-xs-10">
 							Dokumen <?php echo $data_row_ext->DOC_NAMA; ?>, <?php echo $data_row_ext->DOC_STATUS_ACTIVITY; ?>
@@ -384,11 +384,11 @@ if(empty($get_data_count)||$get_data_count==""){
 					$user_maker_division['DI_ID'] == $data_row_ext->DOC_STATUS
 				) {
 			?>
-				<div class="alert alert-info fade in">
-					<form action="<?= base_url('C_notification/delete_notification'); ?>" method="POST">
-						<input type="hidden" name="doc_id" value="<?= $data_row_ext->DOC_ID; ?>">
-						<input type="hidden" name="user_id" value="<?= $data_row_ext->NIP; ?>">
-						<input type="hidden" name="notif_id" value="<?= $data_row_ext->NOTIF_ID; ?>">
+				<div id="div_delete_notif_<?= $data_row_ext->NOTIF_ID; ?>" class="alert alert-info fade in">
+					<form id="form_delete_notif<?= $data_row_ext->NOTIF_ID; ?>" onsubmit="return form_delete_notif(<?= $data_row_ext->NOTIF_ID; ?>);">
+						<input type="hidden" id="doc_delete_notif_<?= $data_row_ext->NOTIF_ID; ?>" name="doc_id" value="<?= $data_row_ext->DOC_ID; ?>">
+						<input type="hidden" id="user_delete_notif_<?= $data_row_ext->NOTIF_ID; ?>" name="user_id" value="<?= $data_row_ext->NIP; ?>">
+						<input type="hidden" id="notif_delete_notif_<?= $data_row_ext->NOTIF_ID; ?>" name="notif_id" value="<?= $data_row_ext->NOTIF_ID; ?>">
 						<button type="submit" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 					</form>
 					<div class="row">
@@ -486,7 +486,9 @@ if(empty($get_data_count)||$get_data_count==""){
 						<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-xl-6" style="position: relative;">
 					<div style="width: 386px;height:500px;background-color:rgba(201, 76, 76, 0);z-index: 99999;position: absolute;"></div>
 							<div class="form-group">
-								<embed src="<?=$url_path_persetujuan;?>" width="400px" height="500px">
+								<object data="<?=$url_path_persetujuan;?>" type="application/pdf" width="400px" height="500px">
+									If you don't have the Adobe Reader plugin, you should see what's between the OBJECT tags, which should include a <a href=""<?=$url_path_persetujuan;?>">link</a>
+								</object>
 								<label for="" class="col-sm-12 control-label" style="text-align:left">
 									<!-- <a target="_blank" href="<?=$url_path_persetujuan;?>">Dokumen Persetujuan</a> -->
 								</label>
@@ -602,4 +604,19 @@ if(empty($get_data_count)||$get_data_count==""){
         todayHighlight: true
     });
  });
+
+	function form_delete_notif(notif_id) {
+		$.ajax({
+			url: '<?= base_url('C_notification/delete_notification'); ?>',
+			type: 'post',
+			data: $('#form_delete_notif' + notif_id).serialize(),
+			dataType: 'json',
+			success: function(data) {
+				$("#div_delete_notif_" + notif_id).hide();
+				return false;
+			}
+		});
+		return false;
+	}
+ 
  </script>

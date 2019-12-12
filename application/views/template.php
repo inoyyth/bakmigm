@@ -353,10 +353,12 @@ $count_notification = $count_notification + $count_news;
 				dataType: "html",   //expect html to be returned                
 				success: function(res){
 					var response = JSON.parse(res);
-					console.log(response.image_path);
-					if (response.image_path !== "" ) {
-						$("#avatar-profile").removeAttr('src');
-						$("#avatar-profile").attr('src', "<?php echo base_url();?>" + response.image_path);
+					if (response) {
+						console.log(response.image_path);
+						if (response.image_path !== "" ) {
+							$("#avatar-profile").removeAttr('src');
+							$("#avatar-profile").attr('src', "<?php echo base_url();?>" + response.image_path);
+						}
 					}
 				}
 			});
