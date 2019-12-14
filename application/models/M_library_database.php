@@ -1448,6 +1448,28 @@ class M_library_database extends CI_Model {
 		}
 		return $result;
 	}
+
+	public function get_departemen_pengguna($departments, $in = true){
+		$result = "";
+		try{
+			$this->db->select('*');
+			$this->db->from($this->tb_departemen);
+			if ($in) {
+				$this->db->where_in('DN_ID', $departments);
+			} else {
+				$this->db->where_not_in('DN_ID', $departments);
+			}
+			$this->db->order_by('DN_NAME','ASC');
+			$query = $this->db->get();
+			if ($query->num_rows() > 0) {
+				return $query->result();
+			}
+		}catch(Exception $exc){
+			$error = $exc->getMessage();
+			echo "[ERROR][M_LIBRARY_DATABASE][DB_GET_DATA_DEPARTEMENT_ARRAY]".$error;
+		}
+		return $result;
+	}
 	//-----------------------------------------------------------------------------------------------//
 	public function DB_GET_DEPARTEMENT_NOT_IN_EVO($data){
 		$result = "";
