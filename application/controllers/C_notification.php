@@ -140,6 +140,9 @@ class C_notification extends CI_Controller {
 	public function document($docid,$doc)
 	{
 		include (APPPATH.'libraries/session_user.php');
+		include (APPPATH.'libraries/FPDF/Fpdf.php');
+		include (APPPATH.'libraries/FPDI/fpdi.php');
+		date_default_timezone_set('Asia/Jakarta');
 		$get = $this->M_library_database->DB_GET_DATA_DOCUMENT_DETAIL_BY_ID_EVO($docid);
 		foreach($get as $data_row_doc){
 			$DOCD_UTAMA = $data_row_doc->DOCD_UTAMA;
@@ -172,8 +175,33 @@ class C_notification extends CI_Controller {
 			if ($DOC_STATUS == "DIPUBLIKASI" || $DOC_STATUS == "KADALUARSA" || $DOC_STATUS == "DIARSIPKAN") {
 				$this->db->delete('tb_document_news', array('DOC_ID' => $docid, 'UR_ID' => $SESSION_ID));
 			}
+			//ADD WATERMAK
+			if ($STATUS_UTAMA==1) {
+				unlink('./assets/pdf/COPY-'.$DOCD_UTAMA.'-'.$this->session->userdata("session_bgm_edocument_id").'.pdf');
+				$GLOBALS['watermark_text'] = '';
+				$GLOBALS['watermark_second_text'] = $this->__getWatermarkText();
+				$GLOBALS['dokumen_utama'] = './assets/pdf/'.$DOCD_UTAMA.'.pdf';
+				$GLOBALS['dokumen_utama_copy'] = './assets/pdf/COPY-'.$DOCD_UTAMA.'-'.$this->session->userdata("session_bgm_edocument_id").'.pdf';
+				copy($GLOBALS['dokumen_utama'], $GLOBALS['dokumen_utama_copy']);
+				chmod($GLOBALS['dokumen_utama_copy'], 0777);
+				include (APPPATH.'libraries/watermark/watermark_utama.php');
+				$pdf = new Watermark_utama();
+				$pdf->AddPage();
+				$pdf->SetFont('Arial', '', 12);
+				if($pdf->numPages>1) {
+					for($i=2;$i<=$pdf->numPages;$i++) {
+						$pdf->_tplIdx = $pdf->importPage($i);
+						$pdf->AddPage();
+					}
+				}
+				$pdf->Output($GLOBALS['dokumen_utama_copy'],'F');
+				$getUtama = $GLOBALS['dokumen_utama_copy'];
+			}else{
+				$getUtama = './assets/pdf/'.$DOCD_UTAMA.'.pdf';
+			}
+			
 			$url['ket'] = 'Dokumen Utama';
-			$url['url'] = base_url('assets/pdf/'.$DOCD_UTAMA.'.pdf');
+			$url['url'] = base_url($getUtama);
 			$url['ext'] = $EXT_UTAMA;
 		}elseif ($doc == $DOCD_PELENGKAP_1) {
 			$url['ket'] = 'Dokumen Pelengkap 1';
