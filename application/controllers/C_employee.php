@@ -3,6 +3,9 @@
     use Sendinblue\Mailin;
 
     class C_employee extends CI_Controller {
+
+    CONST ARCIEVE_DATE = '-30 days';
+
     function __construct() {
         parent::__construct();
         $this->load->model('M_employee');
@@ -92,6 +95,29 @@
                 [
                     'DOC_STATUS' => "KADALUARSA",
                     'DOC_STATUS_ACTIVITY' => "KADALUARSA"
+                ],
+                ['DOC_ID' => $document->DOC_ID]
+            );
+            $this->db->delete('tb_notification_history', ['id' => $document->DOC_ID]);
+            $this->Email_notification($document->DOC_ID);
+        }
+    }
+
+    function setDocumentAsArchive() {
+        $documents = $this->db
+                    ->select('DOC_ID')
+                    ->from('tb_document')
+                    ->where('DOC_STATUS_ACTIVITY', 'KADALUARSA')
+                    ->where('DOC_STATUS', 'KADALUARSA')
+                    ->where('DOC_TGL_EXPIRED <', date('Y-m-d', strtotime(self::ARCIEVE_DATE)))
+                    ->get()
+                    ->result();
+
+        foreach($documents as $document) {
+            $this->db->update('tb_document',
+                [
+                    'DOC_STATUS' => 'DIARSIPKAN',
+						'DOC_STATUS_ACTIVITY' => 'Diarsipkan Oleh System'
                 ],
                 ['DOC_ID' => $document->DOC_ID]
             );
