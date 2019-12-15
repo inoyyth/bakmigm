@@ -240,30 +240,40 @@ class C_activity_report extends CI_Controller {
         $level_akses= $this->input->get('level_akses');
         $start_date= $this->input->get('start_date');
         $end_date= $this->input->get('end_date');
+
+        //get job level
+        $job_level_index = $this->db->select('JBLL_INDEX')->from('tb_job_level')->where('JBLL_ID', $level_akses)->get()->row();
+        $down_level = $this->db->select('JBLL_ID')->from('tb_job_level')->where('JBLL_INDEX <=', $job_level_index->JBLL_INDEX)->get()->result_array();
+        
+        //get division
+        $division = $this->db->select('DI_ID')->from('tb_departemen')->where('DN_ID', $departemen)->get()->row();
+
         try {
             $query = $this->db
-                ->select('a.DOC_ID,a.DOC_NAMA,a.DOC_VERSI,a.DOC_NOMOR,b.LogAct,b.LogDate,c.FULL_NAME')
+                ->select('a.DOC_ID,a.DOC_NAMA,a.DOC_VERSI,a.DOC_NOMOR,b.LogAct,b.LogDate,c.FULL_NAME,c.JOBLVL,c.DEPCODE,c.ORG_PARENT')
                 ->from('tb_document a')
                 ->join('m_log b', 'a.DOC_ID = b.LogDoc', 'inner')
                 ->join('tb_employee c', 'b.LogUserName = c.NIP', 'inner')
                 ->where('a.DOC_PEMILIK_PROSES', $departemen)
                 ->where('b.LogDate >=', $start_date)
                 ->where('b.LogDate <=', $end_date)
-                ->like('a.DOC_AKSES_LEVEL', $level_akses)
                 ->order_by('b.LogDate', 'ASC')
                 ->get()->result();
 
             foreach ($query as $k=>$q) {
-                $data[] = array(
-                    'NO' => $k +1,
-                    'DOC_ID' => $q->DOC_ID,
-                    'FULL_NAME' => $q->FULL_NAME,
-                    'DOC_NOMOR' => $q->DOC_NOMOR,
-                    'DOC_VERSI' => $q->DOC_VERSI,
-                    'DOC_NAMA' => $q->DOC_NAMA,
-                    'ACTIVITY' => $q->LogAct,
-                    'DATE' => $q->LogDate
-                );
+                if (in_array($q->JOBLVL, array_column($down_level,'JBLL_ID')) && 
+                    in_array($q->DEPCODE, [$departemen, $division->DI_ID])) {
+                    $data[] = array(
+                        'NO' => $k +1,
+                        'DOC_ID' => $q->DOC_ID,
+                        'FULL_NAME' => $q->FULL_NAME,
+                        'DOC_NOMOR' => $q->DOC_NOMOR,
+                        'DOC_VERSI' => $q->DOC_VERSI,
+                        'DOC_NAMA' => $q->DOC_NAMA,
+                        'ACTIVITY' => $q->LogAct,
+                        'DATE' => $q->LogDate
+                    );
+                }
             }
         } catch (Exception $e) {
             var_dump($e->getMessage());
