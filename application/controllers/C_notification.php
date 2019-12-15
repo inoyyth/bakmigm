@@ -62,7 +62,8 @@ class C_notification extends CI_Controller {
 				 ->select('tb_document_notification.*')
 				 ->from('tb_document_notification')
 				 ->join('tb_document', 'tb_document_notification.DOC_ID=tb_document.DOC_ID', 'inner')
-				 ->where("(tb_document_notification.PENDISTRIBUSI IN (".$user_dept.") OR tb_document_notification.PEMILIK IN (".$user_dept.") OR tb_document_notification.DEP_MAKER IN (".$user_dept."))");
+				 ->where("(tb_document_notification.PENDISTRIBUSI IN (".$user_dept.") OR tb_document_notification.PEMILIK IN (".$user_dept.") OR tb_document_notification.DEP_MAKER IN (".$user_dept."))")
+				 ->or_where('tb_document.DOC_STATUS', $this->session->userdata("session_bgm_edocument_departement_id"));
 
 		if ($params['status_document'] !== '') {
 			if ($params['status_document'] === 'DIPUBLIKASI') {
@@ -79,7 +80,7 @@ class C_notification extends CI_Controller {
 
 			if ($params['status_document'] === 'MENUNGGU') {
 				$query_is_pendistribusi = $query_is_pendistribusi->like('tb_document.DOC_STATUS_ACTIVITY', 'menunggu persetujuan');
-				$query_is_pendistribusi = $query_is_pendistribusi->where('tb_document.DOC_STATUS', $this->session->userdata("session_bgm_edocument_departement_id"));
+				// $query_is_pendistribusi = $query_is_pendistribusi->or_where('tb_document.DOC_STATUS', $this->session->userdata("session_bgm_edocument_departement_id"));
 			}
 		}
 		$query_is_pendistribusi = 

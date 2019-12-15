@@ -188,7 +188,8 @@ class M_notification extends CI_Model {
 				$dt[] = $v->DN_ID;
 			}
 		}
-		$dt = implode(",", $dt);
+
+		$dt = implode(",", array_merge($dt, [$division_id]));
 
 		return $dt;
 	}
