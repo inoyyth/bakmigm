@@ -49,7 +49,7 @@ class C_notification extends CI_Controller {
 		$this->load->view('template', $data);
 	}
 
-	public function getNotification($nip, $is_ajax = false, $params){
+	public function getNotification($nip, $is_ajax = false, $params=[]){
 		$news = $this->M_notification->GET_NEWS_NEW($this->session->userdata("session_bgm_edocument_id"));
 		$user_dept = $_SESSION['session_bgm_edocument_departement_id'];
 		$org = $_SESSION['session_bgm_edocument_org_parent'];
@@ -62,8 +62,11 @@ class C_notification extends CI_Controller {
 				 ->select('tb_document_notification.*')
 				 ->from('tb_document_notification')
 				 ->join('tb_document', 'tb_document_notification.DOC_ID=tb_document.DOC_ID', 'inner')
-				 ->where("(tb_document_notification.PENDISTRIBUSI IN (".$user_dept.") OR tb_document_notification.PEMILIK IN (".$user_dept.") OR tb_document_notification.DEP_MAKER IN (".$user_dept."))")
-				 ->or_where('tb_document.DOC_STATUS', $this->session->userdata("session_bgm_edocument_departement_id"));
+				 ->where("(
+					 tb_document_notification.PENDISTRIBUSI IN (".$user_dept.") 
+					 OR tb_document_notification.PEMILIK IN (".$user_dept.") 
+					 OR tb_document_notification.DEP_MAKER IN (".$user_dept.") 
+					 OR tb_document.DOC_STATUS=".$this->session->userdata("session_bgm_edocument_departement_id").")");
 
 		if ($params['status_document'] !== '') {
 			if ($params['status_document'] === 'DIPUBLIKASI') {
@@ -84,7 +87,7 @@ class C_notification extends CI_Controller {
 			}
 		}
 		$query_is_pendistribusi = 
-				$query_is_pendistribusi->order_by('tb_document_notification.NOTIF_ID','ASC')
+				$query_is_pendistribusi->order_by('tb_document.DOC_DATE','ASC')
 				->get()->result_array();
 		
 		$data = [];

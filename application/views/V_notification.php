@@ -134,11 +134,12 @@ if(empty($get_data_count)||$get_data_count==""){
 							Dokumen <?php echo $data_row_ext->DOC_NAMA; ?>, perlu persetujuan Anda!
 							<br/>
 							<?php 
-							if ($versioning_date) {
-								echo date('d/M/Y G:i', strtotime($versioning_date));
-							} else {
-								echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));
-							}
+							// if ($versioning_date) {
+							// 	echo date('d/M/Y G:i', strtotime($versioning_date));
+							// } else {
+							// 	echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));
+							// }
+							echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));
 							?> WIB
 						</div>
 						<div class="col-xs-2" style="text-align:right;">
@@ -177,11 +178,12 @@ if(empty($get_data_count)||$get_data_count==""){
 							Dokumen <?php echo $data_row_ext->DOC_NAMA; ?>, perlu persetujuan Anda!
 							<br/>
 							<?php 
-								if ($versioning_date) {
-									echo date('d/M/Y G:i', strtotime($versioning_date));
-								} else {
-									echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));
-								}
+								// if ($versioning_date) {
+								// 	echo date('d/M/Y G:i', strtotime($versioning_date));
+								// } else {
+								// 	echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));
+								// }
+								echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));
 							?> WIB
 						</div>
 						<div class="col-xs-2" style="text-align:right;">
@@ -199,11 +201,12 @@ if(empty($get_data_count)||$get_data_count==""){
 							Dokumen <?php echo $data_row_ext->DOC_NAMA; ?>, <?php echo $data_row_ext->DOC_STATUS_ACTIVITY; ?>
 							<br/>
 							<?php 
-								if ($versioning_date) {
-									echo date('d/M/Y G:i', strtotime($versioning_date));
-								} else {
-									echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));
-								}
+								// if ($versioning_date) {
+								// 	echo date('d/M/Y G:i', strtotime($versioning_date));
+								// } else {
+								// 	echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));
+								// }
+								echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));
 							?> WIB
 						</div>
 						<div class="col-xs-2" style="text-align:right;">
@@ -257,11 +260,12 @@ if(empty($get_data_count)||$get_data_count==""){
 							Dokumen <?php echo $data_row_ext->DOC_NAMA; ?>, <?php echo $data_row_ext->DOC_STATUS_ACTIVITY; ?>
 							<br/>
 							<?php 
-								if ($versioning_date) {
-									echo date('d/M/Y G:i', strtotime($versioning_date));
-								} else {
-									echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));
-								}
+								// if ($versioning_date) {
+								// 	echo date('d/M/Y G:i', strtotime($versioning_date));
+								// } else {
+								// 	echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));
+								// }
+								echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));
 							?> WIB
 						</div>
 					</div>
@@ -281,11 +285,12 @@ if(empty($get_data_count)||$get_data_count==""){
 							Dokumen <?php echo $data_row_ext->DOC_NAMA; ?>, <?php echo $data_row_ext->DOC_STATUS_ACTIVITY; ?>
 							<br/>
 							<?php 
-								if ($versioning_date) {
-									echo date('d/M/Y G:i', strtotime($versioning_date));
-								} else {
-									echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));
-								}
+								// if ($versioning_date) {
+								// 	echo date('d/M/Y G:i', strtotime($versioning_date));
+								// } else {
+								// 	echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));
+								// }
+								echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));
 							?> WIB
 						</div>
 					</div>
@@ -357,11 +362,12 @@ if(empty($get_data_count)||$get_data_count==""){
 							Dokumen <?php echo $data_row_ext->DOC_NAMA; ?>, <?php echo $data_row_ext->DOC_STATUS_ACTIVITY; ?>
 							<br/>
 							<?php 
-								if ($versioning_date) {
-									echo date('d/M/Y G:i', strtotime($versioning_date));
-								} else {
-									echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));
-								}
+								// if ($versioning_date) {
+								// 	echo date('d/M/Y G:i', strtotime($versioning_date));
+								// } else {
+								// 	echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));
+								// }
+								echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));
 							?> WIB
 						</div>
 					</div>
@@ -396,11 +402,12 @@ if(empty($get_data_count)||$get_data_count==""){
 							Dokumen <?php echo $data_row_ext->DOC_NAMA; ?>, <?php echo $data_row_ext->DOC_STATUS_ACTIVITY; ?>
 							<br/>
 							<?php 
-								if ($versioning_date) {
-									echo date('d/M/Y G:i', strtotime($versioning_date));
-								} else {
-									echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));
-								}
+								// if ($versioning_date) {
+								// 	echo date('d/M/Y G:i', strtotime($versioning_date));
+								// } else {
+								// 	echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));
+								// }
+								echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE));
 							?> WIB
 						</div>
 					</div>

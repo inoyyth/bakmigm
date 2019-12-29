@@ -622,51 +622,18 @@ $count_notification = $count_notification + $count_news;
 											<div class="col-sm-9">
 												<select id="duallistbox_pengguna_dokumen" multiple="multiple" size="5" name="duallistbox_pengguna_dokumen[]" required />
 													<?php
-														$DOC_PENGGUNA = $DOC_PENGGUNA;
-														$DOC_PENGGUNA_FINAL = "";
-														if(strpos($DOC_PENGGUNA,'|')!==false){
-															$data_array = explode('|',$DOC_PENGGUNA);
-															$count = count($data_array);
-															for($x=0;$x<$count;$x++){
-																$get_data = $this->M_library_database->DB_GET_DATA_DEPARTEMEN_BY_ID_EVO($data_array[$x]);
-																foreach($get_data as $data_row){
-																	$DN_ID = $data_row->DN_ID;
-																	$DN_CODE = $data_row->DN_CODE;
-																	$DN_NAME = $data_row->DN_NAME;
+														$doc_pengguna = explode('|',$DOC_PENGGUNA);
+														$department_aktif = $this->M_library_database->get_departemen_pengguna($doc_pengguna, true);
+														$department_noaktif = $this->M_library_database->get_departemen_pengguna($doc_pengguna, false);
+														foreach($department_noaktif as $department_pengguna_noaktif){
 													?>
-													<option value="<?php echo $DN_ID; ?>" selected><?php echo $data_row->DN_CODE; ?> (<?php echo $data_row->DN_NAME; ?>)</option>
+														<option value="<?php echo $department_pengguna_noaktif->DN_ID; ?>"><?php echo $department_pengguna_noaktif->DN_CODE; ?> (<?php echo $department_pengguna_noaktif->DN_NAME; ?>)</option>
 													<?php
-																}
-																$DOC_PENGGUNA_FINAL .= $DN_ID.",";
-															}
-														}else{
-															$get_data = $this->M_library_database->DB_GET_DATA_DEPARTEMEN_BY_ID_EVO($DOC_PENGGUNA);
-															foreach($get_data as $data_row){
-																$DN_ID = $data_row->DN_ID;
-																$DN_CODE = $data_row->DN_CODE;
-																$DN_NAME = $data_row->DN_NAME;
-													?>
-													<option value="<?php echo $DN_ID; ?>" selected><?php echo $data_row->DN_CODE; ?> (<?php echo $data_row->DN_NAME; ?>)</option>
-													<?php
-															}
-															$DOC_PENGGUNA_FINAL = $DN_ID.",";
 														}
-													
-													
-													
-														$is_continue = true;
-														$get_data_ext = $this->M_library_database->DB_GET_DEPARTEMENT_NOT_IN_EVO($DOC_PENGGUNA_FINAL);
-														if(empty($get_data_ext)||$get_data_ext==""){
-															$is_continue = false;
-														}
-														if($is_continue){
-															foreach($get_data_ext as $data_row_ext){
-																if($DN_ID!=$data_row_ext->DN_ID){
+														foreach($department_aktif as $department_pengguna_aktif){
 													?>
-													<option value="<?php echo $data_row_ext->DN_ID; ?>"><?php echo $data_row_ext->DN_CODE; ?> (<?php echo $data_row_ext->DN_NAME; ?>)</option>
+														<option value="<?php echo $department_pengguna_aktif->DN_ID; ?>" selected><?php echo $department_pengguna_aktif->DN_CODE; ?> (<?php echo $department_pengguna_aktif->DN_NAME; ?>)</option>
 													<?php
-																}
-															}
 														}
 													?>
 												</select>
