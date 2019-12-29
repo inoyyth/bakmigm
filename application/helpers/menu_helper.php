@@ -1,5 +1,6 @@
 
 <?php
+@ob_start();
 defined('BASEPATH') OR exit('No direct script access allowed');
 /**
  * CodeIgniter Array Helpers

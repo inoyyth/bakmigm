@@ -43,6 +43,8 @@ class C_activity_report extends CI_Controller {
             $query = $query->like('DOC_NAMA', $search);
         }
 
+        $query = $query->where('DOC_STATUS', 'DIPUBLIKASI');
+
         $query = $query->get()->result();
 
         echo json_encode(['results' => $query]);
