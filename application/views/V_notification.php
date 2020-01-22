@@ -231,6 +231,7 @@ if(empty($get_data_count)||$get_data_count==""){
 									<b>
 									<?php echo $index_info_reject; ?>. Oleh : <?php echo $data_row_info_reject->DTDLSS_MAKER; ?>, Note : <?php echo $data_row_info_reject->DTDLSS_NOTE; ?>. Pada : <?php echo date('d/M/Y G:i', strtotime($data_row_info_reject->DTDLSS_DATE)); ?> WIB
 									<br/>
+									<?php echo date('d/M/Y G:i', strtotime($data_row_ext->DOC_DATE)); ?>
 									</b>
 							<?php
 									$index_info_reject++;

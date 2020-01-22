@@ -82,8 +82,8 @@ class C_notification extends CI_Controller {
 			}
 
 			if ($params['status_document'] === 'MENUNGGU') {
-				$query_is_pendistribusi = $query_is_pendistribusi->like('tb_document.DOC_STATUS_ACTIVITY', 'menunggu persetujuan');
-				// $query_is_pendistribusi = $query_is_pendistribusi->or_where('tb_document.DOC_STATUS', $this->session->userdata("session_bgm_edocument_departement_id"));
+				// $query_is_pendistribusi = $query_is_pendistribusi->like('tb_document.DOC_STATUS_ACTIVITY', 'menunggu persetujuan');
+				$query_is_pendistribusi = $query_is_pendistribusi->where('tb_document.DOC_STATUS', $this->session->userdata("session_bgm_edocument_departement_id"));
 			}
 		}
 		$query_is_pendistribusi = 
@@ -92,10 +92,8 @@ class C_notification extends CI_Controller {
 		
 		$data = [];
 		if (count($query_is_pendistribusi) > 0) {
-			$data = array_merge($query_is_pendistribusi);
-			// $data = array_unique($data,SORT_REGULAR);
 			$unique_array = [];
-			foreach($data as $element) {
+			foreach($query_is_pendistribusi as $element) {
 				$hash = $element['DOC_ID'];
 				$unique_array[$hash] = $element;
 			}
@@ -103,8 +101,29 @@ class C_notification extends CI_Controller {
 			$new_data = array();
 			foreach ($unique_array as $k=>$v) {
 				$cek_doc_history = $this->db->select('*')->from('tb_notification_history')->where(array('USER_ID' => $nip, 'DOC_ID' => $v['DOC_ID']))->get()->result_array();
+
 				if (count($cek_doc_history) == 0) {
-					$qr = $this->db->select('*')->from('tb_document')
+					$qr = $this->db->select('
+								tb_document.DOC_ID,
+								tb_document.DOC_DATE,
+								tb_document.DOC_NAMA,
+								tb_document.DOC_STATUS_ACTIVITY,
+								tb_document.DOC_STATUS,
+								tb_document.DOC_TGL_EXPIRED,
+								tb_document.DOC_MAKER,
+								tb_document.DOC_APPROVE,
+								tb_document.DOC_PENDISTRIBUSI,
+								tb_document.DOC_PEMILIK_PROSES,
+								tb_document.DOC_VERSI,
+								tb_document.DOC_NOMOR,
+								tb_document.DOC_DISTRIBUSI,
+								tb_document_notification.NOTIF_ID,
+								tb_document.DOC_ABSTRAK,
+								tb_document.DOC_TGL_EFEKTIF,
+								tb_employee.NIP,
+								tb_confidential.CL_NAME,
+								tb_document_structure_tipe.DTSETE_TIPE
+							')->from('tb_document')
 							->join('tb_document_notification', 'tb_document_notification.DOC_ID = tb_document.DOC_ID')
 							->join('tb_document_detail', 'tb_document.DOC_ID = tb_document_detail.DOC_ID', 'left')
 							->join('tb_document_structure_kategori', 'tb_document.DOC_KATEGORI = tb_document_structure_kategori.DTSEKI_ID', 'left')
@@ -118,6 +137,7 @@ class C_notification extends CI_Controller {
 							->join('tb_divisi', 'tb_departemen.DI_ID = tb_divisi.DI_ID OR tb_employee.DEPCODE = tb_divisi.DI_ID', 'left outer')
 							->join('tb_direktorat', 'tb_divisi.DT_ID = tb_direktorat.DT_ID OR tb_employee.DEPCODE = tb_direktorat.DT_ID', 'left')
 							->where(array('tb_document.DOC_ID'=>$v['DOC_ID']))
+							->order_by('tb_document.DOC_DATE', 'ASC')
 							->get()->row();
 					$new_data[] = $qr;
 				}

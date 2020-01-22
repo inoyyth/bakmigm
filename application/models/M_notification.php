@@ -45,23 +45,24 @@ class M_notification extends CI_Model {
 	public function GET_NEWS_NEW($id)
 	{
 		$removed_news = $this->__getRemovedNews($id);
-		
+
 		$this->db->select('
-		tb_document_news.DOC_ID,
+		tb_document.DOC_ID,
 		tb_employee.FULL_NAME,
 		tb_employee.NIP,
 		tb_document.DOC_DATE,
 		tb_document.DOC_NAMA,
 		tb_document.DOC_NOMOR
 		');
-		$this->db->from('tb_document_news');
-		$this->db->join('tb_document', 'tb_document_news.DOC_ID = tb_document.DOC_ID', 'left');
+		$this->db->from('tb_document');
 		$this->db->join('tb_employee', 'tb_document.DOC_MAKER = tb_employee.NIP', 'left');
 		$this->db->where(array('tb_document.DOC_STATUS' => 'DIPUBLIKASI'));
-		$this->db->where("(tb_document.DOC_PEMILIK_PROSES='".$this->session->userdata('session_bgm_edocument_divisi_id')."' OR tb_document.DOC_PEMILIK_PROSES='".$this->session->userdata('session_bgm_edocument_departement_id')."')");
-		$this->db->where_not_in('tb_document.DOC_ID', implode(',',$removed_news));
+		$this->db->like('tb_document.DOC_PENGGUNA', $this->session->userdata('session_bgm_edocument_departement_id'));
+		if (count($removed_news) > 0) {
+			$this->db->where_not_in('tb_document.DOC_ID', $removed_news);
+		}
 		$this->db->order_by('tb_document.DOC_DATE', 'DESC');
-		$this->db->group_by('tb_document_news.DOC_ID');
+		$this->db->group_by('tb_document.DOC_ID');
 		return $this->db->get()->result();
 	}
 	public function NotifPencipta($NIP)
