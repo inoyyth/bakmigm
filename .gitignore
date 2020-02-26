@@ -9,13 +9,16 @@ application/logs/*
 !application/*/.htaccess
 
 composer.lock
+.htaccess
+vendor/*
+assets/*
 
 user_guide_src/build/*
 user_guide_src/cilexer/build/*
 user_guide_src/cilexer/dist/*
 user_guide_src/cilexer/pycilexer.egg-info/*
-/vendor/
-/assets/
+/vendor/*
+/assets/*
 
 # IDE Files
 #-------------------------
