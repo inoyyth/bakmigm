@@ -542,13 +542,16 @@ $config['rule_column'] = [
     // 'DIPERHARUI',
     'DIPUBLIKASI'
 ];
+
 $config['rule_time'] = [
     '1' => '1 Hari',
     '7' => '7 Hari',
     '30' => '30 Hari',
     '60' => '60 Hari',
-    '90' => '90 Hari'
+    '90' => '90 Hari',
+    '190' => '190 Hari'
 ];
+
 $config['id_days'] = [
     'Sun'=>'Minggu',
     'Mon'=>'Senin',
@@ -558,3 +561,6 @@ $config['id_days'] = [
     'Fri'=>'Jumat',
     'Sat'=>'Sabtu'
 ];
+    
+//upload size in MB.
+$config['upload_size'] = 8; 
