@@ -468,7 +468,7 @@ foreach ($PARENT_TIPE as $parent_tipe):
                                 <div class="form-group">
                                     <label class="checkbox-inline"><input type="checkbox"
                                             <?php echo $is_ocr == 1 ? "checked" : ""; ?> name="convert_to_ocr"
-                                            id="convert_to_ocr">Convert
+                                            id="convert_to_ocr">Konversi dengan
                                         OCR</label>
                                 </div>
                                 <div class="form-group">
