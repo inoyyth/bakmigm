@@ -2934,6 +2934,14 @@ class C_notification extends CI_Controller {
 		redirect('C_notification');
 	}
 
+	public function setNewUser() {
+		$nip = $this->input->post('nip');
+		$doc_id = $this->input->post('doc_id');
+		$query = $this->db->update('tb_document', ['DOC_MAKER' => $nip], array('DOC_ID' => $doc_id));
+
+		echo json_encode(['status'=>'success']);
+	}
+
 	private function __getWatermarkText() {
 		$get_format = $this->db->select("*")
 									->from('m_watermark')
