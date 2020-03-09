@@ -436,13 +436,35 @@ if (!empty($GET_DOC_PENDISTRIBUSI_DEPARTEMEN)) {
                                     <input type="text" class="form-control" value="<?=$DNMD_NAME;?>">
                                 </div>
                             </div>
+                            <?php
+$userDoc = $this->db->select('NIP')
+    ->from('tb_employee')
+    ->where('NIP', $DOC_MAKER)
+    ->get()->row();
+
+if (!$userDoc) {
+    $users = $this->db->select('*')
+        ->from('tb_employee')
+        ->where('DEPCODE', $DOC_PEMILIK_PROSES)
+        ->get()->result();
+    ?>
                             <div class="form-group">
                                 <label for="" class="col-sm-12 control-label" style="text-align:left">User Tidak Aktif
                                     Silahkan Ganti User</label>
                                 <div class="col-sm-12">
-                                    <input type="text" class="form-control" value="<?=$DNMD_NAME;?>">
+                                    <select name="new_user" id="new_user">
+                                        <option value="">-pilih user-</option>
+                                        <?php
+foreach ($users as $kUser => $vUser) {
+        ?>
+                                        <option value="<?php echo $vUser->NIP; ?>">
+                                            <?php echo $vUser->NIP . " - " . $vUser->FULL_NAME; ?>
+                                        </option>
+                                        <?php }?>
+                                    </select>
                                 </div>
                             </div>
+                            <?php }?>
                             <div class="form-group">
                                 <label for="" class="col-sm-12 control-label" style="text-align:left">Dokumen
                                     Terkait</label>
@@ -1255,6 +1277,21 @@ if ($SESSION_DEPARTEMENT_ID == $DOC_STATUS || $SESSION_DIVISI_ID == $DOC_STATUS 
             $('select[name="duallistbox_demo1[]"]').bootstrapDualListbox('destroy');
             $('.rating').raty('destroy');
             $('.multiselect').multiselect('destroy');
+        });
+
+        $("#new_user").change(function() {
+            $.ajax({ //create an ajax request to display.php
+                type: "POST",
+                url: "<?php echo base_url(); ?>C_notification/setNewUser/",
+                data: {
+                    nip: $(this).val(),
+                    doc_id: "<?=$DOC_ID;?>"
+                },
+                dataType: "json", //expect html to be returned
+                success: function(response) {
+                    console.log(response);
+                }
+            });
         });
 
     });
