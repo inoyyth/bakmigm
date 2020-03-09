@@ -631,6 +631,14 @@ class C_contribution extends CI_Controller {
 			$this->load->view('template', $data);
 		}
 
+		//get tipe document with ocr
+		$tipe_ocr_documents = $this->M_library_database->getOcrDocument();
+		if (count($tipe_ocr_documents) > 0) {
+			if (in_array($si_template_new_tipe, $tipe_ocr_documents)) {
+				$dokumen_search_acr = '';
+			}
+		}
+
 		$data_insert = array(
 			'DOC_ID' => $si_code,
 			'DOC_DATE' => $date_now,		

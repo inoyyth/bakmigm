@@ -1669,4 +1669,19 @@ class M_library_database extends CI_Model {
 		
 		return $query;			  
 	}
+
+	public function getOcrDocument() {
+		$query = $this->db->select('DTSETE_ID')
+		->from('tb_document_structure_tipe')
+		->where('IS_CONVERT_OCR', 2)
+		->get()
+		->result();
+
+		$result = [];
+		foreach($query as $k=>$v) {
+			$result[] = $v->DTSETE_ID;
+		}
+
+		return $result;
+	}
 }
