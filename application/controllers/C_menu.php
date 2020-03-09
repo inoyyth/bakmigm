@@ -17,27 +17,16 @@ class C_menu extends CI_Controller
         include APPPATH . 'libraries/session_user.php';
         // Like (STATUS1,2,3,JBL,DN,DV,DT)
         if (empty($SESSION_DEPARTEMENT_ID) && !empty($SESSION_DIVISI_ID)) {
-
             $data['detail'] = $this->Model_detail->DB_GET_SEARCH_DATA_DOCUMENT_ARRAY("DIPUBLIKASI", "KADALUARSA", "DIARSIPKAN", "", "", $SESSION_DIVISI_ID, "");
-
-            // print_r($SESSION_DIVISI_ID);die();
-
         } elseif (empty($SESSION_DIVISI_ID) && !empty($SESSION_DIREKRORAT_ID)) {
-
             $data['detail'] = $this->Model_detail->DB_GET_SEARCH_DATA_DOCUMENT_ARRAY("DIPUBLIKASI", "KADALUARSA", "DIARSIPKAN", "", "", "", $SESSION_DIREKRORAT_ID);
         } else {
             if ($SESSION_ROLES == "PENDISTRIBUSI" || $SESSION_ROLES == "ADMIN DOKUMEN" || $SESSION_ROLES_2 == "PENDISTRIBUSI" || $SESSION_ROLES_2 == "ADMIN DOKUMEN" || $SESSION_ROLES_3 == "PENDISTRIBUSI" || $SESSION_ROLES_3 == "ADMIN DOKUMEN" || $SESSION_ROLES_4 == "PENDISTRIBUSI" || $SESSION_ROLES_4 == "ADMIN DOKUMEN" || $SESSION_ROLES_5 == "PENDISTRIBUSI" || $SESSION_ROLES_5 == "ADMIN DOKUMEN") {
-
                 $data['detail'] = $this->Model_detail->DB_GET_SEARCH_DATA_DOCUMENT_ARRAY("DIPUBLIKASI", "KADALUARSA", "DIARSIPKAN", $SESSION_JOB_LEVEL_ID, "", "", "");
-
             } elseif ($SESSION_ROLES == "PENCIPTA" || $SESSION_ROLES_2 == "PENCIPTA" || $SESSION_ROLES_3 == "PENCIPTA" || $SESSION_ROLES_4 == "PENCIPTA" || $SESSION_ROLES_5 == "PENCIPTA") {
-
                 $data['detail'] = $this->Model_detail->DB_GET_SEARCH_DATA_DOCUMENT_ARRAY("DIPUBLIKASI", "KADALUARSA", "DIARSIPKAN", $SESSION_JOB_LEVEL_ID, $SESSION_DEPARTEMENT_ID, "", "");
-
             } else {
-
                 $data['detail'] = $this->Model_detail->DB_GET_SEARCH_DATA_DOCUMENT_ARRAY("DIPUBLIKASI", "DIPUBLIKASI", "DIPUBLIKASI", $SESSION_JOB_LEVEL_ID, $SESSION_DEPARTEMENT_ID, "", "");
-
             }
         }
         $data['list_department'] = $this->M_library_database->getAllDepartemen();

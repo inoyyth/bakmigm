@@ -20,9 +20,7 @@ class Model_detail extends CI_Model
 			INNER JOIN tb_distribution_method ON tb_distribution_method.DNMD_ID = tb_document.DOC_DISTRIBUSI
 			INNER JOIN tb_confidential ON tb_confidential.CL_ID = tb_document.DOC_KERAHASIAAN
 			INNER JOIN tb_employee ON tb_document.DOC_MAKER = tb_employee.NIP
-			LEFT OUTER JOIN tb_departemen ON tb_employee.DEPCODE = tb_departemen.DN_ID
-			LEFT OUTER JOIN tb_divisi ON (tb_employee.DEPCODE = tb_divisi.DI_ID OR tb_departemen.DI_ID = tb_divisi.DI_ID)
-			LEFT OUTER JOIN tb_direktorat ON (tb_employee.DEPCODE = tb_direktorat.DT_ID OR tb_divisi.DT_ID = tb_direktorat.DT_ID)
+			INNER JOIN tb_departemen ON tb_document.DOC_PEMILIK_PROSES = tb_departemen.DN_ID
 			WHERE
 			(
 				tb_document.DOC_STATUS = "' . $STATUS1 . '" OR
@@ -30,8 +28,6 @@ class Model_detail extends CI_Model
 				tb_document.DOC_STATUS = "' . $STATUS3 . '"
 			)
 			AND tb_document.DOC_PENGGUNA LIKE "%' . $DN_ID . '%"
-			AND tb_divisi.DI_ID LIKE "%' . $DI_ID . '%"
-			AND tb_direktorat.DT_ID LIKE "%' . $DT_ID . '%"
 			');
             if ($query->num_rows() > 0) {
                 return $query->result();
@@ -58,26 +54,22 @@ class Model_detail extends CI_Model
 			INNER JOIN tb_distribution_method ON tb_distribution_method.DNMD_ID = tb_document.DOC_DISTRIBUSI
 			INNER JOIN tb_confidential ON tb_confidential.CL_ID = tb_document.DOC_KERAHASIAAN
 			INNER JOIN tb_employee ON tb_document.DOC_MAKER = tb_employee.NIP
-			LEFT OUTER JOIN tb_departemen ON tb_employee.DEPCODE = tb_departemen.DN_ID
-			LEFT OUTER JOIN tb_divisi ON (tb_employee.DEPCODE = tb_divisi.DI_ID OR tb_departemen.DI_ID = tb_divisi.DI_ID)
-			LEFT OUTER JOIN tb_direktorat ON (tb_employee.DEPCODE = tb_direktorat.DT_ID OR tb_divisi.DT_ID = tb_direktorat.DT_ID)
+			INNER JOIN tb_departemen ON tb_document.DOC_PEMILIK_PROSES = tb_departemen.DN_ID
 			WHERE
 			(
 				tb_document.DOC_STATUS = "' . $STATUS1 . '" OR
 				tb_document.DOC_STATUS = "' . $STATUS2 . '" OR
 				tb_document.DOC_STATUS = "' . $STATUS3 . '"
 			)
-			AND tb_document.DOC_PENGGUNA LIKE "%' . $DN_ID . '%"
-			AND tb_divisi.DI_ID LIKE "%' . $DI_ID . '%"
-			AND tb_direktorat.DT_ID LIKE "%' . $DT_ID . '%"
+            AND tb_document.DOC_PENGGUNA LIKE "%' . $DN_ID . '%"
 			AND
 			(
 				tb_document.DOC_KATA_KUNCI LIKE "%' . $keyword . '%" OR
 				tb_document.DOC_ABSTRAK LIKE "%' . $keyword . '%" OR
 				tb_document.DOC_NOMOR LIKE "%' . $keyword . '%" OR
 				tb_document.DOC_NAMA LIKE "%' . $keyword . '%" OR
-				tb_document_detail.DOCD_SEARCH LIKE "%' . $keyword . '%"
-			)
+                tb_document_detail.DOCD_SEARCH LIKE "%' . $keyword . '%"
+            )
 		');
         return $query->result();
     }
@@ -104,11 +96,10 @@ class Model_detail extends CI_Model
 				tb_document.DOC_STATUS = '" . $STATUS2 . "' OR
 				tb_document.DOC_STATUS = '" . $STATUS3 . "'
 			)
-			AND tb_document.DOC_PEMILIK_PROSES='" . $ssa_dept_owner . "'
+			AND tb_document.DOC_PEMILIK_PROSES LIKE '%" . $ssa_dept_owner . "%'
 			AND tb_document.DOC_TIPE LIKE '%" . $si_doc_type . "%'
 			AND tb_document.DOC_GROUP_PROSES LIKE '%" . $ssa_group_proces . "%'
 			AND tb_document.DOC_PROSES LIKE '%" . $ssa_proces . "%'
-			AND tb_document.DOC_AKSES_LEVEL LIKE '%" . $JBLL_ID . "%'
 
 		");
         return $query->result();
@@ -131,9 +122,7 @@ class Model_detail extends CI_Model
 			INNER JOIN tb_distribution_method ON tb_distribution_method.DNMD_ID = tb_document.DOC_DISTRIBUSI
 			INNER JOIN tb_confidential ON tb_confidential.CL_ID = tb_document.DOC_KERAHASIAAN
 			INNER JOIN tb_employee ON tb_document.DOC_MAKER = tb_employee.NIP
-			LEFT OUTER JOIN tb_departemen ON tb_employee.DEPCODE = tb_departemen.DN_ID
-			LEFT OUTER JOIN tb_divisi ON (tb_employee.DEPCODE = tb_divisi.DI_ID OR tb_departemen.DI_ID = tb_divisi.DI_ID)
-			LEFT OUTER JOIN tb_direktorat ON (tb_employee.DEPCODE = tb_direktorat.DT_ID OR tb_divisi.DT_ID = tb_direktorat.DT_ID)
+			INNER JOIN tb_departemen ON tb_document.DOC_PEMILIK_PROSES = tb_departemen.DN_ID
 			WHERE tb_document_bookmark.UR_ID = "' . $SESSION_ID . '"
 			');
             if ($query->num_rows() > 0) {
