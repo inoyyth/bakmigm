@@ -227,10 +227,11 @@ background-color: white !important;
 							</div>
 							<div class="row" id="radio">
 								<div class="col-sm-12">
-									<input type="radio" class="radio_isi" id="radio1" name="up_doc" value="perubahan_isi"/> Perubahan Isi Dokumen
+									<input type="radio" class="radio_isi" id="radio1" name="up_doc" value="perubahan_isi"/> Perubahan Isi Dokumen <b>(Wajib Upload Ulang Dokumen)</b>
 								</div>
 								<div class="col-sm-12">
-									<input type="radio" class="radio_meta" id="radio2" name="up_doc"/> Perubahan Meta Data Dokumen
+									<input type="radio" class="radio_meta" id="radio2" name="up_doc"/> Perubahan Kata Kunci, Abstrak, Dokumen Terkait dan atau Akses Pengguna <b>(Tidak Upload Ulang)</b>
+
 								</div>
 							</div><br/>
 							<div class="row">
