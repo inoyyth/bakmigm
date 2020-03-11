@@ -13,6 +13,7 @@
     function sync_employee() {
         $employee = $this->M_employee->getEmployee();
         $this->M_employee->updateEmployee($employee);
+        $this->__deleteCopyFile();
     }
 
     function sync_department() {
@@ -23,6 +24,12 @@
     function sync_division() {
         $division = $this->M_employee->getDivision();
         $this->M_employee->updateDivision($division);
+    }
+
+    private function __deleteCopyFile() {
+        foreach (glob("assets/pdf/COPY*.*") as $filename) {
+            unlink($filename);
+        }
     }
 
     function sendReminder() {
