@@ -373,7 +373,7 @@ class C_contribution extends CI_Controller {
 			if ($_FILES['dokumen_utama']['size']!=0) {
 				$GLOBALS['watermark_text'] = $watermark_text;
 				$GLOBALS['watermark_second_text'] = '';//$this->__getWatermarkText();
-				$document_utama_file_name = 'dokumen-utama-'.time().'-'.$_FILES['dokumen_utama']['name'];
+				$document_utama_file_name = 'dokumen-utama-'.time().'-'.preg_replace("/[^A-Za-z0-9.]/", ' ', $_FILES['dokumen_utama']['name']);
 				$config1['upload_path'] = './assets/original';
 				$config1['upload_url'] = './assets/original';
 				$config1['remove_spaces'] = TRUE;
@@ -452,7 +452,7 @@ class C_contribution extends CI_Controller {
 			if ($_FILES['dokumen_pelengkap_1']['size']!=0) {
 				$GLOBALS['watermark_text'] = $watermark_text;
 				$GLOBALS['watermark_second_text'] = '';//$this->__getWatermarkText();
-				$document_pelengkap1_file_name = 'dokumen-pelengkap1-'.time().'-'.$_FILES['dokumen_pelengkap_1']['name'];
+				$document_pelengkap1_file_name = 'dokumen-pelengkap1-'.time().'-'.preg_replace("/[^A-Za-z0-9.]/", ' ', $_FILES['dokumen_pelengkap_1']['name']);
 				$config2['upload_path'] = './assets/original';
 				$config2['upload_url'] = './assets/original';
 				$config2['remove_spaces'] = TRUE;
@@ -522,7 +522,7 @@ class C_contribution extends CI_Controller {
 			if ($_FILES['dokumen_pelengkap_2']['size']!=0) {
 				$GLOBALS['watermark_text'] = $watermark_text;
 				$GLOBALS['watermark_second_text'] = '';//$this->__getWatermarkText();
-				$document_pelengkap2_file_name = 'dokumen-pelengkap2-'.time().'-'.$_FILES['dokumen_pelengkap_2']['name'];
+				$document_pelengkap2_file_name = 'dokumen-pelengkap2-'.time().'-'.preg_replace("/[^A-Za-z0-9.]/", ' ', $_FILES['dokumen_pelengkap_2']['name']);
 				$config3['upload_path'] = './assets/original';
 				$config3['upload_url'] = './assets/original';
 				$config3['remove_spaces'] = TRUE;
@@ -592,7 +592,7 @@ class C_contribution extends CI_Controller {
 			if ($_FILES['dokumen_persetujuan']['size']!=0) {
 				$GLOBALS['watermark_text'] = $watermark_text;
 				$GLOBALS['watermark_second_text'] = '';//$this->__getWatermarkText();
-				$document_persetujuan_file_name = 'dokumen-persetujuan-'.time().'-'.$_FILES['dokumen_persetujuan']['name'];
+				$document_persetujuan_file_name = 'dokumen-persetujuan-'.time().'-'.preg_replace("/[^A-Za-z0-9.]/", ' ', $_FILES['dokumen_persetujuan']['name']);
 				$config4['upload_path'] = './assets/original';
 				$config4['upload_url'] = './assets/original';
 				$config4['remove_spaces'] = TRUE;

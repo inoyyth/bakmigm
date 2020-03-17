@@ -202,7 +202,7 @@ class C_notification extends CI_Controller {
 			}
 			//ADD WATERMAK
 			if ($STATUS_UTAMA==1) {
-				unlink('./assets/pdf/COPY-'.$DOCD_UTAMA.'-'.$this->session->userdata("session_bgm_edocument_id").'.pdf');
+				// unlink('./assets/pdf/COPY-'.$DOCD_UTAMA.'-'.$this->session->userdata("session_bgm_edocument_id").'.pdf');
 				$GLOBALS['watermark_text'] = '';
 				$GLOBALS['watermark_second_text'] = $this->__getWatermarkText();
 				$GLOBALS['dokumen_utama'] = './assets/pdf/'.$DOCD_UTAMA.'.pdf';
