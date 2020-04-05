@@ -1430,6 +1430,26 @@ class M_library_database extends CI_Model {
 		}
 		return $result;
 	}
+
+	public function DB_GET_DATA_DEPARTEMEN_BY_ID_EVO_NEW($DN_ID){
+		$result = "";
+		try{
+			$query = $this->db->query('
+			SELECT
+			*
+			FROM
+			tb_departemen
+			WHERE DN_ID = "'.$DN_ID.'"
+			');
+			if ($query->num_rows() > 0) {
+				return $query->result();
+			}
+		}catch(Exception $exc){
+			$error = $exc->getMessage();
+			echo "[ERROR][M_LIBRARY_DATABASE][DB_GET_DATA_DEPARTEMEN_BY_ID_EVO]".$error;
+		}
+		return $result;
+	}
 	//-----------------------------------------------------------------------------------------------//
 	public function DB_GET_DATA_DEPARTEMENT_ARRAY($DN_ID){
 		$result = "";
