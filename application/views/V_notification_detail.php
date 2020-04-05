@@ -228,7 +228,7 @@ if (strpos($DOC_PENGGUNA, '|') !== false) {
     $data_array = explode('|', $DOC_PENGGUNA);
     $count = count($data_array);
     for ($x = 0; $x < $count; $x++) {
-        $get_data = $this->M_library_database->DB_GET_DATA_DEPARTEMEN_BY_ID_EVO($data_array[$x]);
+        $get_data = $this->M_library_database->DB_GET_DATA_DEPARTEMEN_BY_ID_EVO_NEW($data_array[$x]);
         if (!empty($get_data)) {
             foreach ($get_data as $data_row) {
                 $DN_ID = $data_row->DN_ID;
@@ -240,7 +240,7 @@ if (strpos($DOC_PENGGUNA, '|') !== false) {
 
     }
 } else {
-    $get_data = $this->M_library_database->DB_GET_DATA_DEPARTEMEN_BY_ID_EVO($DOC_PENGGUNA);
+    $get_data = $this->M_library_database->DB_GET_DATA_DEPARTEMEN_BY_ID_EVO_NEW($DOC_PENGGUNA);
     foreach ($get_data as $data_row) {
         $DN_ID = $data_row->DN_ID;
         $DN_CODE = $data_row->DN_CODE;
