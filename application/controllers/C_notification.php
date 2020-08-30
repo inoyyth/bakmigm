@@ -74,8 +74,9 @@ class C_notification extends CI_Controller {
 			}
 
 			if ($params['status_document'] === 'DITOLAK') {
-				$query_is_pendistribusi = $query_is_pendistribusi->where('tb_document.DOC_MAKER', $this->session->userdata("session_bgm_edocument_id"));
+				// $query_is_pendistribusi = $query_is_pendistribusi->where('tb_document.DOC_MAKER', $this->session->userdata("session_bgm_edocument_id"));
 				$query_is_pendistribusi = $query_is_pendistribusi->like('tb_document.DOC_STATUS', 'DITOLAK');
+				$query_is_pendistribusi = $query_is_pendistribusi->like('tb_document.DOC_STATUS_ACTIVITY', 'DITOLAK');
 			}
 
 			if ($params['status_document'] === 'KADALUARSA') {
@@ -84,7 +85,9 @@ class C_notification extends CI_Controller {
 
 			if ($params['status_document'] === 'MENUNGGU') {
 				// $query_is_pendistribusi = $query_is_pendistribusi->like('tb_document.DOC_STATUS_ACTIVITY', 'menunggu persetujuan');
-				$query_is_pendistribusi = $query_is_pendistribusi->where('tb_document.DOC_STATUS', $this->session->userdata("session_bgm_edocument_departement_id"));
+				// $query_is_pendistribusi = $query_is_pendistribusi->where('tb_document.DOC_STATUS', $this->session->userdata("session_bgm_edocument_departement_id"));
+				// $query_is_pendistribusi = $query_is_pendistribusi->like('tb_document.DOC_STATUS', 'Menunggu');
+				$query_is_pendistribusi = $query_is_pendistribusi->like('tb_document.DOC_STATUS_ACTIVITY', 'Menunggu');
 			}
 		}
 		$query_is_pendistribusi = 
